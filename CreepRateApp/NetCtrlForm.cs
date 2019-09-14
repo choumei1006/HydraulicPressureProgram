@@ -212,12 +212,7 @@ namespace CreepRateApp
             return localaddr.ToString();
         }
 
-        //Testing  modify first time
-
-        
-
-        
-
+   
         
     }
 
