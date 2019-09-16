@@ -13,6 +13,7 @@ using com.sun.xml.@internal.bind.v2;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Net.NetworkInformation;
 
 using System.Threading;
 
@@ -86,6 +87,7 @@ namespace CreepRateApp
             udpcSend = new UdpClient(localIpep);
             Thread thrSend = new Thread(SendMessage);
             thrSend.Start(richTextBox1.Text);
+            
 
         }
         /// <summary>
@@ -115,10 +117,15 @@ namespace CreepRateApp
         //接收按钮点击函数
         private void button1_Click(object sender, EventArgs e)
         {
+
             if (!IsUdpcRecvStart) // 未监听的情况，开始监听
             {
                 string localIpAddress = GetIpAddress();
                 IPEndPoint localIpep = new IPEndPoint(IPAddress.Parse(localIpAddress), 10105); // 本机IP和监听端口号
+                if (PortInUse(10105))
+                {
+                    
+                }
                 udpcRecv = new UdpClient(localIpep);
                 thrRecv = new Thread(ReceiveMessage);
                 thrRecv.Start();
@@ -212,12 +219,32 @@ namespace CreepRateApp
             return localaddr.ToString();
         }
 
-        //Testing  modify first time
+        /// <summary>
+        /// 判断某端口是否正在使用中
+        /// </summary>
+        /// <param name="port"></param>
+        /// <returns></returns>
+        public static bool PortInUse(int port)
+        {
+            bool inUse = false;
 
-        
+            IPGlobalProperties ipProperties = IPGlobalProperties.GetIPGlobalProperties();
+            IPEndPoint[] ipEndPoints = ipProperties.GetActiveUdpListeners();
 
-        
+            foreach (IPEndPoint endPoint in ipEndPoints)
+            {
+                if (endPoint.Port == port)
+                {
+                    inUse = true;
+                    break;
+                }
+            }
 
+            return inUse;
+        }
+
+
+   
         
     }
 
