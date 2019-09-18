@@ -121,11 +121,7 @@ namespace CreepRateApp
             if (!IsUdpcRecvStart) // 未监听的情况，开始监听
             {
                 string localIpAddress = GetIpAddress();
-                IPEndPoint localIpep = new IPEndPoint(IPAddress.Parse(localIpAddress), 10105); // 本机IP和监听端口号
-                if (PortInUse(10105))
-                {
-                    
-                }
+                IPEndPoint localIpep = new IPEndPoint(IPAddress.Parse(localIpAddress), 10101); // 本机IP和监听端口号
                 udpcRecv = new UdpClient(localIpep);
                 thrRecv = new Thread(ReceiveMessage);
                 thrRecv.Start();
@@ -147,12 +143,11 @@ namespace CreepRateApp
         /// <param name="obj"></param>
         private void ReceiveMessage(object obj)
         {
-            IPEndPoint remoteIpep = new IPEndPoint(IPAddress.Any, 0);//
+            IPEndPoint remoteIpep = new IPEndPoint(IPAddress.Any, 10105);//
             while (true)
             {
                 try
                 {
-
                     byte[] bytRecv = udpcRecv.Receive(ref remoteIpep);
                     string message = Encoding.Unicode.GetString(bytRecv, 0, bytRecv.Length);
                     ShowMessage(richTextBox2, string.Format("{0}[{1}]", remoteIpep, message));
