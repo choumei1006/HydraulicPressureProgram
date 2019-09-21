@@ -521,13 +521,28 @@ namespace CreepRateApp
         }
 
         /// <summary>
-        /// 串口设置
+        /// 传感器通道设置
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void barButtonItem2_ItemClick(object sender, ItemClickEventArgs e)
         {
-            CreepRateApp.Form.SerialPortConfig spc = new Form.SerialPortConfig();
+            FaultInfoConfigForm spc = new FaultInfoConfigForm(ComDevice);
+            try//此处用try做异常处理，是为了防止COM不存在释放Dialog后，ShowDialog无法找到窗体资源而报错。
+            {
+                spc.ShowDialog();
+            }
+            catch { }
+        }
+
+        /// <summary>
+        /// 故障信息配置
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void barButtonItem10_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            FaultInfoConfigForm spc = new FaultInfoConfigForm(ComDevice);
             try//此处用try做异常处理，是为了防止COM不存在释放Dialog后，ShowDialog无法找到窗体资源而报错。
             {
                 spc.ShowDialog();
@@ -1524,7 +1539,7 @@ namespace CreepRateApp
             }
             catch { }
 
-            FeedingMachineForm fmf = new FeedingMachineForm(ComDevice);
+            FaultInfoConfigForm fmf = new FaultInfoConfigForm(ComDevice);
             fmf.ShowDialog();
             if (fmf.DialogResult == DialogResult.OK)//此处通过弹出窗口的DialogResult的值来判断窗口关闭，需要在弹窗关闭事件中设定dialogresult的值
             {
@@ -1537,60 +1552,7 @@ namespace CreepRateApp
             }
         }
 
-        /// <summary>
-        /// 添加配料输入窗口
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void barButtonItem6_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            //添加配料输入窗口
-            try
-            {
-                if (ComDevice.IsOpen)
-                {
-                    //打开时点击，则关闭串口
-                    ComDevice.Close();
-                }
-            }
-            catch { }
-            //Main界面的循环回访数据的接收标志位也需要关闭
-            isNeedComRecevied = false;
-
-            ///注销操作系统端口取数据监听事件
-            ///此处必须注销现有托管到操作系统的监听事件，因为操作系统一个端口只支持一个事件的监听
-            ///为了防止准备关闭的监听事件不存在而报错，故要加入try处理
-            try
-            {
-                ComDevice.DataReceived -= new SerialDataReceivedEventHandler(Com_DataReceived);
-            }
-            catch { }
-
-            /*FeedingMachineForm fmf = new FeedingMachineForm(ComDevice);
-            fmf.ShowDialog();
-            if (fmf.DialogResult == DialogResult.OK)//此处通过弹出窗口的DialogResult的值来判断窗口关闭，需要在弹窗关闭事件中设定dialogresult的值
-            {
-                //窗口关闭了，重新注册主界面的端口数据获取操作系统托管监听事件
-                try
-                {
-                    ComDevice.DataReceived += new SerialDataReceivedEventHandler(Com_DataReceived);
-                }
-                catch { }
-            }*/
-            IngredientInputForm iif = new IngredientInputForm(ComDevice);
-            iif.ShowDialog();
-            if (iif.DialogResult == DialogResult.OK)//此处通过弹出窗口的DialogResult的值来判断窗口关闭，需要在弹窗关闭事件中设定dialogresult的值
-            {
-                //窗口关闭了，重新注册主界面的端口数据获取操作系统托管监听事件
-                try
-                {
-                    ComDevice.DataReceived += new SerialDataReceivedEventHandler(Com_DataReceived);
-                }
-                catch { }
-            }
-
-        }
-
+       
 
         /// <summary>
         /// 网口通信窗口
@@ -2051,6 +2013,7 @@ namespace CreepRateApp
                 uploadAnalysisModel.IsHuiZhuTie = "-";
             }
         }
+        
 
        
 

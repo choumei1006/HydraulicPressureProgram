@@ -80,21 +80,30 @@
     <Reference Include="DevExpress.Charts.v14.1.Core, Version=14.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
       <Private>True</Private>
     </Reference>
+    <Reference Include="DevExpress.Dashboard.v14.1.Core, Version=14.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.Dashboard.v14.1.Win, Version=14.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
     <Reference Include="DevExpress.Data.v14.1">
       <Private>True</Private>
     </Reference>
     <Reference Include="DevExpress.Data.v15.2, Version=15.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.DataAccess.v14.1, Version=14.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.DataAccess.v14.1.UI, Version=14.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.Office.v14.1.Core, Version=14.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.PivotGrid.v14.1.Core, Version=14.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
     <Reference Include="DevExpress.Printing.v14.1.Core, Version=14.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
       <Private>True</Private>
     </Reference>
     <Reference Include="DevExpress.Printing.v15.2.Core, Version=15.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.RichEdit.v14.1.Core, Version=14.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
     <Reference Include="DevExpress.Utils.v14.1">
       <Private>True</Private>
     </Reference>
     <Reference Include="DevExpress.Sparkline.v14.1.Core">
       <Private>True</Private>
     </Reference>
+    <Reference Include="DevExpress.Utils.v14.1.UI, Version=14.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
     <Reference Include="DevExpress.Utils.v15.2, Version=15.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.Xpo.v14.1, Version=14.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
     <Reference Include="DevExpress.XtraBars.v14.1, Version=14.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
       <Private>True</Private>
     </Reference>
@@ -115,6 +124,8 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="DevExpress.XtraEditors.v15.2, Version=15.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.XtraGauges.v14.1.Core, Version=14.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.XtraGauges.v14.1.Win, Version=14.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
     <Reference Include="DevExpress.XtraGrid.v14.1, Version=14.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
       <Private>True</Private>
     </Reference>
@@ -122,9 +133,14 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="DevExpress.XtraLayout.v15.2, Version=15.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.XtraMap.v14.1, Version=14.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.XtraPivotGrid.v14.1, Version=14.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
     <Reference Include="DevExpress.XtraPrinting.v14.1, Version=14.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a">
       <Private>True</Private>
     </Reference>
+    <Reference Include="DevExpress.XtraRichEdit.v14.1, Version=14.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.XtraRichEdit.v14.1.Extensions, Version=14.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.XtraTreeList.v14.1, Version=14.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
     <Reference Include="DevExpress.XtraTreeList.v15.2, Version=15.2.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
     <Reference Include="ICSharpCode.SharpZipLib">
       <HintPath>..\..\..\Downloads\ikvm-7.2.4630.5\bin\ICSharpCode.SharpZipLib.dll</HintPath>
@@ -269,12 +285,6 @@
     <Compile Include="entity\FileInfo.cs" />
     <Compile Include="entity\ResultFormat.cs" />
     <Compile Include="entity\XY.cs" />
-    <Compile Include="FeedingMachineForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FeedingMachineForm.Designer.cs">
-      <DependentUpon>FeedingMachineForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Form\FileList.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -293,6 +303,12 @@
     <Compile Include="Form\SerialPortConfig.Designer.cs">
       <DependentUpon>SerialPortConfig.cs</DependentUpon>
     </Compile>
+    <Compile Include="Form\FaultInfoConfigForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form\FaultInfoConfigForm.Designer.cs">
+      <DependentUpon>FaultInfoConfigForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="GlobalValue.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
@@ -306,22 +322,19 @@
     <Compile Include="Core\CheckData.cs" />
     <Compile Include="Core\ReadTxt.cs" />
     <Compile Include="uSerialPort.cs" />
-    <Compile Include="IngredientInputForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="IngredientInputForm.Designer.cs">
-      <DependentUpon>IngredientInputForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="AutoSizeFormClass.cs" />
-    <Compile Include="NetCtrlForm.cs">
+    <Compile Include="Form\NetCtrlForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="NetCtrlForm.Designer.cs">
+    <Compile Include="Form\NetCtrlForm.Designer.cs">
       <DependentUpon>NetCtrlForm.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="FeedingMachineForm.resx">
-      <DependentUpon>FeedingMachineForm.cs</DependentUpon>
-    </EmbeddedResource>
+    <Compile Include="Form\SensorChannelConfigForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form\SensorChannelConfigForm.Designer.cs">
+      <DependentUpon>SensorChannelConfigForm.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Form\FileList.resx">
       <DependentUpon>FileList.cs</DependentUpon>
     </EmbeddedResource>
@@ -332,15 +345,18 @@
     <EmbeddedResource Include="Form\SerialPortConfig.resx">
       <DependentUpon>SerialPortConfig.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Form\FaultInfoConfigForm.resx">
+      <DependentUpon>FaultInfoConfigForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="IngredientInputForm.resx">
-      <DependentUpon>IngredientInputForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="NetCtrlForm.resx">
+    <EmbeddedResource Include="Form\NetCtrlForm.resx">
       <DependentUpon>NetCtrlForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form\SensorChannelConfigForm.resx">
+      <DependentUpon>SensorChannelConfigForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\licenses.licx" />
     <EmbeddedResource Include="Properties\Resources.resx">

@@ -151,6 +151,9 @@ namespace CreepRateApp
                     byte[] bytRecv = udpcRecv.Receive(ref remoteIpep);
                     string message = Encoding.Unicode.GetString(bytRecv, 0, bytRecv.Length);
                     ShowMessage(richTextBox2, string.Format("{0}[{1}]", remoteIpep, message));
+
+                    //调用“接收”按钮点击事件
+                    CallButtonClick(button1);
                 }
                 catch (Exception ex)
                 {
@@ -188,6 +191,16 @@ namespace CreepRateApp
                 txtbox.Text = "";
             }
         }
+
+        //调用按钮点击事件
+        delegate void CallButtonClickDelegate(Button button);
+        private void CallButtonClick(Button button)
+        {
+            CallButtonClickDelegate callButtonClickDelegate = CallButtonClick;
+            button.Invoke(callButtonClickDelegate, new object[] { button });
+        }
+
+
 
         /// <summary>
         /// 关闭程序，强制退出
