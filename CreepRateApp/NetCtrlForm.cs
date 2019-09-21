@@ -16,6 +16,7 @@ using System.Net.Sockets;
 using System.Net.NetworkInformation;
 
 using System.Threading;
+using System.Reflection;
 
 namespace CreepRateApp
 {
@@ -33,6 +34,7 @@ namespace CreepRateApp
         private int recv_count = 0;//单次串口收数据计数器
         private byte[] buffer = new byte[8]; //串口缓存
         private byte[] bufferFeedEnough = new byte[6]; //串口缓存
+        
 
 
         public NetCtrlForm(SerialPort paramPortDev)
@@ -66,7 +68,8 @@ namespace CreepRateApp
         /// 用于UDP接收的网络服务类
         ///
         private UdpClient udpcRecv;
-
+        private static string localIpAddress = GetIpAddress();
+        private IPEndPoint localIpep = new IPEndPoint(IPAddress.Parse(localIpAddress), 10101); // 本机IP和监听端口号
 
         
         //发送按钮点击函数
@@ -83,7 +86,7 @@ namespace CreepRateApp
             // 匿名发送
             //udpcSend = new UdpClient(0);             // 自动分配本地IPv4地址
             // 实名发送
-            IPEndPoint localIpep = new IPEndPoint(IPAddress.Parse(localIpAddress), 10101); // 本机IP，指定单片机端口号“10105
+            
             udpcSend = new UdpClient(localIpep);
             Thread thrSend = new Thread(SendMessage);
             thrSend.Start(richTextBox1.Text);
@@ -103,6 +106,15 @@ namespace CreepRateApp
             udpcSend.Close();
             ResetTextBox(richTextBox1);
         }
+        //回复发送函数
+        private void callSendMessage(object obj)
+        {
+            string message = (string)obj;
+            byte[] sendbytes = Encoding.Unicode.GetBytes(message);
+            IPEndPoint remoteIpep = new IPEndPoint(IPAddress.Parse("255.255.255.255"), 10105); // 发送到的IP地址和端口号
+            udpcSend.Send(sendbytes, sendbytes.Length, remoteIpep);
+            udpcSend.Close();
+        }
         /// <summary>
         /// 开关：在监听UDP报文阶段为true，否则为false
         /// </summary>
@@ -120,8 +132,7 @@ namespace CreepRateApp
 
             if (!IsUdpcRecvStart) // 未监听的情况，开始监听
             {
-                string localIpAddress = GetIpAddress();
-                IPEndPoint localIpep = new IPEndPoint(IPAddress.Parse(localIpAddress), 10101); // 本机IP和监听端口号
+               
                 udpcRecv = new UdpClient(localIpep);
                 thrRecv = new Thread(ReceiveMessage);
                 thrRecv.Start();
@@ -130,9 +141,7 @@ namespace CreepRateApp
             }
             else // 正在监听的情况，终止监听
             {
-                thrRecv.Abort(); // 必须先关闭这个线程，否则会异常
-                udpcRecv.Close();
-                IsUdpcRecvStart = false;
+               
                 ShowMessage(richTextBox2, "UDP监听器已成功关闭");
             }
 
@@ -151,7 +160,24 @@ namespace CreepRateApp
                     byte[] bytRecv = udpcRecv.Receive(ref remoteIpep);
                     string message = Encoding.Unicode.GetString(bytRecv, 0, bytRecv.Length);
                     ShowMessage(richTextBox2, string.Format("{0}[{1}]", remoteIpep, message));
+
+                    //开始关闭线程
+                    udpcRecv.Close();//关闭协议
+                    //udpcRecv.Dispose();//释放协议
+                    udpcRecv = null;//为协议至空值
+                    //thrRecv.DisableComObjectEagerCleanup();//直接释放掉当前线程 
+
+
+                    IsUdpcRecvStart = false;
+                    ShowMessage(richTextBox2, "UDP监听器已成功关闭");
+
+
+                    udpcSend = new UdpClient(localIpep);
+                    Thread thrSend = new Thread(callSendMessage);
+                    thrSend.Start("123");
+
                 }
+
                 catch (Exception ex)
                 {
                     ShowMessage(richTextBox2, ex.Message);
@@ -204,7 +230,7 @@ namespace CreepRateApp
         ///获取本机IP地址 
         /// </summary>
         /// <returns></returns>
-        private string GetIpAddress()
+        private static string GetIpAddress()
         {
             string hostName = Dns.GetHostName();   //获取本机名
             IPHostEntry localhost = Dns.GetHostByName(hostName);    //方法已过期，可以获取IPv4的地址
@@ -238,8 +264,7 @@ namespace CreepRateApp
             return inUse;
         }
 
-        //测试pull_zyt
-   
+        
         
     }
 
