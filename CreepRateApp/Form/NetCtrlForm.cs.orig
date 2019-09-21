@@ -161,6 +161,10 @@ namespace CreepRateApp
                     string message = Encoding.Unicode.GetString(bytRecv, 0, bytRecv.Length);
                     ShowMessage(richTextBox2, string.Format("{0}[{1}]", remoteIpep, message));
 
+<<<<<<< HEAD:CreepRateApp/Form/NetCtrlForm.cs
+                    //调用“接收”按钮点击事件
+                    CallButtonClick(button1);
+=======
                     //开始关闭线程
                     udpcRecv.Close();//关闭协议
                     //udpcRecv.Dispose();//释放协议
@@ -176,6 +180,7 @@ namespace CreepRateApp
                     Thread thrSend = new Thread(callSendMessage);
                     thrSend.Start("123");
 
+>>>>>>> master:CreepRateApp/NetCtrlForm.cs
                 }
 
                 catch (Exception ex)
