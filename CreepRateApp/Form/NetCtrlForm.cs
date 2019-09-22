@@ -34,7 +34,7 @@ namespace CreepRateApp
         private int recv_count = 0;//单次串口收数据计数器
         private byte[] buffer = new byte[8]; //串口缓存
         private byte[] bufferFeedEnough = new byte[6]; //串口缓存
-        
+
 
 
         public NetCtrlForm(SerialPort paramPortDev)
@@ -71,7 +71,7 @@ namespace CreepRateApp
         private static string localIpAddress = GetIpAddress();
         private IPEndPoint localIpep = new IPEndPoint(IPAddress.Parse(localIpAddress), 10101); // 本机IP和监听端口号
 
-        
+
         //发送按钮点击函数
         private void button2_Click(object sender, EventArgs e)
         {
@@ -86,11 +86,11 @@ namespace CreepRateApp
             // 匿名发送
             //udpcSend = new UdpClient(0);             // 自动分配本地IPv4地址
             // 实名发送
-            
+
             udpcSend = new UdpClient(localIpep);
             Thread thrSend = new Thread(SendMessage);
             thrSend.Start(richTextBox1.Text);
-            
+
 
         }
         /// <summary>
@@ -124,15 +124,15 @@ namespace CreepRateApp
         /// </summary>
         Thread thrRecv;
 
-        
-        
+
+
         //接收按钮点击函数
         private void button1_Click(object sender, EventArgs e)
         {
 
             if (!IsUdpcRecvStart) // 未监听的情况，开始监听
             {
-               
+
                 udpcRecv = new UdpClient(localIpep);
                 thrRecv = new Thread(ReceiveMessage);
                 thrRecv.Start();
@@ -141,7 +141,7 @@ namespace CreepRateApp
             }
             else // 正在监听的情况，终止监听
             {
-               
+
                 ShowMessage(richTextBox2, "UDP监听器已成功关闭");
             }
 
@@ -215,16 +215,6 @@ namespace CreepRateApp
             }
         }
 
-        //调用按钮点击事件
-        delegate void CallButtonClickDelegate(Button button);
-        private void CallButtonClick(Button button)
-        {
-            CallButtonClickDelegate callButtonClickDelegate = CallButtonClick;
-            button.Invoke(callButtonClickDelegate, new object[] { button });
-        }
-
-
-
         /// <summary>
         /// 关闭程序，强制退出
         /// </summary>
@@ -235,7 +225,7 @@ namespace CreepRateApp
             Environment.Exit(0);
         }
 
-        
+
         /// <summary>
         ///获取本机IP地址 
         /// </summary>
@@ -274,44 +264,43 @@ namespace CreepRateApp
             return inUse;
         }
 
-        
-        
+
+
     }
 
 }
-        
-
-    
-
-       
-
-        
-
-     
-
-        
-
-       
-
-        
-
-       
-       
-        
-
-       
-
-
-       
-       
-       
-        
-
-
-        
-
-       
 
 
 
-   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

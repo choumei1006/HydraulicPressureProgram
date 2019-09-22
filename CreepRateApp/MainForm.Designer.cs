@@ -66,9 +66,7 @@
             this.barButtonItem10 = new DevExpress.XtraBars.BarButtonItem();
             this.barButtonItem11 = new DevExpress.XtraBars.BarButtonItem();
             this.page_HotAnalysis = new DevExpress.XtraBars.Ribbon.RibbonPage();
-            this.rpg_handAnalysis = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
             this.rpg_SerialPortDateAnalysis = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
-            this.rpg_Peripheral = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
             this.ribbonPage1 = new DevExpress.XtraBars.Ribbon.RibbonPage();
             this.ribbonPageGroup1 = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
             this.ribbonStatusBar = new DevExpress.XtraBars.Ribbon.RibbonStatusBar();
@@ -175,6 +173,7 @@
             this.ribbon.ShowExpandCollapseButton = DevExpress.Utils.DefaultBoolean.True;
             this.ribbon.Size = new System.Drawing.Size(1619, 185);
             this.ribbon.StatusBar = this.ribbonStatusBar;
+            this.ribbon.Tag = "";
             // 
             // selectAnalysisFile
             // 
@@ -210,7 +209,7 @@
             // 
             // barButtonItem3
             // 
-            this.barButtonItem3.Caption = "接收数据";
+            this.barButtonItem3.Caption = "开始采集";
             this.barButtonItem3.Glyph = ((System.Drawing.Image)(resources.GetObject("barButtonItem3.Glyph")));
             this.barButtonItem3.Id = 4;
             this.barButtonItem3.LargeGlyph = ((System.Drawing.Image)(resources.GetObject("barButtonItem3.LargeGlyph")));
@@ -221,7 +220,7 @@
             // 
             // barButtonItem4
             // 
-            this.barButtonItem4.Caption = "停止接收并分析";
+            this.barButtonItem4.Caption = "开始回传";
             this.barButtonItem4.Glyph = ((System.Drawing.Image)(resources.GetObject("barButtonItem4.Glyph")));
             this.barButtonItem4.Id = 5;
             this.barButtonItem4.LargeGlyph = ((System.Drawing.Image)(resources.GetObject("barButtonItem4.LargeGlyph")));
@@ -275,7 +274,7 @@
             // 
             // barButtonItem6
             // 
-            this.barButtonItem6.Caption = "添加配料";
+            this.barButtonItem6.Caption = "开始采集";
             this.barButtonItem6.Glyph = ((System.Drawing.Image)(resources.GetObject("barButtonItem6.Glyph")));
             this.barButtonItem6.Id = 12;
             this.barButtonItem6.Name = "barButtonItem6";
@@ -336,25 +335,13 @@
             // page_HotAnalysis
             // 
             this.page_HotAnalysis.Groups.AddRange(new DevExpress.XtraBars.Ribbon.RibbonPageGroup[] {
-            this.rpg_handAnalysis,
-            this.rpg_SerialPortDateAnalysis,
-            this.rpg_Peripheral});
+            this.rpg_SerialPortDateAnalysis});
             this.page_HotAnalysis.Name = "page_HotAnalysis";
             this.page_HotAnalysis.Text = "液压数据平台";
-            // 
-            // rpg_handAnalysis
-            // 
-            this.rpg_handAnalysis.AllowTextClipping = false;
-            this.rpg_handAnalysis.ItemLinks.Add(this.selectAnalysisFile);
-            this.rpg_handAnalysis.ItemLinks.Add(this.barButtonItem1);
-            this.rpg_handAnalysis.Name = "rpg_handAnalysis";
-            this.rpg_handAnalysis.ShowCaptionButton = false;
-            this.rpg_handAnalysis.Text = "手工分析";
             // 
             // rpg_SerialPortDateAnalysis
             // 
             this.rpg_SerialPortDateAnalysis.AllowTextClipping = false;
-            this.rpg_SerialPortDateAnalysis.ItemLinks.Add(this.barButtonItem6);
             this.rpg_SerialPortDateAnalysis.ItemLinks.Add(this.barButtonItem3);
             this.rpg_SerialPortDateAnalysis.ItemLinks.Add(this.barButtonItem4);
             this.rpg_SerialPortDateAnalysis.ItemLinks.Add(this.barButtonItem5);
@@ -362,14 +349,6 @@
             this.rpg_SerialPortDateAnalysis.Name = "rpg_SerialPortDateAnalysis";
             this.rpg_SerialPortDateAnalysis.ShowCaptionButton = false;
             this.rpg_SerialPortDateAnalysis.Text = "串口数据分析";
-            // 
-            // rpg_Peripheral
-            // 
-            this.rpg_Peripheral.AllowTextClipping = false;
-            this.rpg_Peripheral.ItemLinks.Add(this.b_FeedingMachine);
-            this.rpg_Peripheral.Name = "rpg_Peripheral";
-            this.rpg_Peripheral.ShowCaptionButton = false;
-            this.rpg_Peripheral.Text = "外部设备";
             // 
             // ribbonPage1
             // 
@@ -741,7 +720,7 @@
             this.Ribbon = this.ribbon;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.StatusBar = this.ribbonStatusBar;
-            this.Text = "热分析软件";
+            this.Text = "液压数据控制";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             ((System.ComponentModel.ISupportInitialize)(this.ribbon)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.repositoryItemImageEdit1)).EndInit();
@@ -788,7 +767,6 @@
 
         private DevExpress.XtraBars.Ribbon.RibbonControl ribbon;
         private DevExpress.XtraBars.Ribbon.RibbonPage page_HotAnalysis;
-        private DevExpress.XtraBars.Ribbon.RibbonPageGroup rpg_handAnalysis;
         private DevExpress.XtraBars.Ribbon.RibbonStatusBar ribbonStatusBar;
         private DevExpress.XtraBars.BarButtonItem selectAnalysisFile;
         private DevExpress.LookAndFeel.DefaultLookAndFeel defaultLookAndFeel1;
@@ -832,7 +810,6 @@
         private DevExpress.XtraBars.BarButtonItem barButtonItem4;
         private DevExpress.XtraBars.BarButtonItem barButtonItem5;
         private DevExpress.XtraBars.Ribbon.RibbonPageGroup rpg_SerialPortDateAnalysis;
-        private DevExpress.XtraBars.Ribbon.RibbonPageGroup rpg_Peripheral;
         private DevExpress.XtraBars.BarButtonItem b_FeedingMachine;
         private DevExpress.XtraBars.BarCheckItem barCheckItem1;
         private DevExpress.XtraBars.BarCheckItem barCheckItem2;

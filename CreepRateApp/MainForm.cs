@@ -527,7 +527,7 @@ namespace CreepRateApp
         /// <param name="e"></param>
         private void barButtonItem2_ItemClick(object sender, ItemClickEventArgs e)
         {
-            FaultInfoConfigForm spc = new FaultInfoConfigForm(ComDevice);
+            SensorChannelConfigForm spc = new SensorChannelConfigForm(ComDevice);
             try//此处用try做异常处理，是为了防止COM不存在释放Dialog后，ShowDialog无法找到窗体资源而报错。
             {
                 spc.ShowDialog();
@@ -542,7 +542,7 @@ namespace CreepRateApp
         /// <param name="e"></param>
         private void barButtonItem10_ItemClick(object sender, ItemClickEventArgs e)
         {
-            FaultInfoConfigForm spc = new FaultInfoConfigForm(ComDevice);
+            SensorChannelConfigForm spc = new SensorChannelConfigForm(ComDevice);
             try//此处用try做异常处理，是为了防止COM不存在释放Dialog后，ShowDialog无法找到窗体资源而报错。
             {
                 spc.ShowDialog();
@@ -1539,7 +1539,7 @@ namespace CreepRateApp
             }
             catch { }
 
-            FaultInfoConfigForm fmf = new FaultInfoConfigForm(ComDevice);
+            SensorChannelConfigForm fmf = new SensorChannelConfigForm(ComDevice);
             fmf.ShowDialog();
             if (fmf.DialogResult == DialogResult.OK)//此处通过弹出窗口的DialogResult的值来判断窗口关闭，需要在弹窗关闭事件中设定dialogresult的值
             {

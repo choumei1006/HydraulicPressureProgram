@@ -1,6 +1,6 @@
 ﻿namespace CreepRateApp
 {
-    partial class FaultInfoConfigForm
+    partial class SensorChannelConfigForm
     {
         /// <summary>
         /// Required designer variable.

@@ -18,7 +18,7 @@ namespace CreepRateApp
         private SerialPort mSerialPort; 
         private ModbusCRC crc = new ModbusCRC();
         private StringBuilder builder = new StringBuilder();//避免在事件处理方法中反复的创建，定义到外面。
-      
+
 
         public FaultInfoConfigForm(SerialPort paramPortDev)
         {
@@ -27,6 +27,7 @@ namespace CreepRateApp
             mSerialPort.ReceivedBytesThreshold = 1; 
         }
 
+       
         
         
     }

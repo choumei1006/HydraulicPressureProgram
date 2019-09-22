@@ -285,6 +285,12 @@
     <Compile Include="entity\FileInfo.cs" />
     <Compile Include="entity\ResultFormat.cs" />
     <Compile Include="entity\XY.cs" />
+    <Compile Include="Form\FaultInfoConfigForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form\FaultInfoConfigForm.Designer.cs">
+      <DependentUpon>FaultInfoConfigForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form\FileList.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -302,12 +308,6 @@
     </Compile>
     <Compile Include="Form\SerialPortConfig.Designer.cs">
       <DependentUpon>SerialPortConfig.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Form\FaultInfoConfigForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Form\FaultInfoConfigForm.Designer.cs">
-      <DependentUpon>FaultInfoConfigForm.cs</DependentUpon>
     </Compile>
     <Compile Include="GlobalValue.cs" />
     <Compile Include="MainForm.cs">
@@ -335,6 +335,9 @@
     <Compile Include="Form\SensorChannelConfigForm.Designer.cs">
       <DependentUpon>SensorChannelConfigForm.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Form\FaultInfoConfigForm.resx">
+      <DependentUpon>FaultInfoConfigForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form\FileList.resx">
       <DependentUpon>FileList.cs</DependentUpon>
     </EmbeddedResource>
@@ -344,9 +347,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Form\SerialPortConfig.resx">
       <DependentUpon>SerialPortConfig.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Form\FaultInfoConfigForm.resx">
-      <DependentUpon>FaultInfoConfigForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>

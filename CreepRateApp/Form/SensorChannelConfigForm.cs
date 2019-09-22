@@ -13,14 +13,14 @@ using com.sun.xml.@internal.bind.v2;
 
 namespace CreepRateApp
 {
-    public partial class FaultInfoConfigForm : DevExpress.XtraEditors.XtraForm
+    public partial class SensorChannelConfigForm : DevExpress.XtraEditors.XtraForm
     {
         private SerialPort mSerialPort; 
         private ModbusCRC crc = new ModbusCRC();
         private StringBuilder builder = new StringBuilder();//避免在事件处理方法中反复的创建，定义到外面。
       
 
-        public FaultInfoConfigForm(SerialPort paramPortDev)
+        public SensorChannelConfigForm(SerialPort paramPortDev)
         {
             InitializeComponent();
             mSerialPort = paramPortDev;
@@ -30,7 +30,9 @@ namespace CreepRateApp
         private void config_current_Paint(object sender, PaintEventArgs e)
         {
 
-        }  
+        }
+
+        
         
     }
 }
