@@ -549,6 +549,20 @@ namespace CreepRateApp
             }
             catch { }
         }
+        /// <summary>
+        /// 传感器状态配置
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void barButtonItem11_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            SensorStateConfigForm spc = new SensorStateConfigForm(ComDevice);
+            try//此处用try做异常处理，是为了防止COM不存在释放Dialog后，ShowDialog无法找到窗体资源而报错。
+            {
+                spc.ShowDialog();
+            }
+            catch { }
+        }
 
         /// <summary>
         /// 接收数据
@@ -2013,6 +2027,8 @@ namespace CreepRateApp
                 uploadAnalysisModel.IsHuiZhuTie = "-";
             }
         }
+
+        
         
 
        
