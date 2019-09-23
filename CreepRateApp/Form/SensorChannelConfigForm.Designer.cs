@@ -824,7 +824,7 @@
             this.labelControl32.TabIndex = 0;
             this.labelControl32.Text = "开关测点1通道号：";
             // 
-            // FaultInfoConfigForm
+            // SensorChannelConfigForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(144F, 144F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
@@ -832,7 +832,7 @@
             this.Controls.Add(this.xtraTabControl1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.Name = "FaultInfoConfigForm";
+            this.Name = "SensorChannelConfigForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "传感器通道配置";
             ((System.ComponentModel.ISupportInitialize)(this.xtraTabControl1)).EndInit();

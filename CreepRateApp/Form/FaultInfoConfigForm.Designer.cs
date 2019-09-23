@@ -73,19 +73,16 @@
             this.labelControl29 = new DevExpress.XtraEditors.LabelControl();
             this.labelControl30 = new DevExpress.XtraEditors.LabelControl();
             this.numericUpDown15 = new System.Windows.Forms.NumericUpDown();
-            this.labelControl31 = new DevExpress.XtraEditors.LabelControl();
             this.labelControl32 = new DevExpress.XtraEditors.LabelControl();
             this.numericUpDown16 = new System.Windows.Forms.NumericUpDown();
-            this.labelControl33 = new DevExpress.XtraEditors.LabelControl();
             this.labelControl34 = new DevExpress.XtraEditors.LabelControl();
             this.numericUpDown17 = new System.Windows.Forms.NumericUpDown();
-            this.labelControl35 = new DevExpress.XtraEditors.LabelControl();
             this.labelControl36 = new DevExpress.XtraEditors.LabelControl();
             this.numericUpDown18 = new System.Windows.Forms.NumericUpDown();
-            this.labelControl37 = new DevExpress.XtraEditors.LabelControl();
             this.labelControl38 = new DevExpress.XtraEditors.LabelControl();
             this.numericUpDown19 = new System.Windows.Forms.NumericUpDown();
             this.button1 = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).BeginInit();
@@ -109,7 +106,7 @@
             // 
             // numericUpDown1
             // 
-            this.numericUpDown1.Location = new System.Drawing.Point(332, 33);
+            this.numericUpDown1.Location = new System.Drawing.Point(377, 33);
             this.numericUpDown1.Name = "numericUpDown1";
             this.numericUpDown1.Size = new System.Drawing.Size(163, 29);
             this.numericUpDown1.TabIndex = 1;
@@ -120,14 +117,14 @@
             this.labelControl1.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.Vertical;
             this.labelControl1.Location = new System.Drawing.Point(36, 33);
             this.labelControl1.Name = "labelControl1";
-            this.labelControl1.Size = new System.Drawing.Size(290, 22);
+            this.labelControl1.Size = new System.Drawing.Size(335, 22);
             this.labelControl1.TabIndex = 2;
             this.labelControl1.Text = "系统欠压(压力测点2) (建压时长):";
             // 
             // labelControl2
             // 
             this.labelControl2.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.None;
-            this.labelControl2.Location = new System.Drawing.Point(501, 35);
+            this.labelControl2.Location = new System.Drawing.Point(546, 35);
             this.labelControl2.Name = "labelControl2";
             this.labelControl2.Size = new System.Drawing.Size(29, 22);
             this.labelControl2.TabIndex = 3;
@@ -136,11 +133,11 @@
             // labelControl3
             // 
             this.labelControl3.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.None;
-            this.labelControl3.Location = new System.Drawing.Point(501, 82);
+            this.labelControl3.Location = new System.Drawing.Point(546, 82);
             this.labelControl3.Name = "labelControl3";
-            this.labelControl3.Size = new System.Drawing.Size(29, 22);
+            this.labelControl3.Size = new System.Drawing.Size(39, 22);
             this.labelControl3.TabIndex = 6;
-            this.labelControl3.Text = "S";
+            this.labelControl3.Text = "MPa";
             // 
             // labelControl4
             // 
@@ -148,13 +145,13 @@
             this.labelControl4.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.Vertical;
             this.labelControl4.Location = new System.Drawing.Point(36, 80);
             this.labelControl4.Name = "labelControl4";
-            this.labelControl4.Size = new System.Drawing.Size(290, 22);
+            this.labelControl4.Size = new System.Drawing.Size(335, 22);
             this.labelControl4.TabIndex = 5;
-            this.labelControl4.Text = "系统欠压(压力测点2) (建压时长):";
+            this.labelControl4.Text = "系统欠压(最低压力):";
             // 
             // numericUpDown2
             // 
-            this.numericUpDown2.Location = new System.Drawing.Point(332, 80);
+            this.numericUpDown2.Location = new System.Drawing.Point(377, 80);
             this.numericUpDown2.Name = "numericUpDown2";
             this.numericUpDown2.Size = new System.Drawing.Size(163, 29);
             this.numericUpDown2.TabIndex = 4;
@@ -162,11 +159,11 @@
             // labelControl5
             // 
             this.labelControl5.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.None;
-            this.labelControl5.Location = new System.Drawing.Point(501, 129);
+            this.labelControl5.Location = new System.Drawing.Point(546, 129);
             this.labelControl5.Name = "labelControl5";
-            this.labelControl5.Size = new System.Drawing.Size(29, 22);
+            this.labelControl5.Size = new System.Drawing.Size(39, 22);
             this.labelControl5.TabIndex = 9;
-            this.labelControl5.Text = "S";
+            this.labelControl5.Text = "MPa";
             // 
             // labelControl6
             // 
@@ -174,13 +171,13 @@
             this.labelControl6.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.Vertical;
             this.labelControl6.Location = new System.Drawing.Point(36, 127);
             this.labelControl6.Name = "labelControl6";
-            this.labelControl6.Size = new System.Drawing.Size(290, 22);
+            this.labelControl6.Size = new System.Drawing.Size(335, 22);
             this.labelControl6.TabIndex = 8;
-            this.labelControl6.Text = "系统欠压(压力测点2) (建压时长):";
+            this.labelControl6.Text = "系统超压(最高压力):";
             // 
             // numericUpDown3
             // 
-            this.numericUpDown3.Location = new System.Drawing.Point(332, 127);
+            this.numericUpDown3.Location = new System.Drawing.Point(377, 127);
             this.numericUpDown3.Name = "numericUpDown3";
             this.numericUpDown3.Size = new System.Drawing.Size(163, 29);
             this.numericUpDown3.TabIndex = 7;
@@ -188,11 +185,11 @@
             // labelControl7
             // 
             this.labelControl7.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.None;
-            this.labelControl7.Location = new System.Drawing.Point(501, 175);
+            this.labelControl7.Location = new System.Drawing.Point(546, 175);
             this.labelControl7.Name = "labelControl7";
-            this.labelControl7.Size = new System.Drawing.Size(29, 22);
+            this.labelControl7.Size = new System.Drawing.Size(39, 22);
             this.labelControl7.TabIndex = 12;
-            this.labelControl7.Text = "S";
+            this.labelControl7.Text = "MPa";
             // 
             // labelControl8
             // 
@@ -200,13 +197,13 @@
             this.labelControl8.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.Vertical;
             this.labelControl8.Location = new System.Drawing.Point(36, 173);
             this.labelControl8.Name = "labelControl8";
-            this.labelControl8.Size = new System.Drawing.Size(290, 22);
+            this.labelControl8.Size = new System.Drawing.Size(335, 22);
             this.labelControl8.TabIndex = 11;
-            this.labelControl8.Text = "系统欠压(压力测点2) (建压时长):";
+            this.labelControl8.Text = "仓压力(压力测点3)(最低压力):";
             // 
             // numericUpDown4
             // 
-            this.numericUpDown4.Location = new System.Drawing.Point(332, 173);
+            this.numericUpDown4.Location = new System.Drawing.Point(377, 173);
             this.numericUpDown4.Name = "numericUpDown4";
             this.numericUpDown4.Size = new System.Drawing.Size(163, 29);
             this.numericUpDown4.TabIndex = 10;
@@ -214,11 +211,11 @@
             // labelControl9
             // 
             this.labelControl9.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.None;
-            this.labelControl9.Location = new System.Drawing.Point(501, 222);
+            this.labelControl9.Location = new System.Drawing.Point(546, 222);
             this.labelControl9.Name = "labelControl9";
-            this.labelControl9.Size = new System.Drawing.Size(29, 22);
+            this.labelControl9.Size = new System.Drawing.Size(39, 22);
             this.labelControl9.TabIndex = 15;
-            this.labelControl9.Text = "S";
+            this.labelControl9.Text = "MPa";
             // 
             // labelControl10
             // 
@@ -226,13 +223,13 @@
             this.labelControl10.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.Vertical;
             this.labelControl10.Location = new System.Drawing.Point(36, 220);
             this.labelControl10.Name = "labelControl10";
-            this.labelControl10.Size = new System.Drawing.Size(290, 22);
+            this.labelControl10.Size = new System.Drawing.Size(335, 22);
             this.labelControl10.TabIndex = 14;
-            this.labelControl10.Text = "系统欠压(压力测点2) (建压时长):";
+            this.labelControl10.Text = "仓压力(压力测点3)(最高压力):";
             // 
             // numericUpDown5
             // 
-            this.numericUpDown5.Location = new System.Drawing.Point(332, 220);
+            this.numericUpDown5.Location = new System.Drawing.Point(377, 220);
             this.numericUpDown5.Name = "numericUpDown5";
             this.numericUpDown5.Size = new System.Drawing.Size(163, 29);
             this.numericUpDown5.TabIndex = 13;
@@ -240,11 +237,11 @@
             // labelControl11
             // 
             this.labelControl11.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.None;
-            this.labelControl11.Location = new System.Drawing.Point(501, 271);
+            this.labelControl11.Location = new System.Drawing.Point(546, 271);
             this.labelControl11.Name = "labelControl11";
-            this.labelControl11.Size = new System.Drawing.Size(29, 22);
+            this.labelControl11.Size = new System.Drawing.Size(39, 22);
             this.labelControl11.TabIndex = 18;
-            this.labelControl11.Text = "S";
+            this.labelControl11.Text = "MPa";
             // 
             // labelControl12
             // 
@@ -252,13 +249,13 @@
             this.labelControl12.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.Vertical;
             this.labelControl12.Location = new System.Drawing.Point(36, 269);
             this.labelControl12.Name = "labelControl12";
-            this.labelControl12.Size = new System.Drawing.Size(290, 22);
+            this.labelControl12.Size = new System.Drawing.Size(335, 22);
             this.labelControl12.TabIndex = 17;
-            this.labelControl12.Text = "系统欠压(压力测点2) (建压时长):";
+            this.labelControl12.Text = "回转连接器漏油(压差):";
             // 
             // numericUpDown6
             // 
-            this.numericUpDown6.Location = new System.Drawing.Point(332, 269);
+            this.numericUpDown6.Location = new System.Drawing.Point(377, 269);
             this.numericUpDown6.Name = "numericUpDown6";
             this.numericUpDown6.Size = new System.Drawing.Size(163, 29);
             this.numericUpDown6.TabIndex = 16;
@@ -266,11 +263,11 @@
             // labelControl13
             // 
             this.labelControl13.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.None;
-            this.labelControl13.Location = new System.Drawing.Point(501, 318);
+            this.labelControl13.Location = new System.Drawing.Point(546, 318);
             this.labelControl13.Name = "labelControl13";
-            this.labelControl13.Size = new System.Drawing.Size(29, 22);
+            this.labelControl13.Size = new System.Drawing.Size(39, 22);
             this.labelControl13.TabIndex = 21;
-            this.labelControl13.Text = "S";
+            this.labelControl13.Text = "MPa";
             // 
             // labelControl14
             // 
@@ -278,13 +275,13 @@
             this.labelControl14.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.Vertical;
             this.labelControl14.Location = new System.Drawing.Point(36, 316);
             this.labelControl14.Name = "labelControl14";
-            this.labelControl14.Size = new System.Drawing.Size(290, 22);
+            this.labelControl14.Size = new System.Drawing.Size(335, 22);
             this.labelControl14.TabIndex = 20;
-            this.labelControl14.Text = "系统欠压(压力测点2) (建压时长):";
+            this.labelControl14.Text = "蓄能器充气压力(压力测点?):";
             // 
             // numericUpDown7
             // 
-            this.numericUpDown7.Location = new System.Drawing.Point(332, 316);
+            this.numericUpDown7.Location = new System.Drawing.Point(377, 316);
             this.numericUpDown7.Name = "numericUpDown7";
             this.numericUpDown7.Size = new System.Drawing.Size(163, 29);
             this.numericUpDown7.TabIndex = 19;
@@ -292,11 +289,11 @@
             // labelControl15
             // 
             this.labelControl15.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.None;
-            this.labelControl15.Location = new System.Drawing.Point(501, 372);
+            this.labelControl15.Location = new System.Drawing.Point(546, 372);
             this.labelControl15.Name = "labelControl15";
-            this.labelControl15.Size = new System.Drawing.Size(29, 22);
+            this.labelControl15.Size = new System.Drawing.Size(39, 22);
             this.labelControl15.TabIndex = 24;
-            this.labelControl15.Text = "S";
+            this.labelControl15.Text = "MPa";
             // 
             // labelControl16
             // 
@@ -304,13 +301,13 @@
             this.labelControl16.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.Vertical;
             this.labelControl16.Location = new System.Drawing.Point(36, 370);
             this.labelControl16.Name = "labelControl16";
-            this.labelControl16.Size = new System.Drawing.Size(290, 22);
+            this.labelControl16.Size = new System.Drawing.Size(335, 22);
             this.labelControl16.TabIndex = 23;
-            this.labelControl16.Text = "系统欠压(压力测点2) (建压时长):";
+            this.labelControl16.Text = "左供油压力(压力测点5)(最低压力):";
             // 
             // numericUpDown8
             // 
-            this.numericUpDown8.Location = new System.Drawing.Point(332, 370);
+            this.numericUpDown8.Location = new System.Drawing.Point(377, 370);
             this.numericUpDown8.Name = "numericUpDown8";
             this.numericUpDown8.Size = new System.Drawing.Size(163, 29);
             this.numericUpDown8.TabIndex = 22;
@@ -318,11 +315,11 @@
             // labelControl17
             // 
             this.labelControl17.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.None;
-            this.labelControl17.Location = new System.Drawing.Point(501, 422);
+            this.labelControl17.Location = new System.Drawing.Point(546, 422);
             this.labelControl17.Name = "labelControl17";
-            this.labelControl17.Size = new System.Drawing.Size(29, 22);
+            this.labelControl17.Size = new System.Drawing.Size(39, 22);
             this.labelControl17.TabIndex = 27;
-            this.labelControl17.Text = "S";
+            this.labelControl17.Text = "MPa";
             // 
             // labelControl18
             // 
@@ -330,13 +327,13 @@
             this.labelControl18.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.Vertical;
             this.labelControl18.Location = new System.Drawing.Point(36, 420);
             this.labelControl18.Name = "labelControl18";
-            this.labelControl18.Size = new System.Drawing.Size(290, 22);
+            this.labelControl18.Size = new System.Drawing.Size(335, 22);
             this.labelControl18.TabIndex = 26;
-            this.labelControl18.Text = "系统欠压(压力测点2) (建压时长):";
+            this.labelControl18.Text = "左供油压力(压力测点5)(最高压力):";
             // 
             // numericUpDown9
             // 
-            this.numericUpDown9.Location = new System.Drawing.Point(332, 420);
+            this.numericUpDown9.Location = new System.Drawing.Point(377, 420);
             this.numericUpDown9.Name = "numericUpDown9";
             this.numericUpDown9.Size = new System.Drawing.Size(163, 29);
             this.numericUpDown9.TabIndex = 25;
@@ -344,11 +341,11 @@
             // labelControl19
             // 
             this.labelControl19.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.None;
-            this.labelControl19.Location = new System.Drawing.Point(501, 472);
+            this.labelControl19.Location = new System.Drawing.Point(546, 472);
             this.labelControl19.Name = "labelControl19";
-            this.labelControl19.Size = new System.Drawing.Size(29, 22);
+            this.labelControl19.Size = new System.Drawing.Size(39, 22);
             this.labelControl19.TabIndex = 30;
-            this.labelControl19.Text = "S";
+            this.labelControl19.Text = "MPa";
             // 
             // labelControl20
             // 
@@ -356,13 +353,13 @@
             this.labelControl20.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.Vertical;
             this.labelControl20.Location = new System.Drawing.Point(36, 470);
             this.labelControl20.Name = "labelControl20";
-            this.labelControl20.Size = new System.Drawing.Size(290, 22);
+            this.labelControl20.Size = new System.Drawing.Size(335, 22);
             this.labelControl20.TabIndex = 29;
-            this.labelControl20.Text = "系统欠压(压力测点2) (建压时长):";
+            this.labelControl20.Text = "右供油压力(压力测点7)(最低压力):";
             // 
             // numericUpDown10
             // 
-            this.numericUpDown10.Location = new System.Drawing.Point(332, 470);
+            this.numericUpDown10.Location = new System.Drawing.Point(377, 470);
             this.numericUpDown10.Name = "numericUpDown10";
             this.numericUpDown10.Size = new System.Drawing.Size(163, 29);
             this.numericUpDown10.TabIndex = 28;
@@ -370,11 +367,11 @@
             // labelControl21
             // 
             this.labelControl21.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.None;
-            this.labelControl21.Location = new System.Drawing.Point(501, 523);
+            this.labelControl21.Location = new System.Drawing.Point(546, 523);
             this.labelControl21.Name = "labelControl21";
-            this.labelControl21.Size = new System.Drawing.Size(29, 22);
+            this.labelControl21.Size = new System.Drawing.Size(39, 22);
             this.labelControl21.TabIndex = 33;
-            this.labelControl21.Text = "S";
+            this.labelControl21.Text = "MPa";
             // 
             // labelControl22
             // 
@@ -382,13 +379,13 @@
             this.labelControl22.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.Vertical;
             this.labelControl22.Location = new System.Drawing.Point(36, 521);
             this.labelControl22.Name = "labelControl22";
-            this.labelControl22.Size = new System.Drawing.Size(290, 22);
+            this.labelControl22.Size = new System.Drawing.Size(335, 22);
             this.labelControl22.TabIndex = 32;
-            this.labelControl22.Text = "系统欠压(压力测点2) (建压时长):";
+            this.labelControl22.Text = "右供油压力(压力测点7)(最高压力):";
             // 
             // numericUpDown11
             // 
-            this.numericUpDown11.Location = new System.Drawing.Point(332, 521);
+            this.numericUpDown11.Location = new System.Drawing.Point(377, 521);
             this.numericUpDown11.Name = "numericUpDown11";
             this.numericUpDown11.Size = new System.Drawing.Size(163, 29);
             this.numericUpDown11.TabIndex = 31;
@@ -396,11 +393,11 @@
             // labelControl23
             // 
             this.labelControl23.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.None;
-            this.labelControl23.Location = new System.Drawing.Point(501, 579);
+            this.labelControl23.Location = new System.Drawing.Point(546, 579);
             this.labelControl23.Name = "labelControl23";
-            this.labelControl23.Size = new System.Drawing.Size(29, 22);
+            this.labelControl23.Size = new System.Drawing.Size(39, 22);
             this.labelControl23.TabIndex = 36;
-            this.labelControl23.Text = "S";
+            this.labelControl23.Text = "MPa";
             // 
             // labelControl24
             // 
@@ -408,13 +405,13 @@
             this.labelControl24.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.Vertical;
             this.labelControl24.Location = new System.Drawing.Point(36, 577);
             this.labelControl24.Name = "labelControl24";
-            this.labelControl24.Size = new System.Drawing.Size(290, 22);
+            this.labelControl24.Size = new System.Drawing.Size(335, 22);
             this.labelControl24.TabIndex = 35;
-            this.labelControl24.Text = "系统欠压(压力测点2) (建压时长):";
+            this.labelControl24.Text = "固定供油压力(压力测点8)(最低压力):";
             // 
             // numericUpDown12
             // 
-            this.numericUpDown12.Location = new System.Drawing.Point(332, 577);
+            this.numericUpDown12.Location = new System.Drawing.Point(377, 577);
             this.numericUpDown12.Name = "numericUpDown12";
             this.numericUpDown12.Size = new System.Drawing.Size(163, 29);
             this.numericUpDown12.TabIndex = 34;
@@ -422,11 +419,11 @@
             // labelControl25
             // 
             this.labelControl25.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.None;
-            this.labelControl25.Location = new System.Drawing.Point(501, 632);
+            this.labelControl25.Location = new System.Drawing.Point(546, 623);
             this.labelControl25.Name = "labelControl25";
-            this.labelControl25.Size = new System.Drawing.Size(29, 22);
+            this.labelControl25.Size = new System.Drawing.Size(39, 29);
             this.labelControl25.TabIndex = 39;
-            this.labelControl25.Text = "S";
+            this.labelControl25.Text = "MPa";
             // 
             // labelControl26
             // 
@@ -434,13 +431,13 @@
             this.labelControl26.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.Vertical;
             this.labelControl26.Location = new System.Drawing.Point(36, 630);
             this.labelControl26.Name = "labelControl26";
-            this.labelControl26.Size = new System.Drawing.Size(290, 22);
+            this.labelControl26.Size = new System.Drawing.Size(335, 22);
             this.labelControl26.TabIndex = 38;
-            this.labelControl26.Text = "系统欠压(压力测点2) (建压时长):";
+            this.labelControl26.Text = "固定供油压力(压力测点8)(最高压力):";
             // 
             // numericUpDown13
             // 
-            this.numericUpDown13.Location = new System.Drawing.Point(332, 630);
+            this.numericUpDown13.Location = new System.Drawing.Point(377, 623);
             this.numericUpDown13.Name = "numericUpDown13";
             this.numericUpDown13.Size = new System.Drawing.Size(163, 29);
             this.numericUpDown13.TabIndex = 37;
@@ -448,11 +445,11 @@
             // labelControl27
             // 
             this.labelControl27.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.None;
-            this.labelControl27.Location = new System.Drawing.Point(501, 681);
+            this.labelControl27.Location = new System.Drawing.Point(546, 674);
             this.labelControl27.Name = "labelControl27";
-            this.labelControl27.Size = new System.Drawing.Size(29, 22);
+            this.labelControl27.Size = new System.Drawing.Size(39, 23);
             this.labelControl27.TabIndex = 42;
-            this.labelControl27.Text = "S";
+            this.labelControl27.Text = "MPa";
             // 
             // labelControl28
             // 
@@ -460,13 +457,13 @@
             this.labelControl28.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.Vertical;
             this.labelControl28.Location = new System.Drawing.Point(36, 679);
             this.labelControl28.Name = "labelControl28";
-            this.labelControl28.Size = new System.Drawing.Size(290, 22);
+            this.labelControl28.Size = new System.Drawing.Size(335, 22);
             this.labelControl28.TabIndex = 41;
-            this.labelControl28.Text = "系统欠压(压力测点2) (建压时长):";
+            this.labelControl28.Text = "固定器异常(压力测点8)(异常压力阈值):";
             // 
             // numericUpDown14
             // 
-            this.numericUpDown14.Location = new System.Drawing.Point(332, 679);
+            this.numericUpDown14.Location = new System.Drawing.Point(377, 672);
             this.numericUpDown14.Name = "numericUpDown14";
             this.numericUpDown14.Size = new System.Drawing.Size(163, 29);
             this.numericUpDown14.TabIndex = 40;
@@ -474,11 +471,11 @@
             // labelControl29
             // 
             this.labelControl29.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.None;
-            this.labelControl29.Location = new System.Drawing.Point(501, 729);
+            this.labelControl29.Location = new System.Drawing.Point(546, 720);
             this.labelControl29.Name = "labelControl29";
-            this.labelControl29.Size = new System.Drawing.Size(29, 22);
+            this.labelControl29.Size = new System.Drawing.Size(29, 23);
             this.labelControl29.TabIndex = 45;
-            this.labelControl29.Text = "S";
+            this.labelControl29.Text = "℃";
             // 
             // labelControl30
             // 
@@ -486,25 +483,16 @@
             this.labelControl30.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.Vertical;
             this.labelControl30.Location = new System.Drawing.Point(36, 727);
             this.labelControl30.Name = "labelControl30";
-            this.labelControl30.Size = new System.Drawing.Size(290, 22);
+            this.labelControl30.Size = new System.Drawing.Size(335, 22);
             this.labelControl30.TabIndex = 44;
-            this.labelControl30.Text = "系统欠压(压力测点2) (建压时长):";
+            this.labelControl30.Text = "温度过高:温度阈值";
             // 
             // numericUpDown15
             // 
-            this.numericUpDown15.Location = new System.Drawing.Point(332, 727);
+            this.numericUpDown15.Location = new System.Drawing.Point(377, 720);
             this.numericUpDown15.Name = "numericUpDown15";
             this.numericUpDown15.Size = new System.Drawing.Size(163, 29);
             this.numericUpDown15.TabIndex = 43;
-            // 
-            // labelControl31
-            // 
-            this.labelControl31.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.None;
-            this.labelControl31.Location = new System.Drawing.Point(501, 779);
-            this.labelControl31.Name = "labelControl31";
-            this.labelControl31.Size = new System.Drawing.Size(29, 22);
-            this.labelControl31.TabIndex = 48;
-            this.labelControl31.Text = "S";
             // 
             // labelControl32
             // 
@@ -512,25 +500,16 @@
             this.labelControl32.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.Vertical;
             this.labelControl32.Location = new System.Drawing.Point(36, 777);
             this.labelControl32.Name = "labelControl32";
-            this.labelControl32.Size = new System.Drawing.Size(290, 22);
+            this.labelControl32.Size = new System.Drawing.Size(335, 22);
             this.labelControl32.TabIndex = 47;
-            this.labelControl32.Text = "系统欠压(压力测点2) (建压时长):";
+            this.labelControl32.Text = "液位:下限值";
             // 
             // numericUpDown16
             // 
-            this.numericUpDown16.Location = new System.Drawing.Point(332, 777);
+            this.numericUpDown16.Location = new System.Drawing.Point(377, 770);
             this.numericUpDown16.Name = "numericUpDown16";
             this.numericUpDown16.Size = new System.Drawing.Size(163, 29);
             this.numericUpDown16.TabIndex = 46;
-            // 
-            // labelControl33
-            // 
-            this.labelControl33.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.None;
-            this.labelControl33.Location = new System.Drawing.Point(501, 829);
-            this.labelControl33.Name = "labelControl33";
-            this.labelControl33.Size = new System.Drawing.Size(29, 22);
-            this.labelControl33.TabIndex = 51;
-            this.labelControl33.Text = "S";
             // 
             // labelControl34
             // 
@@ -538,25 +517,16 @@
             this.labelControl34.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.Vertical;
             this.labelControl34.Location = new System.Drawing.Point(36, 827);
             this.labelControl34.Name = "labelControl34";
-            this.labelControl34.Size = new System.Drawing.Size(290, 22);
+            this.labelControl34.Size = new System.Drawing.Size(335, 22);
             this.labelControl34.TabIndex = 50;
-            this.labelControl34.Text = "系统欠压(压力测点2) (建压时长):";
+            this.labelControl34.Text = "液位:上限值";
             // 
             // numericUpDown17
             // 
-            this.numericUpDown17.Location = new System.Drawing.Point(332, 827);
+            this.numericUpDown17.Location = new System.Drawing.Point(377, 820);
             this.numericUpDown17.Name = "numericUpDown17";
             this.numericUpDown17.Size = new System.Drawing.Size(163, 29);
             this.numericUpDown17.TabIndex = 49;
-            // 
-            // labelControl35
-            // 
-            this.labelControl35.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.None;
-            this.labelControl35.Location = new System.Drawing.Point(501, 885);
-            this.labelControl35.Name = "labelControl35";
-            this.labelControl35.Size = new System.Drawing.Size(29, 22);
-            this.labelControl35.TabIndex = 54;
-            this.labelControl35.Text = "S";
             // 
             // labelControl36
             // 
@@ -564,25 +534,16 @@
             this.labelControl36.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.Vertical;
             this.labelControl36.Location = new System.Drawing.Point(36, 883);
             this.labelControl36.Name = "labelControl36";
-            this.labelControl36.Size = new System.Drawing.Size(290, 22);
+            this.labelControl36.Size = new System.Drawing.Size(335, 22);
             this.labelControl36.TabIndex = 53;
-            this.labelControl36.Text = "系统欠压(压力测点2) (建压时长):";
+            this.labelControl36.Text = "含水量:上限值";
             // 
             // numericUpDown18
             // 
-            this.numericUpDown18.Location = new System.Drawing.Point(332, 883);
+            this.numericUpDown18.Location = new System.Drawing.Point(377, 876);
             this.numericUpDown18.Name = "numericUpDown18";
             this.numericUpDown18.Size = new System.Drawing.Size(163, 29);
             this.numericUpDown18.TabIndex = 52;
-            // 
-            // labelControl37
-            // 
-            this.labelControl37.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.None;
-            this.labelControl37.Location = new System.Drawing.Point(501, 936);
-            this.labelControl37.Name = "labelControl37";
-            this.labelControl37.Size = new System.Drawing.Size(29, 22);
-            this.labelControl37.TabIndex = 57;
-            this.labelControl37.Text = "S";
             // 
             // labelControl38
             // 
@@ -590,42 +551,49 @@
             this.labelControl38.AutoSizeMode = DevExpress.XtraEditors.LabelAutoSizeMode.Vertical;
             this.labelControl38.Location = new System.Drawing.Point(36, 934);
             this.labelControl38.Name = "labelControl38";
-            this.labelControl38.Size = new System.Drawing.Size(290, 22);
+            this.labelControl38.Size = new System.Drawing.Size(335, 22);
             this.labelControl38.TabIndex = 56;
-            this.labelControl38.Text = "系统欠压(压力测点2) (建压时长):";
+            this.labelControl38.Text = "过滤器两端压差:差值";
             // 
             // numericUpDown19
             // 
-            this.numericUpDown19.Location = new System.Drawing.Point(332, 934);
+            this.numericUpDown19.Location = new System.Drawing.Point(377, 927);
             this.numericUpDown19.Name = "numericUpDown19";
             this.numericUpDown19.Size = new System.Drawing.Size(163, 29);
             this.numericUpDown19.TabIndex = 55;
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(223, 1001);
+            this.button1.Location = new System.Drawing.Point(248, 983);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(123, 43);
             this.button1.TabIndex = 58;
             this.button1.Text = "提交配置";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(278, 1038);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(0, 22);
+            this.label1.TabIndex = 59;
             // 
             // FaultInfoConfigForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(144F, 144F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(614, 1066);
+            this.AutoScroll = true;
+            this.ClientSize = new System.Drawing.Size(647, 771);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.button1);
-            this.Controls.Add(this.labelControl37);
             this.Controls.Add(this.labelControl38);
             this.Controls.Add(this.numericUpDown19);
-            this.Controls.Add(this.labelControl35);
             this.Controls.Add(this.labelControl36);
             this.Controls.Add(this.numericUpDown18);
-            this.Controls.Add(this.labelControl33);
             this.Controls.Add(this.labelControl34);
             this.Controls.Add(this.numericUpDown17);
-            this.Controls.Add(this.labelControl31);
             this.Controls.Add(this.labelControl32);
             this.Controls.Add(this.numericUpDown16);
             this.Controls.Add(this.labelControl29);
@@ -677,7 +645,7 @@
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "FaultInfoConfigForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "传感器通道配置";
+            this.Text = "故障配置";
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).EndInit();
@@ -698,6 +666,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown18)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown19)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -748,19 +717,16 @@
         private DevExpress.XtraEditors.LabelControl labelControl29;
         private DevExpress.XtraEditors.LabelControl labelControl30;
         private System.Windows.Forms.NumericUpDown numericUpDown15;
-        private DevExpress.XtraEditors.LabelControl labelControl31;
         private DevExpress.XtraEditors.LabelControl labelControl32;
         private System.Windows.Forms.NumericUpDown numericUpDown16;
-        private DevExpress.XtraEditors.LabelControl labelControl33;
         private DevExpress.XtraEditors.LabelControl labelControl34;
         private System.Windows.Forms.NumericUpDown numericUpDown17;
-        private DevExpress.XtraEditors.LabelControl labelControl35;
         private DevExpress.XtraEditors.LabelControl labelControl36;
         private System.Windows.Forms.NumericUpDown numericUpDown18;
-        private DevExpress.XtraEditors.LabelControl labelControl37;
         private DevExpress.XtraEditors.LabelControl labelControl38;
         private System.Windows.Forms.NumericUpDown numericUpDown19;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Label label1;
 
 
     }

@@ -542,7 +542,7 @@ namespace CreepRateApp
         /// <param name="e"></param>
         private void barButtonItem10_ItemClick(object sender, ItemClickEventArgs e)
         {
-            SensorChannelConfigForm spc = new SensorChannelConfigForm(ComDevice);
+            FaultInfoConfigForm spc = new FaultInfoConfigForm(ComDevice);
             try//此处用try做异常处理，是为了防止COM不存在释放Dialog后，ShowDialog无法找到窗体资源而报错。
             {
                 spc.ShowDialog();
