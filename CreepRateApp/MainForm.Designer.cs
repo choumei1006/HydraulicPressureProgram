@@ -220,7 +220,7 @@
             // 
             // barButtonItem4
             // 
-            this.barButtonItem4.Caption = "开始回传";
+            this.barButtonItem4.Caption = "停止采集";
             this.barButtonItem4.Glyph = ((System.Drawing.Image)(resources.GetObject("barButtonItem4.Glyph")));
             this.barButtonItem4.Id = 5;
             this.barButtonItem4.LargeGlyph = ((System.Drawing.Image)(resources.GetObject("barButtonItem4.LargeGlyph")));
@@ -231,7 +231,7 @@
             // 
             // barButtonItem5
             // 
-            this.barButtonItem5.Caption = "发送结果";
+            this.barButtonItem5.Caption = "开始回传";
             this.barButtonItem5.Glyph = ((System.Drawing.Image)(resources.GetObject("barButtonItem5.Glyph")));
             this.barButtonItem5.Id = 6;
             this.barButtonItem5.LargeGlyph = ((System.Drawing.Image)(resources.GetObject("barButtonItem5.LargeGlyph")));

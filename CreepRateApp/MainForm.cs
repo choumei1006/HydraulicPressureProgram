@@ -1575,6 +1575,14 @@ namespace CreepRateApp
         /// <param name="e"></param>
         private void barButtonItem9_ItemClick(object sender, ItemClickEventArgs e)
         {
+            NetCtrlForm spc = new NetCtrlForm(ComDevice);
+            try//此处用try做异常处理，是为了防止COM不存在释放Dialog后，ShowDialog无法找到窗体资源而报错。
+            {
+                spc.ShowDialog();
+            }
+            catch { }
+            //------------------------------------------------
+            /*
             //添加配料输入窗口
             try
             {
@@ -1591,13 +1599,15 @@ namespace CreepRateApp
             ///注销操作系统端口取数据监听事件
             ///此处必须注销现有托管到操作系统的监听事件，因为操作系统一个端口只支持一个事件的监听
             ///为了防止准备关闭的监听事件不存在而报错，故要加入try处理
+            ///
+            
             try
             {
                 ComDevice.DataReceived -= new SerialDataReceivedEventHandler(Com_DataReceived);
             }
             catch { }
 
-            /*FeedingMachineForm fmf = new FeedingMachineForm(ComDevice);
+            FeedingMachineForm fmf = new FeedingMachineForm(ComDevice);
             fmf.ShowDialog();
             if (fmf.DialogResult == DialogResult.OK)//此处通过弹出窗口的DialogResult的值来判断窗口关闭，需要在弹窗关闭事件中设定dialogresult的值
             {
@@ -1619,7 +1629,7 @@ namespace CreepRateApp
                     ComDevice.DataReceived += new SerialDataReceivedEventHandler(Com_DataReceived);
                 }
                 catch { }
-            }*/
+            }
             NetCtrlForm ncf = new NetCtrlForm(ComDevice);
             ncf.ShowDialog();
             if (ncf.DialogResult == DialogResult.OK)//此处通过弹出窗口的DialogResult的值来判断窗口关闭，需要在弹窗关闭事件中设定dialogresult的值
@@ -1630,7 +1640,7 @@ namespace CreepRateApp
                     ComDevice.DataReceived += new SerialDataReceivedEventHandler(Com_DataReceived);
                 }
                 catch { }
-            }
+            }*/
 
         }
 

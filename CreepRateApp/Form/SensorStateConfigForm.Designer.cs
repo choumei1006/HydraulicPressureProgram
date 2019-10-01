@@ -120,10 +120,9 @@
             this.toggleSwitch1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.toggleSwitch1.Location = new System.Drawing.Point(335, 28);
             this.toggleSwitch1.Name = "toggleSwitch1";
-            this.toggleSwitch1.Properties.GlyphAlignment = DevExpress.Utils.HorzAlignment.Default;
             this.toggleSwitch1.Properties.OffText = "断开";
             this.toggleSwitch1.Properties.OnText = "闭合";
-            this.toggleSwitch1.Size = new System.Drawing.Size(165, 32);
+            this.toggleSwitch1.Size = new System.Drawing.Size(158, 32);
             this.toggleSwitch1.TabIndex = 60;
             this.toggleSwitch1.Tag = "";
             // 
@@ -133,7 +132,7 @@
             this.toggleSwitch2.Name = "toggleSwitch2";
             this.toggleSwitch2.Properties.OffText = "断开";
             this.toggleSwitch2.Properties.OnText = "闭合";
-            this.toggleSwitch2.Size = new System.Drawing.Size(165, 32);
+            this.toggleSwitch2.Size = new System.Drawing.Size(158, 32);
             this.toggleSwitch2.TabIndex = 61;
             // 
             // toggleSwitch3
@@ -142,7 +141,7 @@
             this.toggleSwitch3.Name = "toggleSwitch3";
             this.toggleSwitch3.Properties.OffText = "断开";
             this.toggleSwitch3.Properties.OnText = "闭合";
-            this.toggleSwitch3.Size = new System.Drawing.Size(165, 32);
+            this.toggleSwitch3.Size = new System.Drawing.Size(158, 32);
             this.toggleSwitch3.TabIndex = 62;
             // 
             // toggleSwitch4
@@ -151,7 +150,7 @@
             this.toggleSwitch4.Name = "toggleSwitch4";
             this.toggleSwitch4.Properties.OffText = "断开";
             this.toggleSwitch4.Properties.OnText = "闭合";
-            this.toggleSwitch4.Size = new System.Drawing.Size(165, 32);
+            this.toggleSwitch4.Size = new System.Drawing.Size(158, 32);
             this.toggleSwitch4.TabIndex = 63;
             // 
             // toggleSwitch5
@@ -160,7 +159,7 @@
             this.toggleSwitch5.Name = "toggleSwitch5";
             this.toggleSwitch5.Properties.OffText = "断开";
             this.toggleSwitch5.Properties.OnText = "闭合";
-            this.toggleSwitch5.Size = new System.Drawing.Size(165, 32);
+            this.toggleSwitch5.Size = new System.Drawing.Size(158, 32);
             this.toggleSwitch5.TabIndex = 64;
             // 
             // SensorStateConfigForm

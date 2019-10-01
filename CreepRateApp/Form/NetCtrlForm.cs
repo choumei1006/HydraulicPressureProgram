@@ -22,7 +22,7 @@ namespace CreepRateApp
 {
     public partial class NetCtrlForm : DevExpress.XtraEditors.XtraForm
     {
-
+        static object Locker = new object();
         //1.声明自适应类实例
         AutoSizeFormClass asc = new AutoSizeFormClass();
         Properties.Settings settings = Properties.Settings.Default;
@@ -70,6 +70,7 @@ namespace CreepRateApp
         private UdpClient udpcRecv;
         private static string localIpAddress = GetIpAddress();
         private IPEndPoint localIpep = new IPEndPoint(IPAddress.Parse(localIpAddress), 10101); // 本机IP和监听端口号
+        private IPEndPoint localIpep2 = new IPEndPoint(IPAddress.Parse(localIpAddress), 10101); // 本机IP和监听端口号
 
 
         //发送按钮点击函数
@@ -81,17 +82,13 @@ namespace CreepRateApp
                 return;
             }
 
-            string localIpAddress = GetIpAddress();
 
             // 匿名发送
             //udpcSend = new UdpClient(0);             // 自动分配本地IPv4地址
             // 实名发送
-
             udpcSend = new UdpClient(localIpep);
             Thread thrSend = new Thread(SendMessage);
             thrSend.Start(richTextBox1.Text);
-
-
         }
         /// <summary>
         /// 发送信息
@@ -104,17 +101,18 @@ namespace CreepRateApp
             IPEndPoint remoteIpep = new IPEndPoint(IPAddress.Parse("255.255.255.255"), 10105); // 发送到的IP地址和端口号
             udpcSend.Send(sendbytes, sendbytes.Length, remoteIpep);
             udpcSend.Close();
-            ResetTextBox(richTextBox1);
+            //ResetTextBox(richTextBox1,message);
         }
+        
         //回复发送函数
-        private void callSendMessage(object obj)
+        /*private void callSendMessage(object obj)
         {
             string message = (string)obj;
             byte[] sendbytes = Encoding.Unicode.GetBytes(message);
             IPEndPoint remoteIpep = new IPEndPoint(IPAddress.Parse("255.255.255.255"), 10105); // 发送到的IP地址和端口号
             udpcSend.Send(sendbytes, sendbytes.Length, remoteIpep);
             udpcSend.Close();
-        }
+        }*/
         /// <summary>
         /// 开关：在监听UDP报文阶段为true，否则为false
         /// </summary>
@@ -129,10 +127,9 @@ namespace CreepRateApp
         //接收按钮点击函数
         private void button1_Click(object sender, EventArgs e)
         {
-
             if (!IsUdpcRecvStart) // 未监听的情况，开始监听
             {
-
+                //IPEndPoint localIpep = new IPEndPoint(IPAddress.Parse(localIpAddress), 10101); // 本机IP和监听端口号
                 udpcRecv = new UdpClient(localIpep);
                 thrRecv = new Thread(ReceiveMessage);
                 thrRecv.Start();
@@ -141,8 +138,27 @@ namespace CreepRateApp
             }
             else // 正在监听的情况，终止监听
             {
+                
+                thrRecv.Abort(); // 必须先关闭这个线程，否则会异常
+                //thrRecv.DisableComObjectEagerCleanup();//直接释放掉当前线程 
+                //thrRecv.Join();
+                //Console.WriteLine(string.Format("thrRecv的状态："+thrRecv.ThreadState));
+                udpcRecv.Close();
+                IsUdpcRecvStart = false;
+                //thrRecv.Abort(); // 必须先关闭这个线程，否则会异常
+                ShowMessage(richTextBox2, "UDP监听器已成功关闭"); 
 
-                ShowMessage(richTextBox2, "UDP监听器已成功关闭");
+                //开始关闭线程
+                /*
+                udpcRecv.Close();//关闭UDP连接
+                //udpcRecv.Dispose();//释放协议
+                udpcRecv = null;//为协议至空值
+                //thrRecv.DisableComObjectEagerCleanup();//直接释放掉当前线程 
+
+
+                IsUdpcRecvStart = false;
+                ShowMessage(richTextBox2, "UDP监听器已成功关闭");*/
+                 
             }
 
         }
@@ -155,12 +171,29 @@ namespace CreepRateApp
             IPEndPoint remoteIpep = new IPEndPoint(IPAddress.Any, 10105);//
             while (true)
             {
-                try
-                {
+                //try
+                //{
+                //lock (Locker) { 
+                    //Console.WriteLine(udpcRecv.Client);
+                    Thread.Sleep(5000);
+                    if (udpcRecv.Client == null) {
+                        udpcRecv = new UdpClient(localIpep);
+                    }
                     byte[] bytRecv = udpcRecv.Receive(ref remoteIpep);
                     string message = Encoding.Unicode.GetString(bytRecv, 0, bytRecv.Length);
                     ShowMessage(richTextBox2, string.Format("{0}[{1}]", remoteIpep, message));
 
+
+                    //thrRecv.Abort(); // 必须先关闭这个线程，否则会异常  
+                    udpcRecv.Close();
+                    //udpcRecv = new UdpClient(localIpep);
+                    IsUdpcRecvStart = false; 
+                    ShowMessage(richTextBox2, "UDP监听器已成功关闭");
+                    udpcSend = new UdpClient(localIpep);
+                    Thread thrSend = new Thread(SendMessage);
+                    thrSend.Start("2");
+                //}
+                   /*
                     //开始关闭线程
                     udpcRecv.Close();//关闭协议
                     //udpcRecv.Dispose();//释放协议
@@ -174,16 +207,17 @@ namespace CreepRateApp
 
                     udpcSend = new UdpClient(localIpep);
                     Thread thrSend = new Thread(callSendMessage);
-                    thrSend.Start("123");
+                    thrSend.Start("2"); 
+                    * */
 
                 }
 
-                catch (Exception ex)
+                /*catch (Exception ex)
                 {
                     ShowMessage(richTextBox2, ex.Message);
                     break;
-                }
-            }
+                }*/
+            //}
         }
         // 向RichTextBox中添加文本
         delegate void ShowMessageDelegate(RichTextBox txtbox, string message);
@@ -201,8 +235,8 @@ namespace CreepRateApp
         }
 
         // 清空指定RichTextBox中的文本
-        delegate void ResetTextBoxDelegate(RichTextBox txtbox);
-        private void ResetTextBox(RichTextBox txtbox)
+        delegate void ResetTextBoxDelegate(RichTextBox txtbox,string message);
+        private void ResetTextBox(RichTextBox txtbox,string message)
         {
             if (txtbox.InvokeRequired)
             {
@@ -211,7 +245,7 @@ namespace CreepRateApp
             }
             else
             {
-                txtbox.Text = "";
+                txtbox.Text = "send>>" + message;
             }
         }
 
@@ -263,8 +297,6 @@ namespace CreepRateApp
 
             return inUse;
         }
-
-
 
     }
 
