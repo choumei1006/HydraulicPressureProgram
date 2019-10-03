@@ -70,7 +70,7 @@ namespace CreepRateApp
         private UdpClient udpcRecv;
         private static string localIpAddress = GetIpAddress();
         private IPEndPoint localIpep = new IPEndPoint(IPAddress.Parse(localIpAddress), 10101); // 本机IP和监听端口号
-        private IPEndPoint localIpep2 = new IPEndPoint(IPAddress.Parse(localIpAddress), 10101); // 本机IP和监听端口号
+        //private IPEndPoint localIpep2 = new IPEndPoint(IPAddress.Parse(localIpAddress), 10101); // 本机IP和监听端口号
 
 
         //发送按钮点击函数
@@ -175,15 +175,15 @@ namespace CreepRateApp
                 //{
                 //lock (Locker) { 
                     //Console.WriteLine(udpcRecv.Client);
-                    Thread.Sleep(5000);
-                    if (udpcRecv.Client == null) {
-                        udpcRecv = new UdpClient(localIpep);
-                    }
-                    byte[] bytRecv = udpcRecv.Receive(ref remoteIpep);
+                    //Thread.Sleep(5000);
+                    //if (udpcRecv.Client == null) {
+                     //   udpcRecv = new UdpClient(localIpep);
+                   // }
+                    byte[] bytRecv = udpcRecv.Receive(ref remoteIpep);   
                     string message = Encoding.Unicode.GetString(bytRecv, 0, bytRecv.Length);
                     ShowMessage(richTextBox2, string.Format("{0}[{1}]", remoteIpep, message));
 
-
+                /*
                     //thrRecv.Abort(); // 必须先关闭这个线程，否则会异常  
                     udpcRecv.Close();
                     //udpcRecv = new UdpClient(localIpep);
@@ -192,6 +192,7 @@ namespace CreepRateApp
                     udpcSend = new UdpClient(localIpep);
                     Thread thrSend = new Thread(SendMessage);
                     thrSend.Start("2");
+                 */
                 //}
                    /*
                     //开始关闭线程

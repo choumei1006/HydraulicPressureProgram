@@ -30,7 +30,6 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            DevExpress.XtraGrid.GridLevelNode gridLevelNode1 = new DevExpress.XtraGrid.GridLevelNode();
             DevExpress.XtraCharts.XYDiagram xyDiagram1 = new DevExpress.XtraCharts.XYDiagram();
             DevExpress.XtraCharts.Series series1 = new DevExpress.XtraCharts.Series();
             DevExpress.XtraCharts.SplineSeriesView splineSeriesView1 = new DevExpress.XtraCharts.SplineSeriesView();
@@ -65,6 +64,7 @@
             this.barButtonItem9 = new DevExpress.XtraBars.BarButtonItem();
             this.barButtonItem10 = new DevExpress.XtraBars.BarButtonItem();
             this.barButtonItem11 = new DevExpress.XtraBars.BarButtonItem();
+            this.barButtonItem12 = new DevExpress.XtraBars.BarButtonItem();
             this.page_HotAnalysis = new DevExpress.XtraBars.Ribbon.RibbonPage();
             this.rpg_SerialPortDateAnalysis = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
             this.ribbonPage1 = new DevExpress.XtraBars.Ribbon.RibbonPage();
@@ -72,9 +72,20 @@
             this.ribbonStatusBar = new DevExpress.XtraBars.Ribbon.RibbonStatusBar();
             this.defaultLookAndFeel1 = new DevExpress.LookAndFeel.DefaultLookAndFeel(this.components);
             this.layoutControl1 = new DevExpress.XtraLayout.LayoutControl();
-            this.gridControl1 = new DevExpress.XtraGrid.GridControl();
+            this.chartControl2 = new DevExpress.XtraCharts.ChartControl();
+            this.chartControl1 = new DevExpress.XtraCharts.ChartControl();
+            this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();
+            this.layoutControlGroup2 = new DevExpress.XtraLayout.LayoutControlGroup();
+            this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
+            this.layoutControlGroup3 = new DevExpress.XtraLayout.LayoutControlGroup();
+            this.layoutControlItem2 = new DevExpress.XtraLayout.LayoutControlItem();
             this.analysisModelBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.gridView1 = new DevExpress.XtraGrid.Views.Grid.GridView();
+            this.chartDataBindingSource1 = new System.Windows.Forms.BindingSource(this.components);
+            this.chartDataBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.xYBindingSource1 = new System.Windows.Forms.BindingSource(this.components);
+            this.xYBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.preAnalysisOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.barButtonItem8 = new DevExpress.XtraBars.BarButtonItem();
             this.colTime = new DevExpress.XtraGrid.Columns.GridColumn();
             this.colFileName = new DevExpress.XtraGrid.Columns.GridColumn();
             this.colTAL = new DevExpress.XtraGrid.Columns.GridColumn();
@@ -86,28 +97,13 @@
             this.colTal_Teu = new DevExpress.XtraGrid.Columns.GridColumn();
             this.colRuHuaLv = new DevExpress.XtraGrid.Columns.GridColumn();
             this.colIsHuiZhuTie = new DevExpress.XtraGrid.Columns.GridColumn();
-            this.chartControl2 = new DevExpress.XtraCharts.ChartControl();
-            this.chartControl1 = new DevExpress.XtraCharts.ChartControl();
-            this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();
-            this.layoutControlGroup2 = new DevExpress.XtraLayout.LayoutControlGroup();
-            this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
-            this.layoutControlGroup3 = new DevExpress.XtraLayout.LayoutControlGroup();
-            this.layoutControlItem2 = new DevExpress.XtraLayout.LayoutControlItem();
             this.layoutControlGroup4 = new DevExpress.XtraLayout.LayoutControlGroup();
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.layoutControlItem3 = new DevExpress.XtraLayout.LayoutControlItem();
-            this.chartDataBindingSource1 = new System.Windows.Forms.BindingSource(this.components);
-            this.chartDataBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.xYBindingSource1 = new System.Windows.Forms.BindingSource(this.components);
-            this.xYBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.preAnalysisOpenFileDialog = new System.Windows.Forms.OpenFileDialog();
-            this.barButtonItem8 = new DevExpress.XtraBars.BarButtonItem();
             ((System.ComponentModel.ISupportInitialize)(this.ribbon)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.repositoryItemImageEdit1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).BeginInit();
             this.layoutControl1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.gridControl1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.analysisModelBindingSource)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.gridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chartControl2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(xyDiagram1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(series1)).BeginInit();
@@ -131,12 +127,13 @@
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup4)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.analysisModelBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chartDataBindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chartDataBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.xYBindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.xYBindingSource)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup4)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem3)).BeginInit();
             this.SuspendLayout();
             // 
             // ribbon
@@ -160,10 +157,11 @@
             this.barEditItem1,
             this.barButtonItem9,
             this.barButtonItem10,
-            this.barButtonItem11});
+            this.barButtonItem11,
+            this.barButtonItem12});
             this.ribbon.Location = new System.Drawing.Point(0, 0);
             this.ribbon.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.ribbon.MaxItemId = 19;
+            this.ribbon.MaxItemId = 20;
             this.ribbon.Name = "ribbon";
             this.ribbon.Pages.AddRange(new DevExpress.XtraBars.Ribbon.RibbonPage[] {
             this.page_HotAnalysis,
@@ -333,6 +331,15 @@
                         | DevExpress.XtraBars.Ribbon.RibbonItemStyles.SmallWithoutText)));
             this.barButtonItem11.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.barButtonItem11_ItemClick);
             // 
+            // barButtonItem12
+            // 
+            this.barButtonItem12.Caption = "开始监听";
+            this.barButtonItem12.Glyph = ((System.Drawing.Image)(resources.GetObject("barButtonItem12.Glyph")));
+            this.barButtonItem12.Id = 19;
+            this.barButtonItem12.LargeGlyph = ((System.Drawing.Image)(resources.GetObject("barButtonItem12.LargeGlyph")));
+            this.barButtonItem12.Name = "barButtonItem12";
+            this.barButtonItem12.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.barButtonItem12_ItemClick);
+            // 
             // page_HotAnalysis
             // 
             this.page_HotAnalysis.Groups.AddRange(new DevExpress.XtraBars.Ribbon.RibbonPageGroup[] {
@@ -346,6 +353,7 @@
             this.rpg_SerialPortDateAnalysis.ItemLinks.Add(this.barButtonItem3);
             this.rpg_SerialPortDateAnalysis.ItemLinks.Add(this.barButtonItem4);
             this.rpg_SerialPortDateAnalysis.ItemLinks.Add(this.barButtonItem5);
+            this.rpg_SerialPortDateAnalysis.ItemLinks.Add(this.barButtonItem12);
             this.rpg_SerialPortDateAnalysis.ItemLinks.Add(this.barButtonItem9);
             this.rpg_SerialPortDateAnalysis.Name = "rpg_SerialPortDateAnalysis";
             this.rpg_SerialPortDateAnalysis.ShowCaptionButton = false;
@@ -381,63 +389,171 @@
             // 
             // layoutControl1
             // 
-            this.layoutControl1.Controls.Add(this.gridControl1);
+            this.layoutControl1.Controls.Add(this.richTextBox1);
             this.layoutControl1.Controls.Add(this.chartControl2);
             this.layoutControl1.Controls.Add(this.chartControl1);
             this.layoutControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.layoutControl1.Location = new System.Drawing.Point(0, 185);
             this.layoutControl1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.layoutControl1.Name = "layoutControl1";
-            this.layoutControl1.OptionsCustomizationForm.DesignTimeCustomizationFormPositionAndSize = new System.Drawing.Rectangle(98, 446, 626, 350);
+            this.layoutControl1.OptionsCustomizationForm.DesignTimeCustomizationFormPositionAndSize = new System.Drawing.Rectangle(98, 446, 964, 516);
             this.layoutControl1.Root = this.layoutControlGroup1;
             this.layoutControl1.Size = new System.Drawing.Size(1619, 701);
             this.layoutControl1.TabIndex = 2;
             this.layoutControl1.Text = "layoutControl1";
             // 
-            // gridControl1
+            // chartControl2
             // 
-            this.gridControl1.Cursor = System.Windows.Forms.Cursors.Default;
-            this.gridControl1.DataSource = this.analysisModelBindingSource;
-            this.gridControl1.EmbeddedNavigator.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            gridLevelNode1.RelationName = "Level1";
-            this.gridControl1.LevelTree.Nodes.AddRange(new DevExpress.XtraGrid.GridLevelNode[] {
-            gridLevelNode1});
-            this.gridControl1.Location = new System.Drawing.Point(36, 593);
-            this.gridControl1.MainView = this.gridView1;
-            this.gridControl1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.gridControl1.MenuManager = this.ribbon;
-            this.gridControl1.Name = "gridControl1";
-            this.gridControl1.Size = new System.Drawing.Size(1547, 72);
-            this.gridControl1.TabIndex = 6;
-            this.gridControl1.ViewCollection.AddRange(new DevExpress.XtraGrid.Views.Base.BaseView[] {
-            this.gridView1});
+            this.chartControl2.Cursor = System.Windows.Forms.Cursors.Default;
+            xyDiagram1.AxisX.VisibleInPanesSerializable = "-1";
+            xyDiagram1.AxisY.VisibleInPanesSerializable = "-1";
+            this.chartControl2.Diagram = xyDiagram1;
+            this.chartControl2.Location = new System.Drawing.Point(24, 302);
+            this.chartControl2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.chartControl2.Name = "chartControl2";
+            series1.ArgumentDataMember = "x";
+            series1.ArgumentScaleType = DevExpress.XtraCharts.ScaleType.Numerical;
+            series1.Name = "斜率1";
+            series1.ValueDataMembersSerializable = "y";
+            splineSeriesView1.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            splineSeriesView1.LineTensionPercent = 100;
+            series1.View = splineSeriesView1;
+            series2.ArgumentScaleType = DevExpress.XtraCharts.ScaleType.Numerical;
+            series2.Name = "斜率2              ";
+            series2.View = splineSeriesView2;
+            series3.ArgumentScaleType = DevExpress.XtraCharts.ScaleType.Numerical;
+            series3.Name = "斜率3";
+            series3.View = splineSeriesView3;
+            this.chartControl2.SeriesSerializable = new DevExpress.XtraCharts.Series[] {
+        series1,
+        series2,
+        series3};
+            this.chartControl2.SeriesTemplate.View = splineSeriesView4;
+            this.chartControl2.Size = new System.Drawing.Size(1571, 213);
+            this.chartControl2.TabIndex = 5;
+            // 
+            // chartControl1
+            // 
+            this.chartControl1.Cursor = System.Windows.Forms.Cursors.Default;
+            xyDiagram2.AxisX.VisibleInPanesSerializable = "-1";
+            xyDiagram2.AxisY.VisibleInPanesSerializable = "-1";
+            this.chartControl1.Diagram = xyDiagram2;
+            this.chartControl1.Location = new System.Drawing.Point(24, 52);
+            this.chartControl1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.chartControl1.Name = "chartControl1";
+            this.chartControl1.PaletteName = "Apex";
+            series4.ArgumentDataMember = "x";
+            series4.ArgumentScaleType = DevExpress.XtraCharts.ScaleType.Numerical;
+            series4.Name = "温度1";
+            series4.ValueDataMembersSerializable = "y";
+            splineSeriesView5.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            splineSeriesView5.LineTensionPercent = 100;
+            series4.View = splineSeriesView5;
+            series5.ArgumentScaleType = DevExpress.XtraCharts.ScaleType.Numerical;
+            series5.Name = "温度2";
+            series5.View = splineSeriesView6;
+            series6.ArgumentScaleType = DevExpress.XtraCharts.ScaleType.Numerical;
+            series6.Name = "温度3";
+            series6.View = splineSeriesView7;
+            this.chartControl1.SeriesSerializable = new DevExpress.XtraCharts.Series[] {
+        series4,
+        series5,
+        series6};
+            this.chartControl1.SeriesTemplate.View = splineSeriesView8;
+            this.chartControl1.Size = new System.Drawing.Size(1571, 194);
+            this.chartControl1.TabIndex = 4;
+            // 
+            // layoutControlGroup1
+            // 
+            this.layoutControlGroup1.CustomizationFormText = "layoutControlGroup1";
+            this.layoutControlGroup1.EnableIndentsWithoutBorders = DevExpress.Utils.DefaultBoolean.True;
+            this.layoutControlGroup1.GroupBordersVisible = false;
+            this.layoutControlGroup1.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
+            this.layoutControlGroup2,
+            this.layoutControlGroup3,
+            this.layoutControlGroup4});
+            this.layoutControlGroup1.Location = new System.Drawing.Point(0, 0);
+            this.layoutControlGroup1.Name = "layoutControlGroup1";
+            this.layoutControlGroup1.Size = new System.Drawing.Size(1619, 701);
+            this.layoutControlGroup1.Text = "layoutControlGroup1";
+            this.layoutControlGroup1.TextVisible = false;
+            // 
+            // layoutControlGroup2
+            // 
+            this.layoutControlGroup2.CustomizationFormText = "温度分析曲线";
+            this.layoutControlGroup2.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
+            this.layoutControlItem1});
+            this.layoutControlGroup2.Location = new System.Drawing.Point(0, 0);
+            this.layoutControlGroup2.Name = "layoutControlGroup2";
+            this.layoutControlGroup2.Size = new System.Drawing.Size(1599, 250);
+            this.layoutControlGroup2.Text = "温度分析曲线";
+            // 
+            // layoutControlItem1
+            // 
+            this.layoutControlItem1.Control = this.chartControl1;
+            this.layoutControlItem1.CustomizationFormText = "layoutControlItem1";
+            this.layoutControlItem1.Location = new System.Drawing.Point(0, 0);
+            this.layoutControlItem1.Name = "layoutControlItem1";
+            this.layoutControlItem1.Size = new System.Drawing.Size(1575, 198);
+            this.layoutControlItem1.Text = "layoutControlItem1";
+            this.layoutControlItem1.TextSize = new System.Drawing.Size(0, 0);
+            this.layoutControlItem1.TextToControlDistance = 0;
+            this.layoutControlItem1.TextVisible = false;
+            // 
+            // layoutControlGroup3
+            // 
+            this.layoutControlGroup3.CustomizationFormText = "斜率分析曲线";
+            this.layoutControlGroup3.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
+            this.layoutControlItem2});
+            this.layoutControlGroup3.Location = new System.Drawing.Point(0, 250);
+            this.layoutControlGroup3.Name = "layoutControlGroup3";
+            this.layoutControlGroup3.Size = new System.Drawing.Size(1599, 269);
+            this.layoutControlGroup3.Text = "斜率分析曲线";
+            // 
+            // layoutControlItem2
+            // 
+            this.layoutControlItem2.Control = this.chartControl2;
+            this.layoutControlItem2.CustomizationFormText = "layoutControlItem2";
+            this.layoutControlItem2.Location = new System.Drawing.Point(0, 0);
+            this.layoutControlItem2.Name = "layoutControlItem2";
+            this.layoutControlItem2.Size = new System.Drawing.Size(1575, 217);
+            this.layoutControlItem2.Text = "layoutControlItem2";
+            this.layoutControlItem2.TextSize = new System.Drawing.Size(0, 0);
+            this.layoutControlItem2.TextToControlDistance = 0;
+            this.layoutControlItem2.TextVisible = false;
             // 
             // analysisModelBindingSource
             // 
             this.analysisModelBindingSource.DataSource = typeof(CreepRateApp.entity.AnalysisModel);
             // 
-            // gridView1
+            // chartDataBindingSource1
             // 
-            this.gridView1.Columns.AddRange(new DevExpress.XtraGrid.Columns.GridColumn[] {
-            this.colTime,
-            this.colFileName,
-            this.colTAL,
-            this.gridColumn1,
-            this.colTEU,
-            this.gridColumn2,
-            this.colTER,
-            this.colTer_Teu,
-            this.colTal_Teu,
-            this.colRuHuaLv,
-            this.colIsHuiZhuTie});
-            this.gridView1.GridControl = this.gridControl1;
-            this.gridView1.Name = "gridView1";
-            this.gridView1.OptionsBehavior.Editable = false;
-            this.gridView1.OptionsCustomization.AllowFilter = false;
-            this.gridView1.OptionsCustomization.AllowSort = false;
-            this.gridView1.OptionsPrint.AutoWidth = false;
-            this.gridView1.OptionsPrint.ShowPrintExportProgress = false;
-            this.gridView1.OptionsView.ShowGroupPanel = false;
+            this.chartDataBindingSource1.DataSource = typeof(CreepRateApp.entity.ChartData);
+            // 
+            // chartDataBindingSource
+            // 
+            this.chartDataBindingSource.DataSource = typeof(CreepRateApp.entity.ChartData);
+            // 
+            // xYBindingSource1
+            // 
+            this.xYBindingSource1.DataSource = typeof(CreepRateApp.entity.XY);
+            // 
+            // xYBindingSource
+            // 
+            this.xYBindingSource.DataSource = typeof(CreepRateApp.entity.XY);
+            // 
+            // preAnalysisOpenFileDialog
+            // 
+            this.preAnalysisOpenFileDialog.FileName = "openFileDialog1";
+            // 
+            // barButtonItem8
+            // 
+            this.barButtonItem8.Caption = "添加配料";
+            this.barButtonItem8.Glyph = ((System.Drawing.Image)(resources.GetObject("barButtonItem8.Glyph")));
+            this.barButtonItem8.Id = 12;
+            this.barButtonItem8.Name = "barButtonItem8";
+            this.barButtonItem8.RibbonStyle = ((DevExpress.XtraBars.Ribbon.RibbonItemStyles)(((DevExpress.XtraBars.Ribbon.RibbonItemStyles.Large | DevExpress.XtraBars.Ribbon.RibbonItemStyles.SmallWithText)
+                        | DevExpress.XtraBars.Ribbon.RibbonItemStyles.SmallWithoutText)));
             // 
             // colTime
             // 
@@ -536,176 +652,35 @@
             this.colIsHuiZhuTie.VisibleIndex = 10;
             this.colIsHuiZhuTie.Width = 45;
             // 
-            // chartControl2
-            // 
-            this.chartControl2.Cursor = System.Windows.Forms.Cursors.Default;
-            xyDiagram1.AxisX.VisibleInPanesSerializable = "-1";
-            xyDiagram1.AxisY.VisibleInPanesSerializable = "-1";
-            this.chartControl2.Diagram = xyDiagram1;
-            this.chartControl2.Location = new System.Drawing.Point(24, 366);
-            this.chartControl2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.chartControl2.Name = "chartControl2";
-            series1.ArgumentDataMember = "x";
-            series1.ArgumentScaleType = DevExpress.XtraCharts.ScaleType.Numerical;
-            series1.Name = "斜率1";
-            series1.ValueDataMembersSerializable = "y";
-            splineSeriesView1.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            splineSeriesView1.LineTensionPercent = 100;
-            series1.View = splineSeriesView1;
-            series2.ArgumentScaleType = DevExpress.XtraCharts.ScaleType.Numerical;
-            series2.Name = "斜率2              ";
-            series2.View = splineSeriesView2;
-            series3.ArgumentScaleType = DevExpress.XtraCharts.ScaleType.Numerical;
-            series3.Name = "斜率3";
-            series3.View = splineSeriesView3;
-            this.chartControl2.SeriesSerializable = new DevExpress.XtraCharts.Series[] {
-        series1,
-        series2,
-        series3};
-            this.chartControl2.SeriesTemplate.View = splineSeriesView4;
-            this.chartControl2.Size = new System.Drawing.Size(1571, 183);
-            this.chartControl2.TabIndex = 5;
-            // 
-            // chartControl1
-            // 
-            this.chartControl1.Cursor = System.Windows.Forms.Cursors.Default;
-            xyDiagram2.AxisX.VisibleInPanesSerializable = "-1";
-            xyDiagram2.AxisY.VisibleInPanesSerializable = "-1";
-            this.chartControl1.Diagram = xyDiagram2;
-            this.chartControl1.Location = new System.Drawing.Point(24, 52);
-            this.chartControl1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.chartControl1.Name = "chartControl1";
-            this.chartControl1.PaletteName = "Apex";
-            series4.ArgumentDataMember = "x";
-            series4.ArgumentScaleType = DevExpress.XtraCharts.ScaleType.Numerical;
-            series4.Name = "温度1";
-            series4.ValueDataMembersSerializable = "y";
-            splineSeriesView5.Color = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            splineSeriesView5.LineTensionPercent = 100;
-            series4.View = splineSeriesView5;
-            series5.ArgumentScaleType = DevExpress.XtraCharts.ScaleType.Numerical;
-            series5.Name = "温度2";
-            series5.View = splineSeriesView6;
-            series6.ArgumentScaleType = DevExpress.XtraCharts.ScaleType.Numerical;
-            series6.Name = "温度3";
-            series6.View = splineSeriesView7;
-            this.chartControl1.SeriesSerializable = new DevExpress.XtraCharts.Series[] {
-        series4,
-        series5,
-        series6};
-            this.chartControl1.SeriesTemplate.View = splineSeriesView8;
-            this.chartControl1.Size = new System.Drawing.Size(1571, 258);
-            this.chartControl1.TabIndex = 4;
-            // 
-            // layoutControlGroup1
-            // 
-            this.layoutControlGroup1.CustomizationFormText = "layoutControlGroup1";
-            this.layoutControlGroup1.EnableIndentsWithoutBorders = DevExpress.Utils.DefaultBoolean.True;
-            this.layoutControlGroup1.GroupBordersVisible = false;
-            this.layoutControlGroup1.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
-            this.layoutControlGroup2,
-            this.layoutControlGroup3});
-            this.layoutControlGroup1.Location = new System.Drawing.Point(0, 0);
-            this.layoutControlGroup1.Name = "layoutControlGroup1";
-            this.layoutControlGroup1.Size = new System.Drawing.Size(1619, 701);
-            this.layoutControlGroup1.Text = "layoutControlGroup1";
-            this.layoutControlGroup1.TextVisible = false;
-            // 
-            // layoutControlGroup2
-            // 
-            this.layoutControlGroup2.CustomizationFormText = "温度分析曲线";
-            this.layoutControlGroup2.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
-            this.layoutControlItem1});
-            this.layoutControlGroup2.Location = new System.Drawing.Point(0, 0);
-            this.layoutControlGroup2.Name = "layoutControlGroup2";
-            this.layoutControlGroup2.Size = new System.Drawing.Size(1599, 314);
-            this.layoutControlGroup2.Text = "温度分析曲线";
-            // 
-            // layoutControlItem1
-            // 
-            this.layoutControlItem1.Control = this.chartControl1;
-            this.layoutControlItem1.CustomizationFormText = "layoutControlItem1";
-            this.layoutControlItem1.Location = new System.Drawing.Point(0, 0);
-            this.layoutControlItem1.Name = "layoutControlItem1";
-            this.layoutControlItem1.Size = new System.Drawing.Size(1575, 262);
-            this.layoutControlItem1.Text = "layoutControlItem1";
-            this.layoutControlItem1.TextSize = new System.Drawing.Size(0, 0);
-            this.layoutControlItem1.TextToControlDistance = 0;
-            this.layoutControlItem1.TextVisible = false;
-            // 
-            // layoutControlGroup3
-            // 
-            this.layoutControlGroup3.CustomizationFormText = "斜率分析曲线";
-            this.layoutControlGroup3.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
-            this.layoutControlItem2,
-            this.layoutControlGroup4});
-            this.layoutControlGroup3.Location = new System.Drawing.Point(0, 314);
-            this.layoutControlGroup3.Name = "layoutControlGroup3";
-            this.layoutControlGroup3.Size = new System.Drawing.Size(1599, 367);
-            this.layoutControlGroup3.Text = "斜率分析曲线";
-            // 
-            // layoutControlItem2
-            // 
-            this.layoutControlItem2.Control = this.chartControl2;
-            this.layoutControlItem2.CustomizationFormText = "layoutControlItem2";
-            this.layoutControlItem2.Location = new System.Drawing.Point(0, 0);
-            this.layoutControlItem2.Name = "layoutControlItem2";
-            this.layoutControlItem2.Size = new System.Drawing.Size(1575, 187);
-            this.layoutControlItem2.Text = "layoutControlItem2";
-            this.layoutControlItem2.TextSize = new System.Drawing.Size(0, 0);
-            this.layoutControlItem2.TextToControlDistance = 0;
-            this.layoutControlItem2.TextVisible = false;
-            // 
             // layoutControlGroup4
             // 
-            this.layoutControlGroup4.CustomizationFormText = "分析汇总";
+            this.layoutControlGroup4.CustomizationFormText = "通讯监听窗口";
             this.layoutControlGroup4.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
             this.layoutControlItem3});
-            this.layoutControlGroup4.Location = new System.Drawing.Point(0, 187);
+            this.layoutControlGroup4.Location = new System.Drawing.Point(0, 519);
             this.layoutControlGroup4.Name = "layoutControlGroup4";
-            this.layoutControlGroup4.Size = new System.Drawing.Size(1575, 128);
-            this.layoutControlGroup4.Text = "分析汇总";
+            this.layoutControlGroup4.Size = new System.Drawing.Size(1599, 162);
+            this.layoutControlGroup4.Text = "通讯监听窗口";
+            // 
+            // richTextBox1
+            // 
+            this.richTextBox1.Location = new System.Drawing.Point(24, 571);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.Size = new System.Drawing.Size(1571, 106);
+            this.richTextBox1.TabIndex = 6;
+            this.richTextBox1.Text = "";
             // 
             // layoutControlItem3
             // 
-            this.layoutControlItem3.Control = this.gridControl1;
+            this.layoutControlItem3.Control = this.richTextBox1;
             this.layoutControlItem3.CustomizationFormText = "layoutControlItem3";
             this.layoutControlItem3.Location = new System.Drawing.Point(0, 0);
             this.layoutControlItem3.Name = "layoutControlItem3";
-            this.layoutControlItem3.Size = new System.Drawing.Size(1551, 76);
+            this.layoutControlItem3.Size = new System.Drawing.Size(1575, 110);
             this.layoutControlItem3.Text = "layoutControlItem3";
             this.layoutControlItem3.TextSize = new System.Drawing.Size(0, 0);
             this.layoutControlItem3.TextToControlDistance = 0;
             this.layoutControlItem3.TextVisible = false;
-            // 
-            // chartDataBindingSource1
-            // 
-            this.chartDataBindingSource1.DataSource = typeof(CreepRateApp.entity.ChartData);
-            // 
-            // chartDataBindingSource
-            // 
-            this.chartDataBindingSource.DataSource = typeof(CreepRateApp.entity.ChartData);
-            // 
-            // xYBindingSource1
-            // 
-            this.xYBindingSource1.DataSource = typeof(CreepRateApp.entity.XY);
-            // 
-            // xYBindingSource
-            // 
-            this.xYBindingSource.DataSource = typeof(CreepRateApp.entity.XY);
-            // 
-            // preAnalysisOpenFileDialog
-            // 
-            this.preAnalysisOpenFileDialog.FileName = "openFileDialog1";
-            // 
-            // barButtonItem8
-            // 
-            this.barButtonItem8.Caption = "添加配料";
-            this.barButtonItem8.Glyph = ((System.Drawing.Image)(resources.GetObject("barButtonItem8.Glyph")));
-            this.barButtonItem8.Id = 12;
-            this.barButtonItem8.Name = "barButtonItem8";
-            this.barButtonItem8.RibbonStyle = ((DevExpress.XtraBars.Ribbon.RibbonItemStyles)(((DevExpress.XtraBars.Ribbon.RibbonItemStyles.Large | DevExpress.XtraBars.Ribbon.RibbonItemStyles.SmallWithText)
-                        | DevExpress.XtraBars.Ribbon.RibbonItemStyles.SmallWithoutText)));
             // 
             // MainForm
             // 
@@ -727,9 +702,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.repositoryItemImageEdit1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).EndInit();
             this.layoutControl1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.gridControl1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.analysisModelBindingSource)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.gridView1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(xyDiagram1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(splineSeriesView1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(series1)).EndInit();
@@ -753,12 +725,13 @@
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup4)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.analysisModelBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.chartDataBindingSource1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.chartDataBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.xYBindingSource1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.xYBindingSource)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup4)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem3)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -781,26 +754,11 @@
         private DevExpress.XtraLayout.LayoutControlItem layoutControlItem1;
         private DevExpress.XtraCharts.ChartControl chartControl2;
         private System.Windows.Forms.BindingSource xYBindingSource1;
-        private DevExpress.XtraLayout.LayoutControlItem layoutControlItem2;
-        private DevExpress.XtraGrid.GridControl gridControl1;
-        private DevExpress.XtraGrid.Views.Grid.GridView gridView1;
-        private DevExpress.XtraLayout.LayoutControlItem layoutControlItem3;
         private System.Windows.Forms.OpenFileDialog preAnalysisOpenFileDialog;
         private System.Windows.Forms.BindingSource analysisModelBindingSource;
-        private DevExpress.XtraGrid.Columns.GridColumn colTAL;
         private DevExpress.XtraGrid.Columns.GridColumn colTSEF;
-        private DevExpress.XtraGrid.Columns.GridColumn colTEU;
         private DevExpress.XtraGrid.Columns.GridColumn colTEM;
-        private DevExpress.XtraGrid.Columns.GridColumn colTER;
-        private DevExpress.XtraGrid.Columns.GridColumn colTer_Teu;
-        private DevExpress.XtraGrid.Columns.GridColumn colTal_Teu;
-        private DevExpress.XtraGrid.Columns.GridColumn colRuHuaLv;
-        private DevExpress.XtraGrid.Columns.GridColumn colIsHuiZhuTie;
-        private DevExpress.XtraGrid.Columns.GridColumn colFileName;
-        private DevExpress.XtraGrid.Columns.GridColumn colTime;
         private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup2;
-        private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup3;
-        private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup4;
         private System.Windows.Forms.BindingSource chartDataBindingSource1;
         private System.Windows.Forms.BindingSource chartDataBindingSource;
         private DevExpress.XtraBars.BarButtonItem barButtonItem1;
@@ -815,8 +773,6 @@
         private DevExpress.XtraBars.BarCheckItem barCheckItem1;
         private DevExpress.XtraBars.BarCheckItem barCheckItem2;
         private DevExpress.XtraBars.BarCheckItem barCheckItem3;
-        private DevExpress.XtraGrid.Columns.GridColumn gridColumn1;
-        private DevExpress.XtraGrid.Columns.GridColumn gridColumn2;
         private DevExpress.XtraBars.BarButtonItem barButtonItem6;
         private DevExpress.XtraBars.BarButtonItem barButtonItem7;
         private DevExpress.XtraBars.BarEditItem barEditItem1;
@@ -825,5 +781,22 @@
         private DevExpress.XtraBars.BarButtonItem barButtonItem8;
         private DevExpress.XtraBars.BarButtonItem barButtonItem10;
         private DevExpress.XtraBars.BarButtonItem barButtonItem11;
+        private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup3;
+        private DevExpress.XtraLayout.LayoutControlItem layoutControlItem2;
+        private DevExpress.XtraGrid.Columns.GridColumn colTime;
+        private DevExpress.XtraGrid.Columns.GridColumn colFileName;
+        private DevExpress.XtraGrid.Columns.GridColumn colTAL;
+        private DevExpress.XtraGrid.Columns.GridColumn gridColumn1;
+        private DevExpress.XtraGrid.Columns.GridColumn colTEU;
+        private DevExpress.XtraGrid.Columns.GridColumn gridColumn2;
+        private DevExpress.XtraGrid.Columns.GridColumn colTER;
+        private DevExpress.XtraGrid.Columns.GridColumn colTer_Teu;
+        private DevExpress.XtraGrid.Columns.GridColumn colTal_Teu;
+        private DevExpress.XtraGrid.Columns.GridColumn colRuHuaLv;
+        private DevExpress.XtraGrid.Columns.GridColumn colIsHuiZhuTie;
+        private DevExpress.XtraBars.BarButtonItem barButtonItem12;
+        private System.Windows.Forms.RichTextBox richTextBox1;
+        private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup4;
+        private DevExpress.XtraLayout.LayoutControlItem layoutControlItem3;
     }
 }

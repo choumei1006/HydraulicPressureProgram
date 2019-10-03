@@ -20,7 +20,14 @@ using SerialportSample;
 using System.Timers;
 using System.Collections;
 using System.IO;//引用此命名空间是用于数据的写入与读取
-using System.Text; //引用这个命名空间是用于接下来用可变的字符串的
+
+using System.Net;
+using System.Net.Sockets;
+using System.Net.NetworkInformation;
+using System.Threading;
+using System.Reflection;
+
+
 
 namespace CreepRateApp
 {
@@ -44,7 +51,6 @@ namespace CreepRateApp
         private String oneSeriesSendMsg = "";
         private String twoSerisSendMsg = "";
         private String threeSeriesSendMsg = "";
-
 
 
         //线路循环切换
@@ -261,6 +267,14 @@ namespace CreepRateApp
 
         private Boolean isNeedComRecevied = false;
 
+        //网口通信
+        private UdpClient udpcSend;
+        private UdpClient udpcRecv;
+        private static string localIPAddress = GetIpAddress();   //获取本地IP地址
+        private static IPEndPoint localIpep = new IPEndPoint(IPAddress.Parse(localIPAddress), 10101);   //（本地）应用程序与特定主机特定服务的连接点
+        bool isNeedUdpRecv;   //是否监听UDP报文，在UDP监听阶段为true
+        Thread thrRecv;       //线程：监听UDP报文
+
         public MainForm()
         {
 
@@ -283,12 +297,14 @@ namespace CreepRateApp
 
             ComDevice.DataReceived += new SerialDataReceivedEventHandler(Com_DataReceived);
 
+
             System.Timers.Timer timer = new System.Timers.Timer();
             timer.Enabled = true;
             timer.Interval = double.Parse(GlobalValue.IntalvasTime); //执行间隔时间,单位为毫秒; 这里实际间隔为10分钟  
             //timer.Interval = double.Parse(settings.IntervalTime);
             timer.Start();
             timer.Elapsed += new System.Timers.ElapsedEventHandler(timer1_Tick);
+
 
         }
 
@@ -596,7 +612,7 @@ namespace CreepRateApp
 
             isNeedComRecevied = true;
 
-            
+
 
             //清理数据
             ClearChartcontrol1Points();
@@ -665,10 +681,11 @@ namespace CreepRateApp
                 //if (!ComDevice.IsOpen) {
                 ComDevice.DataReceived += new SerialDataReceivedEventHandler(Com_DataReceived);
                 ComDevice.Open();
-                    
+
                 //}
             }
-            catch(Exception ex) {
+            catch (Exception ex)
+            {
                 MessageBox.Show(ex.ToString());
             }
 
@@ -1135,7 +1152,8 @@ namespace CreepRateApp
                 ComDevice.Close();
                 isNeedComRecevied = false;
             }
-            catch(SystemException ex){
+            catch (SystemException ex)
+            {
                 MessageBox.Show(ex.ToString());
             }
 
@@ -1510,7 +1528,8 @@ namespace CreepRateApp
                             }
                         }
                     }
-                    else {
+                    else
+                    {
                         //MessageBox.Show("ComDevice.isOpen未打开！", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         System.Console.WriteLine("ComDevice.isOpen未打开！");
                     }
@@ -1566,7 +1585,7 @@ namespace CreepRateApp
             }
         }
 
-       
+
 
         /// <summary>
         /// 网口通信窗口
@@ -1946,12 +1965,12 @@ namespace CreepRateApp
                         am.IsHuiZhuTie = "否";
                     }
                 }
-                this.gridView1.AddNewRow();
-                int focuedRow = this.gridView1.FocusedRowHandle;
+                //this.gridView1.AddNewRow();
+                //int focuedRow = this.gridView1.FocusedRowHandle;
                 java.io.File file = new java.io.File(filePath);
                 if (file.exists())
                 {
-                    this.gridView1.SetRowCellValue(focuedRow, "Time", timeString);
+                    /*this.gridView1.SetRowCellValue(focuedRow, "Time", timeString);
                     uploadAnalysisModel.Time = timeString;
                     this.gridView1.SetRowCellValue(focuedRow, "FileName", file.getName());
                     uploadAnalysisModel.FileName = file.getName();
@@ -1973,9 +1992,11 @@ namespace CreepRateApp
                     uploadAnalysisModel.RuHuaLv = am.RuHuaLv;
                     this.gridView1.SetRowCellValue(focuedRow, "IsHuiZhuTie", am.IsHuiZhuTie);
                     uploadAnalysisModel.IsHuiZhuTie = am.IsHuiZhuTie;
+                     * */
                 }
                 else
                 {
+                    /*
                     this.gridView1.SetRowCellValue(focuedRow, "Time", timeString);
                     uploadAnalysisModel.Time = timeString;
                     this.gridView1.SetRowCellValue(focuedRow, "FileName", "-");
@@ -1998,10 +2019,12 @@ namespace CreepRateApp
                     uploadAnalysisModel.RuHuaLv = "-";
                     this.gridView1.SetRowCellValue(focuedRow, "IsHuiZhuTie", "-");
                     uploadAnalysisModel.IsHuiZhuTie = "-";
+                     * */
                 }
             }
             catch
             {
+                /*
                 this.gridView1.AddNewRow();
                 java.io.File file = new java.io.File(filePath);
                 int focuedRow = this.gridView1.FocusedRowHandle;
@@ -2035,17 +2058,92 @@ namespace CreepRateApp
                 uploadAnalysisModel.RuHuaLv = "-";
                 this.gridView1.SetRowCellValue(focuedRow, "IsHuiZhuTie", "-");
                 uploadAnalysisModel.IsHuiZhuTie = "-";
+                 * */
+            }
+        }
+        
+        /// <summary>
+        /// 开始/停止监听
+        /// 开启UDP接收，按钮caption切换
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void barButtonItem12_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            //实现按钮caption切换
+            if (barButtonItem12.Caption == "开始监听")
+            {
+                 
+                barButtonItem12.Caption = "停止监听";
+                udpcRecv = new UdpClient(localIpep);
+                thrRecv = new Thread(ReceiveMessage);
+                thrRecv.Start();
+                showMessage(richTextBox1, "上位机：UDP监听已开启");
+            }
+            else
+            {
+                barButtonItem12.Caption = "开始监听";
+                thrRecv.Abort();    //所谓的关闭线程
+                udpcRecv.Close();
+                showMessage(richTextBox1,"上位机：UDP监听已关闭");
+
+            }
+
+        }
+
+        /// <summary>
+        ///获取本机IP地址 
+        /// </summary>
+        /// <returns></returns>
+        private static string GetIpAddress()
+        {
+            string hostName = Dns.GetHostName();   //获取本机名
+            IPHostEntry localhost = Dns.GetHostByName(hostName);    //方法已过期，可以获取IPv4的地址
+            //IPHostEntry localhost = Dns.GetHostEntry(hostName);   //获取IPv6地址
+            IPAddress localaddr = localhost.AddressList[0];
+
+            return localaddr.ToString();
+        }
+
+        /// <summary>
+        /// 接收数据
+        /// </summary>
+        /// <param name="obj"></param>
+        public void ReceiveMessage(Object obj)
+        {
+            IPEndPoint remoteIpep = new IPEndPoint(IPAddress.Any, 10105);   //（下位机）应用程序与特定主机特定端口之间的连接
+            while (true)
+            {
+                byte[] byteRecv = udpcRecv.Receive(ref remoteIpep);   //ref高级参数目的：使引用地址一致   
+                //string message = Encoding.Unicode.GetString(byteRecv, 0, byteRecv.Length);   //将指定字节数组中的一个字节解码为字符串
+                string message = Encoding.UTF8.GetString(byteRecv);
+                showMessage(richTextBox1, string.Format("{0}[{1}]", "下位机(" + remoteIpep + ")：", message));
             }
         }
 
-        
-        
-
-       
-
-       
-
-        
-
+        /// <summary>
+        /// 监听消息显示
+        /// </summary>
+        /// <param name="textBox"></param>
+        /// <param name="message"></param>
+        delegate void showMessageDelegate(RichTextBox textBox, string message);
+        private void showMessage(RichTextBox textBox, string message) {
+            if (textBox.InvokeRequired)
+            {
+                showMessageDelegate showMessageDelegate = showMessage;
+                textBox.Invoke(showMessageDelegate,new object[] {textBox,message});
+            }
+            else {
+                //让文本框获取焦点  
+                textBox.Focus();
+                //设置光标的位置到文本尾  
+                textBox.Select(textBox.TextLength, 0);
+                //滚动到控件光标处  
+                textBox.ScrollToCaret();
+                //添加文本内容
+                textBox.AppendText(message + "\r\n");
+                //textBox.Text += message + "\r\n";
+            }
+        }
     }
 }
