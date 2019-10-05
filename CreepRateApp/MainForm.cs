@@ -272,7 +272,7 @@ namespace CreepRateApp
         private UdpClient udpcRecv;
         private static string localIPAddress = GetIpAddress();   //获取本地IP地址
         private static IPEndPoint localIpep = new IPEndPoint(IPAddress.Parse(localIPAddress), 10101);   //（本地）应用程序与特定主机特定服务的连接点
-        bool isNeedUdpRecv;   //是否监听UDP报文，在UDP监听阶段为true
+        //bool isNeedUdpRecv;   //是否监听UDP报文，在UDP监听阶段为true
         Thread thrRecv;       //线程：监听UDP报文
 
         public MainForm()
@@ -304,6 +304,15 @@ namespace CreepRateApp
             //timer.Interval = double.Parse(settings.IntervalTime);
             timer.Start();
             timer.Elapsed += new System.Timers.ElapsedEventHandler(timer1_Tick);
+
+            //开启UDP监听
+            udpcRecv = new UdpClient(localIpep);
+            udpcRecv.Client.ReceiveTimeout = 5000;
+            thrRecv = new Thread(ReceiveMessage);
+            thrRecv.Start();
+            showMessage(richTextBox1, "上位机：UDP监听已开启");
+           
+            
 
 
         }
@@ -2114,10 +2123,79 @@ namespace CreepRateApp
             IPEndPoint remoteIpep = new IPEndPoint(IPAddress.Any, 10105);   //（下位机）应用程序与特定主机特定端口之间的连接
             while (true)
             {
-                byte[] byteRecv = udpcRecv.Receive(ref remoteIpep);   //ref高级参数目的：使引用地址一致   
-                //string message = Encoding.Unicode.GetString(byteRecv, 0, byteRecv.Length);   //将指定字节数组中的一个字节解码为字符串
-                string message = Encoding.UTF8.GetString(byteRecv);
-                showMessage(richTextBox1, string.Format("{0}[{1}]", "下位机(" + remoteIpep + ")：", message));
+                try
+                {
+                    
+                    byte[] byteRecv = udpcRecv.Receive(ref remoteIpep);  //ref高级参数目的：使引用地址一致 
+                    StringBuilder message = new StringBuilder(0);   //存储16进制字节数拼接成的字符串
+                    //StringBuilder[] hexStrs = new  StringBuilder[5];   //存储16进制字节数
+                    List<StringBuilder> hexStrs = new List<StringBuilder>();
+                    for (int i = 0; i < byteRecv.Length;i++ )
+                    {
+                        StringBuilder hexStr = new StringBuilder(byteRecv[i].ToString("X2"));
+                        hexStrs.Add(hexStr);
+                        message.Append("0x" + hexStr + " ");
+                    }
+
+
+                    if (hexStrs.Count >= 4)   //数据包至少包含Header、Length、Verify，共计4字节
+                    {
+                        //解析16进制字节数
+                        int dataLen = (int)byteRecv[2];    //获取数据段长度(根据协议规定，data_len存在数据包的第3个字节，下标为2)
+                        if (dataLen <= 0 || hexStrs.Count != dataLen+4)                 //没有数据或数据段长度无效
+                        {
+                            showMessage(richTextBox1, string.Format("{0}", "下位机(" + remoteIpep + ")：无效数据包"));
+                        }
+                        else {
+                            StringBuilder hexStrData = new StringBuilder();
+                            for (int i = 3; i < 2 + dataLen; i++)
+                            {
+                                hexStrData.Append("0x"+hexStrs[i]+" ");
+                            }
+                            switch (hexStrs[3]+"")
+                            {
+                                //故障配置应答
+                                case "81":
+
+                                    showMessage(richTextBox1, string.Format("{0}[{1}]", "下位机(" + remoteIpep + ")故障配置应答：", hexStrData));
+                                    break;
+                                //传感器通道配置应答
+                                case "82":
+                                    showMessage(richTextBox1, string.Format("{0}[{1}]", "下位机(" + remoteIpep + ")传感器通道配置应答：", hexStrData));
+                                    break;
+                                //数据应答
+                                case "83":
+                                    showMessage(richTextBox1, string.Format("{0}[{1}]", "下位机(" + remoteIpep + ")数据应答：", hexStrData));
+                                    break;
+                                //传感器交互应答
+                                case "84":
+                                    showMessage(richTextBox1, string.Format("{0}[{1}]", "下位机(" + remoteIpep + ")传感器交互应答：", hexStrData));
+                                    break; 
+                                //交互应答
+                                case "85":
+                                    showMessage(richTextBox1, string.Format("{0}[{1}]", "下位机(" + remoteIpep + ")交互应答：", hexStrData));
+                                    break;
+                                default:
+                                    showMessage(richTextBox1, string.Format("{0}[{1}]", "下位机(" + remoteIpep + ")无法识别命令：", hexStrData));
+                                    break;
+                            }
+                        }
+                        
+                    }
+                    else {
+                        showMessage(richTextBox1, string.Format("{0}[{1}]", "未知命令(" + remoteIpep + ")：", message));
+                    }
+                }
+                catch{
+                    udpcRecv.Close();
+                    udpcRecv = null;
+                    showMessage(richTextBox1, string.Format("系统消息：下位机5s无回应"));
+                    //thrRecv.Abort();    //所谓的关闭线程
+                    udpcRecv = new UdpClient(localIpep);
+                    udpcRecv.Client.ReceiveTimeout = 5000;
+                    continue;
+                }
+                
             }
         }
 

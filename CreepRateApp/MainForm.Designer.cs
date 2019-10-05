@@ -72,6 +72,7 @@
             this.ribbonStatusBar = new DevExpress.XtraBars.Ribbon.RibbonStatusBar();
             this.defaultLookAndFeel1 = new DevExpress.LookAndFeel.DefaultLookAndFeel(this.components);
             this.layoutControl1 = new DevExpress.XtraLayout.LayoutControl();
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.chartControl2 = new DevExpress.XtraCharts.ChartControl();
             this.chartControl1 = new DevExpress.XtraCharts.ChartControl();
             this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();
@@ -79,6 +80,8 @@
             this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
             this.layoutControlGroup3 = new DevExpress.XtraLayout.LayoutControlGroup();
             this.layoutControlItem2 = new DevExpress.XtraLayout.LayoutControlItem();
+            this.layoutControlGroup4 = new DevExpress.XtraLayout.LayoutControlGroup();
+            this.layoutControlItem3 = new DevExpress.XtraLayout.LayoutControlItem();
             this.analysisModelBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.chartDataBindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             this.chartDataBindingSource = new System.Windows.Forms.BindingSource(this.components);
@@ -97,9 +100,6 @@
             this.colTal_Teu = new DevExpress.XtraGrid.Columns.GridColumn();
             this.colRuHuaLv = new DevExpress.XtraGrid.Columns.GridColumn();
             this.colIsHuiZhuTie = new DevExpress.XtraGrid.Columns.GridColumn();
-            this.layoutControlGroup4 = new DevExpress.XtraLayout.LayoutControlGroup();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
-            this.layoutControlItem3 = new DevExpress.XtraLayout.LayoutControlItem();
             ((System.ComponentModel.ISupportInitialize)(this.ribbon)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.repositoryItemImageEdit1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).BeginInit();
@@ -127,13 +127,13 @@
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup4)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem3)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.analysisModelBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chartDataBindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chartDataBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.xYBindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.xYBindingSource)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup4)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem3)).BeginInit();
             this.SuspendLayout();
             // 
             // ribbon
@@ -307,6 +307,7 @@
             this.barButtonItem9.ItemAppearance.Disabled.Options.UseImage = true;
             this.barButtonItem9.Name = "barButtonItem9";
             this.barButtonItem9.RibbonStyle = DevExpress.XtraBars.Ribbon.RibbonItemStyles.Large;
+            this.barButtonItem9.Visibility = DevExpress.XtraBars.BarItemVisibility.OnlyInCustomizing;
             this.barButtonItem9.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.barButtonItem9_ItemClick);
             // 
             // barButtonItem10
@@ -338,6 +339,7 @@
             this.barButtonItem12.Id = 19;
             this.barButtonItem12.LargeGlyph = ((System.Drawing.Image)(resources.GetObject("barButtonItem12.LargeGlyph")));
             this.barButtonItem12.Name = "barButtonItem12";
+            this.barButtonItem12.Visibility = DevExpress.XtraBars.BarItemVisibility.OnlyInCustomizing;
             this.barButtonItem12.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.barButtonItem12_ItemClick);
             // 
             // page_HotAnalysis
@@ -401,6 +403,14 @@
             this.layoutControl1.Size = new System.Drawing.Size(1619, 701);
             this.layoutControl1.TabIndex = 2;
             this.layoutControl1.Text = "layoutControl1";
+            // 
+            // richTextBox1
+            // 
+            this.richTextBox1.Location = new System.Drawing.Point(24, 571);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.Size = new System.Drawing.Size(1571, 106);
+            this.richTextBox1.TabIndex = 6;
+            this.richTextBox1.Text = "";
             // 
             // chartControl2
             // 
@@ -521,6 +531,28 @@
             this.layoutControlItem2.TextSize = new System.Drawing.Size(0, 0);
             this.layoutControlItem2.TextToControlDistance = 0;
             this.layoutControlItem2.TextVisible = false;
+            // 
+            // layoutControlGroup4
+            // 
+            this.layoutControlGroup4.CustomizationFormText = "通讯监听窗口";
+            this.layoutControlGroup4.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
+            this.layoutControlItem3});
+            this.layoutControlGroup4.Location = new System.Drawing.Point(0, 519);
+            this.layoutControlGroup4.Name = "layoutControlGroup4";
+            this.layoutControlGroup4.Size = new System.Drawing.Size(1599, 162);
+            this.layoutControlGroup4.Text = "通讯监听窗口";
+            // 
+            // layoutControlItem3
+            // 
+            this.layoutControlItem3.Control = this.richTextBox1;
+            this.layoutControlItem3.CustomizationFormText = "layoutControlItem3";
+            this.layoutControlItem3.Location = new System.Drawing.Point(0, 0);
+            this.layoutControlItem3.Name = "layoutControlItem3";
+            this.layoutControlItem3.Size = new System.Drawing.Size(1575, 110);
+            this.layoutControlItem3.Text = "layoutControlItem3";
+            this.layoutControlItem3.TextSize = new System.Drawing.Size(0, 0);
+            this.layoutControlItem3.TextToControlDistance = 0;
+            this.layoutControlItem3.TextVisible = false;
             // 
             // analysisModelBindingSource
             // 
@@ -652,36 +684,6 @@
             this.colIsHuiZhuTie.VisibleIndex = 10;
             this.colIsHuiZhuTie.Width = 45;
             // 
-            // layoutControlGroup4
-            // 
-            this.layoutControlGroup4.CustomizationFormText = "通讯监听窗口";
-            this.layoutControlGroup4.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
-            this.layoutControlItem3});
-            this.layoutControlGroup4.Location = new System.Drawing.Point(0, 519);
-            this.layoutControlGroup4.Name = "layoutControlGroup4";
-            this.layoutControlGroup4.Size = new System.Drawing.Size(1599, 162);
-            this.layoutControlGroup4.Text = "通讯监听窗口";
-            // 
-            // richTextBox1
-            // 
-            this.richTextBox1.Location = new System.Drawing.Point(24, 571);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(1571, 106);
-            this.richTextBox1.TabIndex = 6;
-            this.richTextBox1.Text = "";
-            // 
-            // layoutControlItem3
-            // 
-            this.layoutControlItem3.Control = this.richTextBox1;
-            this.layoutControlItem3.CustomizationFormText = "layoutControlItem3";
-            this.layoutControlItem3.Location = new System.Drawing.Point(0, 0);
-            this.layoutControlItem3.Name = "layoutControlItem3";
-            this.layoutControlItem3.Size = new System.Drawing.Size(1575, 110);
-            this.layoutControlItem3.Text = "layoutControlItem3";
-            this.layoutControlItem3.TextSize = new System.Drawing.Size(0, 0);
-            this.layoutControlItem3.TextToControlDistance = 0;
-            this.layoutControlItem3.TextVisible = false;
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 22F);
@@ -725,13 +727,13 @@
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup4)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem3)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.analysisModelBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.chartDataBindingSource1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.chartDataBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.xYBindingSource1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.xYBindingSource)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup4)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem3)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
