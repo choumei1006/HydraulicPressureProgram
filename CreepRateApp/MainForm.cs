@@ -33,8 +33,14 @@ namespace CreepRateApp
 {
     public partial class MainForm : DevExpress.XtraBars.Ribbon.RibbonForm
     {
+
         delegate void SetChartControlPointsBack(SeriesPoint point);
         delegate void ClearChartControlPointsBack();
+
+        System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
+
+        //richTextBox1窗体
+        public static System.Windows.Forms.RichTextBox richTextBox1;
 
         private ModbusCRC crc = new ModbusCRC();
         private StringBuilder builder = new StringBuilder();//避免在事件处理方法中反复的创建，定义到外面。
@@ -51,6 +57,7 @@ namespace CreepRateApp
         private String oneSeriesSendMsg = "";
         private String twoSerisSendMsg = "";
         private String threeSeriesSendMsg = "";
+         
 
 
         //线路循环切换
@@ -267,13 +274,21 @@ namespace CreepRateApp
 
         private Boolean isNeedComRecevied = false;
 
-        //网口通信
-        private UdpClient udpcSend;
-        private UdpClient udpcRecv;
+        //网口通信 
         private static string localIPAddress = GetIpAddress();   //获取本地IP地址
-        private static IPEndPoint localIpep = new IPEndPoint(IPAddress.Parse(localIPAddress), 10101);   //（本地）应用程序与特定主机特定服务的连接点
+        public static IPEndPoint localIpep = new IPEndPoint(IPAddress.Parse(localIPAddress), 10101);   //（本地）应用程序与特定主机特定服务的连接点
+        
+        //public static UdpClient udpcSend;
+        public static UdpClient udpClient = new UdpClient(localIpep);
+
+        
+        
         //bool isNeedUdpRecv;   //是否监听UDP报文，在UDP监听阶段为true
-        Thread thrRecv;       //线程：监听UDP报文
+        public static Thread thrRecv = new Thread(ReceiveMessage);       //线程：监听UDP报文
+        public static Thread thrSend;       //线程：监听UDP报文
+        
+
+        private static readonly object lockHelper = new object();
 
         public MainForm()
         {
@@ -281,6 +296,19 @@ namespace CreepRateApp
             //Control.CheckForIllegalCrossThreadCalls = false;
 
             InitializeComponent();
+
+            //设置RichTextBox1的相关位置属性
+            richTextBox1 = new System.Windows.Forms.RichTextBox();
+            layoutControl1.Controls.Add(richTextBox1);
+
+            richTextBox1.Location = new System.Drawing.Point(24, 571);
+            richTextBox1.Name = "richTextBox1";
+            richTextBox1.Size = new System.Drawing.Size(1571, 106);
+            richTextBox1.TabIndex = 6;
+            richTextBox1.Text = "";
+
+            this.layoutControlItem3.Control = richTextBox1;
+            this.layoutControlItem3.TextVisible = false;
 
             //设置串口相关属性
             //端口
@@ -306,11 +334,11 @@ namespace CreepRateApp
             timer.Elapsed += new System.Timers.ElapsedEventHandler(timer1_Tick);
 
             //开启UDP监听
-            udpcRecv = new UdpClient(localIpep);
-            udpcRecv.Client.ReceiveTimeout = 5000;
-            thrRecv = new Thread(ReceiveMessage);
-            thrRecv.Start();
-            showMessage(richTextBox1, "上位机：UDP监听已开启");
+            //udpClient = new UdpClient(localIpep);
+            udpClient.Client.ReceiveTimeout = 5000;
+            //thrRecv = new Thread(ReceiveMessage);
+            thrRecv.Start(); 
+            showMessage(richTextBox1,string.Format("{0}{1}", "上位机(" + localIpep + ")_" + System.DateTime.Now.ToString() + "：", "UDP监听已开启"));
            
             
 
@@ -552,7 +580,7 @@ namespace CreepRateApp
         /// <param name="e"></param>
         private void barButtonItem2_ItemClick(object sender, ItemClickEventArgs e)
         {
-            SensorChannelConfigForm spc = new SensorChannelConfigForm(ComDevice);
+            SensorChannelConfigForm spc = new SensorChannelConfigForm(this);
             try//此处用try做异常处理，是为了防止COM不存在释放Dialog后，ShowDialog无法找到窗体资源而报错。
             {
                 spc.ShowDialog();
@@ -590,114 +618,77 @@ namespace CreepRateApp
         }
 
         /// <summary>
-        /// 接收数据
+        /// 开始采集
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void barButtonItem3_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            //注销接收数据事件
+        { 
             try
-            {
-                ComDevice.DataReceived -= new SerialDataReceivedEventHandler(Com_DataReceived);
-                //ComDevice.Close();
-                //isNeedComRecevied = false;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
-            }
+            {  
+                //生成配置信息 byte数组 对应的 16进制字符串数组
+                byte[] cmd = new byte[6];
 
-            try
-            {
-                if (ComDevice.IsOpen)
+                //Header
+                cmd[0] = byte.Parse("EB", System.Globalization.NumberStyles.HexNumber);
+                cmd[1] = byte.Parse("90", System.Globalization.NumberStyles.HexNumber);
+
+                //Len
+                cmd[2] = 2;
+
+                //data
+                //--Category
+                cmd[3] = byte.Parse("05", System.Globalization.NumberStyles.HexNumber);
+
+                //--data 
+                cmd[4] = byte.Parse("03", System.Globalization.NumberStyles.HexNumber);
+                 
+                //Verify
+                byte verifyByte = 0;
+                for (int i = 0; i < cmd.Length; i++)
                 {
-                    //打开时点击，则关闭串口
-                    ComDevice.Close();
+                    verifyByte ^= cmd[i];
                 }
+                cmd[5] = verifyByte;
+
+                //转换为十六进制字符串 
+                string sendCmdStr = "";
+                for (int i = 0; i < cmd.Length; i++)
+                {
+                    StringBuilder hexStr = new StringBuilder(cmd[i].ToString("X2"));
+                    //将上述16进制字符串数组 拼接为 0x_ _ 格式 的字符串 
+                    sendCmdStr += "0x" + hexStr + " ";
+                    //cmdStrs[i] = hexStr + "";
+                } 
+
+                //===============================================
+                  
+
+                //下发通道配置信息
+                //1、关闭线程 
+                //MainForm.thrRecv.Abort();    //所谓的关闭线程
+                //MainForm.thrRecv.Join();    //挂起
+                //2、关闭udpcRecv
+                //MainForm.udpcRecv.Close();
+                //MainForm.udpcRecv = null;
+                //3、创建udpcSend
+
+                //4、创建thrSend
+                thrSend = new Thread(MainForm.SendMessage);
+
+                //5、开启thrSend（thrSend执行结束后自动关闭udpcSend，销毁thrSend） 
+                thrSend.Start(sendCmdStr);
+
+                //6、在主界面显示发送内容 
+                showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[开始采集]_" + System.DateTime.Now.ToString() + "：", sendCmdStr));
+
+
+                XtraMessageBox.Show("指令下发成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
-            catch { }
-
-
-            isNeedComRecevied = true;
-
-
-
-            //清理数据
-            ClearChartcontrol1Points();
-            ClearChartcontrol2Points();
-            //temperatureList.Clear();
-            /*try
+            catch (Exception exception)
             {
-                this.temperatureList.Clear();
+                XtraMessageBox.Show(exception.Message, "异常", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
-            catch { }
-
-            XYDiagram diagram = (XYDiagram)chartControl1.Diagram;
-            XYDiagram diagram2 = (XYDiagram)chartControl2.Diagram;
-
-            try
-            {
-                this.chartControl1.Series[0].Points.Clear();
-                this.chartControl2.Series[0].Points.Clear();
-                this.chartControl1.Series[1].Points.Clear();
-                this.chartControl2.Series[1].Points.Clear();
-                this.chartControl1.Series[2].Points.Clear();
-                this.chartControl2.Series[2].Points.Clear();
-
-                diagram.AxisX.ConstantLines.Clear();
-                diagram.AxisY.ConstantLines.Clear();
-
-                diagram2.AxisX.ConstantLines.Clear();
-                diagram2.AxisY.ConstantLines.Clear();
-            }
-            catch { }*/
-
-            //清空temperatureList全局变量
-            try
-            {
-                this.temperatureList.Clear();
-            }
-            catch { }
-
-
-            //清空温度、斜率曲线
-            XYDiagram diagram = (XYDiagram)chartControl1.Diagram;
-            XYDiagram diagram2 = (XYDiagram)chartControl2.Diagram;
-
-            try
-            {
-                this.chartControl1.Series[0].Points.Clear();
-                this.chartControl2.Series[0].Points.Clear();
-                this.chartControl1.Series[1].Points.Clear();
-                this.chartControl2.Series[1].Points.Clear();
-                this.chartControl1.Series[2].Points.Clear();
-                this.chartControl2.Series[2].Points.Clear();
-
-                diagram.AxisX.ConstantLines.Clear();
-                diagram.AxisY.ConstantLines.Clear();
-
-                diagram2.AxisX.ConstantLines.Clear();
-                diagram2.AxisY.ConstantLines.Clear();
-            }
-            catch { }
-
-
-
-            //注册接收数据事件
-            try
-            {
-                //if (!ComDevice.IsOpen) {
-                ComDevice.DataReceived += new SerialDataReceivedEventHandler(Com_DataReceived);
-                ComDevice.Open();
-
-                //}
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
-            }
-
 
 
 
@@ -1071,252 +1062,71 @@ namespace CreepRateApp
         /// <param name="e"></param>
         private void barButtonItem4_ItemClick(object sender, ItemClickEventArgs e)
         {
-
-            string exportFileTime = DateTime.Now.ToString("yyyyMMddhhmmss");
-            //获取接收数据路数
-            List<int> roadList = getRoadNumList();
-
-            //---------------导出温度数据-----begin---------------------
-            String[] abfilePathList = new string[3];
-            string abfilePath1 = Application.StartupPath + "\\temp\\温度1数据_" + exportFileTime + ".txt";
-            string abfilePath2 = Application.StartupPath + "\\temp\\温度2数据_" + exportFileTime + ".txt";
-            string abfilePath3 = Application.StartupPath + "\\temp\\温度3数据_" + exportFileTime + ".txt";
-
-
-            for (int roadNum = 0; roadNum < roadList.Count; roadNum++)
-            {
-                switch (roadList[roadNum])
-                {
-                    case 1:
-                        StringBuilder sb1 = new StringBuilder();//声明一个可变字符串
-                        //---------------------温度1----------------------
-                        for (int i = 0; i < temperatureList.Count; i++)
-                        {
-                            //循环给字符串拼接字符
-                            sb1.Append(temperatureList[i] + ' ');
-                        }
-                        //写文件 文件名为save.text
-                        //这里的FileMode.create是创建这个文件,如果文件名存在则覆盖重新创建
-                        FileStream fs1 = new FileStream(abfilePath1, FileMode.Create);
-                        abfilePathList[0] = abfilePath1;
-                        //存储时时二进制,所以这里需要把我们的字符串转成二进制
-                        byte[] bytes1 = new UTF8Encoding().GetBytes(sb1.ToString());
-                        fs1.Write(bytes1, 0, bytes1.Length);
-                        //每次读取文件后都要记得关闭文件
-                        fs1.Close();
-                        break;
-                    case 2:
-                        StringBuilder sb2 = new StringBuilder();//声明一个可变字符串
-                        //---------------------温度2----------------------
-                        for (int i = 0; i < temperatureList1.Count; i++)
-                        {
-                            //循环给字符串拼接字符
-                            sb2.Append(temperatureList1[i] + ' ');
-                        }
-                        //写文件 文件名为save.text
-                        //这里的FileMode.create是创建这个文件,如果文件名存在则覆盖重新创建
-                        FileStream fs2 = new FileStream(abfilePath2, FileMode.Create);
-                        abfilePathList[1] = abfilePath2;
-                        //存储时时二进制,所以这里需要把我们的字符串转成二进制
-                        byte[] bytes2 = new UTF8Encoding().GetBytes(sb2.ToString());
-                        fs2.Write(bytes2, 0, bytes2.Length);
-                        //每次读取文件后都要记得关闭文件
-                        fs2.Close();
-                        break;
-                    case 3:
-                        StringBuilder sb3 = new StringBuilder();//声明一个可变字符串
-                        //---------------------温度3----------------------
-                        for (int i = 0; i < temperatureList2.Count; i++)
-                        {
-                            //循环给字符串拼接字符
-                            sb3.Append(temperatureList2[i] + ' ');
-                        }
-                        //写文件 文件名为save.text
-                        //这里的FileMode.create是创建这个文件,如果文件名存在则覆盖重新创建
-                        FileStream fs3 = new FileStream(abfilePath3, FileMode.Create);
-                        abfilePathList[2] = abfilePath3;
-                        //存储时时二进制,所以这里需要把我们的字符串转成二进制
-                        byte[] bytes3 = new UTF8Encoding().GetBytes(sb3.ToString());
-                        fs3.Write(bytes3, 0, bytes3.Length);
-                        //每次读取文件后都要记得关闭文件
-                        fs3.Close();
-                        break;
-                    default:
-                        break;
-                }
-            }
-
-            //---------------导出温度数据-----stop--------------------------------------------------------
-
-
-
-            byte[] buf = crc.FillCRC16("01 04 00 00 00 02");
-            //转换列表为数组后发送
-            ComDevice.Write(buf, 0, buf.Length);
-
-            //注销接收数据事件
             try
             {
-                ComDevice.DataReceived -= new SerialDataReceivedEventHandler(Com_DataReceived);
-                ComDevice.Close();
-                isNeedComRecevied = false;
+                //生成配置信息 byte数组 对应的 16进制字符串数组
+                byte[] cmd = new byte[6];
+
+                //Header
+                cmd[0] = byte.Parse("EB", System.Globalization.NumberStyles.HexNumber);
+                cmd[1] = byte.Parse("90", System.Globalization.NumberStyles.HexNumber);
+
+                //Len
+                cmd[2] = 2;
+
+                //data
+                //--Category
+                cmd[3] = byte.Parse("05", System.Globalization.NumberStyles.HexNumber);
+
+                //--data 
+                cmd[4] = byte.Parse("04", System.Globalization.NumberStyles.HexNumber);
+
+                //Verify
+                byte verifyByte = 0;
+                for (int i = 0; i < cmd.Length; i++)
+                {
+                    verifyByte ^= cmd[i];
+                }
+                cmd[5] = verifyByte;
+
+                //转换为十六进制字符串 
+                string sendCmdStr = "";
+                for (int i = 0; i < cmd.Length; i++)
+                {
+                    StringBuilder hexStr = new StringBuilder(cmd[i].ToString("X2"));
+                    //将上述16进制字符串数组 拼接为 0x_ _ 格式 的字符串 
+                    sendCmdStr += "0x" + hexStr + " ";
+                    //cmdStrs[i] = hexStr + "";
+                }
+
+                //===============================================
+
+
+                //下发通道配置信息
+                //1、关闭线程 
+                //MainForm.thrRecv.Abort();    //所谓的关闭线程
+                //MainForm.thrRecv.Join();    //挂起
+                //2、关闭udpcRecv
+                //MainForm.udpcRecv.Close();
+                //MainForm.udpcRecv = null;
+                //3、创建udpcSend
+
+                //4、创建thrSend
+                thrSend = new Thread(MainForm.SendMessage);
+
+                //5、开启thrSend（thrSend执行结束后自动关闭udpcSend，销毁thrSend） 
+                thrSend.Start(sendCmdStr);
+
+                //6、在主界面显示发送内容 
+                showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[停止采集]_" + System.DateTime.Now.ToString() + "：", sendCmdStr));
+
+
+                XtraMessageBox.Show("指令下发成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
-            catch (SystemException ex)
+            catch (Exception exception)
             {
-                MessageBox.Show(ex.ToString());
+                XtraMessageBox.Show(exception.Message, "异常", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
-
-            ///一下代码是仿照“手动分析”的代码写的。
-            ///手动的代码，是选择文件，解析成温度list数组，在进行计算。
-            ///这里的代码复写手动分析的，因为在自动接收的时候已经收集完成了温度list数组
-            ///因此，这里直接使用温度list数组就行了，删除选择文件，分析文件的代码。
-
-            try
-            {
-                //清理第1条曲线的代码
-                this.chartControl1.Series[0].Points.Clear();
-                this.chartControl2.Series[0].Points.Clear();
-
-                //*************添加清理第2条和第3条的代码*******************
-                this.chartControl1.Series[1].Points.Clear();
-                this.chartControl2.Series[1].Points.Clear();
-
-                this.chartControl1.Series[2].Points.Clear();
-                this.chartControl2.Series[2].Points.Clear();
-
-
-                //XYDiagram diagram = (XYDiagram)chartControl1.Diagram;
-                //diagram.AxisX.ConstantLines.Clear();
-                //diagram.AxisY.ConstantLines.Clear();
-            }
-            catch { }
-
-            entity.AnalysisModel uploadAnalysisModel = new entity.AnalysisModel();
-            if (uploadAnalysisModel.FileInfoList == null)
-            {
-                uploadAnalysisModel.FileInfoList = new List<entity.FileInfo>();
-            }
-
-            string timeString = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss");
-            List<string> slopList = new List<string>();
-            //------------------sxm添加-----------
-            List<string> slopList1 = new List<string>();  //用来存放第二条曲线数据
-            List<string> slopList2 = new List<string>();
-            //-----------------sxm添加【完】-----------
-
-            /*
-            //------------二阶导数组--------------
-            List<string> secDeriList = new List<string>();
-            List<string> secDeriList1 = new List<string>();
-            List<string> secDeriList2 = new List<string>();
-
-
-            List<double> quxianList = new List<double>();
-            //------------------sxm添加-----------
-            List<double> quxianList1 = new List<double>();  //用来存放第二条曲线数据
-            List<double> quxianList2 = new List<double>();
-            //-----------------sxm添加【完】-----------
-            List<string> formatTxt0 = new List<string>();
-            //------------------sxm添加-----------
-            List<string> formatTxt1 = new List<string>();  //用来存放第二条曲线数据
-            List<string> formatTxt2 = new List<string>();
-            //-----------------sxm添加【完】-----------
-             */
-
-            //最高温度
-            //string maxTemperature = this.maxTemperatureInput.Text;
-            //最低温度
-            //string minTemperature = this.minTemperatureInput.Text;
-
-            //这里没有了手动读取文件的步骤，而是自动接收串口数据的过程
-            //if (this.preAnalysisOpenFileDialog.ShowDialog() == DialogResult.OK)
-            //{
-            //由上，这里也就没有了选择文件，得到选择文件的路径的步骤
-            //因此，需要代码创造一个路径。
-            //string filePath = this.preAnalysisOpenFileDialog.FileName;
-            string filePath = Application.StartupPath + "\\temp\\" + timeString + "_1.txt";
-            string filePath1 = Application.StartupPath + "\\temp\\" + timeString + "_2.txt";
-            string filePath2 = Application.StartupPath + "\\temp\\" + timeString + "_3.txt";
-
-            //--------------------------------------------copy-------------------------------------------
-            //--------------------------sxm---判断接收哪一路数据，并接收-------------------------------------------
-
-
-            //如果温度最大值、最小值为空
-            //if (string.IsNullOrWhiteSpace(maxTemperature) || string.IsNullOrWhiteSpace(minTemperature))
-            //{
-            XYDiagram diagram = (XYDiagram)chartControl1.Diagram;
-            diagram.AxisX.ConstantLines.Clear();
-            diagram.AxisY.ConstantLines.Clear();
-            for (int r_num = 0; r_num < roadList.Count; r_num++)
-            {
-                drawLine(abfilePathList[roadList[r_num] - 1], null, null, false, roadList[r_num] - 1, diagram, uploadAnalysisModel);
-            }
-
-            //}
-            //温度最大值最小值不为空
-            //else
-            //{
-
-            //}
-
-            //询问框
-            if (XtraMessageBox.Show("计算完毕，是否将计算结果及相关文件保存至云端？", "提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
-            {
-                string uploadFileTime = DateTime.Now.ToString("yyyyMMddhhmmss");
-                //待分析的txt文件路径
-                string uploadTxtPath = filePath;
-                //温度分析曲线图
-                string uploadTempereturePic = Application.StartupPath + "\\temp\\温度分析曲线_" + uploadFileTime + ".Jpeg";
-                this.chartControl1.ExportToImage(uploadTempereturePic, ImageFormat.Jpeg);
-                //温度采集Excel报表
-                string uploadTemperetureXls = Application.StartupPath + "\\temp\\温度采集报表_" + uploadFileTime + ".xls";
-                //this.gridControl2.ExportToXls(uploadTemperetureXls);
-                //斜率分析曲线图
-                string uploadSlopPic = Application.StartupPath + "\\temp\\斜率分析曲线图_" + uploadFileTime + ".Jpeg";
-                this.chartControl2.ExportToImage(uploadSlopPic, ImageFormat.Jpeg);
-                //斜率计算记录Excel报表
-                string uploadSlopXls = Application.StartupPath + "\\temp\\斜率计算记录报表_" + uploadFileTime + ".xls";
-                //this.gridControl3.ExportToXls(uploadSlopXls);
-
-                try
-                {
-                    uploadAnalysisModel.FileInfoList.Add(UploadFiles(uploadTxtPath, "txt"));
-                }
-                catch { }
-
-                try
-                {
-                    uploadAnalysisModel.FileInfoList.Add(UploadFiles(uploadTempereturePic, "Jpeg"));
-                }
-                catch { }
-
-                try
-                {
-                    uploadAnalysisModel.FileInfoList.Add(UploadFiles(uploadTemperetureXls, "xls"));
-                }
-                catch { }
-
-                try
-                {
-                    uploadAnalysisModel.FileInfoList.Add(UploadFiles(uploadSlopPic, "Jpeg"));
-                }
-                catch { }
-
-                try
-                {
-                    uploadAnalysisModel.FileInfoList.Add(UploadFiles(uploadSlopXls, "xls"));
-                }
-                catch { }
-
-                try
-                {
-                    Core.DataBaseTools.Insert<entity.AnalysisModel>("AnalysisResult", uploadAnalysisModel);
-                }
-                catch { }
-                XtraMessageBox.Show("操作完成。", "信息", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            //}
 
         }
 
@@ -1369,29 +1179,106 @@ namespace CreepRateApp
         }
 
         /// <summary>
-        /// 发送结果
+        /// 开始回传数据
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void barButtonItem5_ItemClick(object sender, ItemClickEventArgs e)
         {
-            ///此处需要按接口组织需要的格式发送的数据。
-            ///如果不知道怎么组织，联系我。
-            ///如果联系之后还表示无法编程，将对方的发送内容编目要求发给我。
-            string sendMessage = "";
-            if (!ComDevice.IsOpen)
-            {
-                try
-                {
-                    ComDevice.Open();
-                }
-                catch { }
+            //TODO
+            //询问 电流数据/24V
+
+            //实现按钮caption切换
+            if (barButtonItem5.Caption == "开始回传")
+            { 
+                barButtonItem5.Caption = "停止回传"; 
             }
-            this.SendData(sendMessage);
-            XtraMessageBox.Show("发送成功。", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            else
+            {
+                barButtonItem5.Caption = "开始回传";
+                XtraMessageBox.Show("该功能正在开发，请您耐心等候！", "信息", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            //开始发送
             try
-            { ComDevice.Close(); }
-            catch { }
+            {
+                //生成配置信息 byte数组 对应的 16进制字符串数组
+                byte[] cmd = new byte[9];
+
+                //Header
+                cmd[0] = byte.Parse("EB", System.Globalization.NumberStyles.HexNumber);
+                cmd[1] = byte.Parse("90", System.Globalization.NumberStyles.HexNumber);
+
+                //Len
+                cmd[2] = 5;
+
+                //data
+                //--Category
+                cmd[3] = byte.Parse("03", System.Globalization.NumberStyles.HexNumber);
+
+                //--data_type 
+                //电流
+                cmd[4] = byte.Parse("00", System.Globalization.NumberStyles.HexNumber);
+                //24V
+                //cmd[4] = byte.Parse("01", System.Globalization.NumberStyles.HexNumber);
+
+
+                //--data_group
+                //全部回传
+                cmd[5] = byte.Parse("FF", System.Globalization.NumberStyles.HexNumber);
+                cmd[6] = byte.Parse("FF", System.Globalization.NumberStyles.HexNumber);
+                cmd[7] = byte.Parse("FF", System.Globalization.NumberStyles.HexNumber);
+                //TODO
+                //回传相应组号数据
+
+                //Verify
+                byte verifyByte = 0;
+                for (int i = 0; i < cmd.Length; i++)
+                {
+                    verifyByte ^= cmd[i];
+                }
+                cmd[8] = verifyByte;
+
+                //转换为十六进制字符串
+                //String[] cmdStrs = new String[9];
+                string sendCmdStr = "";
+                for (int i = 0; i < cmd.Length; i++)
+                {
+                    StringBuilder hexStr = new StringBuilder(cmd[i].ToString("X2"));
+                    //将上述16进制字符串数组 拼接为 0x_ _ 格式 的字符串 
+                    sendCmdStr += "0x" + hexStr + " ";
+                    //cmdStrs[i] = hexStr + "";
+                }
+
+                //===============================================
+
+
+                //下发通道配置信息
+                //1、关闭线程 
+                //MainForm.thrRecv.Abort();    //所谓的关闭线程
+                //MainForm.thrRecv.Join();    //挂起
+                //2、关闭udpcRecv
+                //MainForm.udpcRecv.Close();
+                //MainForm.udpcRecv = null;
+                //3、创建udpcSend
+
+                //4、创建thrSend
+                thrSend = new Thread(MainForm.SendMessage);
+
+                //5、开启thrSend（thrSend执行结束后自动关闭udpcSend，销毁thrSend） 
+                thrSend.Start(sendCmdStr);
+
+                //6、在主界面显示发送内容 
+                showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[开始回传数据命令]_" + System.DateTime.Now.ToString() + "：", sendCmdStr));
+
+
+                XtraMessageBox.Show("指令下发成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception exception)
+            {
+                XtraMessageBox.Show(exception.Message, "异常", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
 
         }
 
@@ -1557,6 +1444,7 @@ namespace CreepRateApp
             }
         }
 
+        /*
         private void b_FeedingMachine_ItemClick(object sender, ItemClickEventArgs e)
         {
             //“喂料机”功能也需要发送串口数据，占用信道，故先关闭Main界面已经开启的串口
@@ -1581,7 +1469,7 @@ namespace CreepRateApp
             }
             catch { }
 
-            SensorChannelConfigForm fmf = new SensorChannelConfigForm(ComDevice);
+            //SensorChannelConfigForm fmf = new SensorChannelConfigForm(ComDevice);
             fmf.ShowDialog();
             if (fmf.DialogResult == DialogResult.OK)//此处通过弹出窗口的DialogResult的值来判断窗口关闭，需要在弹窗关闭事件中设定dialogresult的值
             {
@@ -1592,7 +1480,7 @@ namespace CreepRateApp
                 }
                 catch { }
             }
-        }
+        }*/
 
 
 
@@ -2084,7 +1972,7 @@ namespace CreepRateApp
             {
                  
                 barButtonItem12.Caption = "停止监听";
-                udpcRecv = new UdpClient(localIpep);
+                udpClient = new UdpClient(localIpep);
                 thrRecv = new Thread(ReceiveMessage);
                 thrRecv.Start();
                 showMessage(richTextBox1, "上位机：UDP监听已开启");
@@ -2093,11 +1981,47 @@ namespace CreepRateApp
             {
                 barButtonItem12.Caption = "开始监听";
                 thrRecv.Abort();    //所谓的关闭线程
-                udpcRecv.Close();
+                udpClient.Close();
                 showMessage(richTextBox1,"上位机：UDP监听已关闭");
 
             }
 
+        }
+
+        /// <summary>
+        /// 发送信息
+        /// </summary>
+        /// <param name="obj"></param>
+        public static void SendMessage(object obj)
+        {
+            try
+            {
+                Monitor.Enter(lockHelper);  //锁定对象
+
+                string message = (string)obj;
+                //byte[] sendbytes = Encoding.Unicode.GetBytes(message);
+
+                //将16进制数的字符串形式转换为byte数组
+                String[] cmdStrs = message.Split(new string[]{"0x"},StringSplitOptions.RemoveEmptyEntries);
+                byte[] cmdBytes = new byte[cmdStrs.Length];
+                for (int i = 0; i < cmdStrs.Length; i++) {
+                    cmdBytes[i] = Byte.Parse(cmdStrs[i],System.Globalization.NumberStyles.HexNumber); 
+                }
+
+
+                //System.Text.ASCIIEncoding ascEncoding = new ASCIIEncoding();
+                //byte[] sendbytes = ascEncoding.GetBytes(message);
+                IPEndPoint remoteIpep2 = new IPEndPoint(IPAddress.Parse("255.255.255.255"), 10105); // 发送到的IP地址和端口号
+                udpClient.Send(cmdBytes, cmdBytes.Length, remoteIpep2);
+                udpClient.Close();
+
+                Monitor.Pulse(lockHelper);  //通知其他线程，我忙完了，等我Monitor.Exit(obj)了，你们就继续吧
+                Monitor.Exit(lockHelper);  //释放锁
+            }
+            catch(Exception exception) {
+                XtraMessageBox.Show(exception.Message, "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            
         }
 
         /// <summary>
@@ -2118,17 +2042,20 @@ namespace CreepRateApp
         /// 接收数据
         /// </summary>
         /// <param name="obj"></param>
-        public void ReceiveMessage(Object obj)
+        public static  void ReceiveMessage(Object obj)
         {
             IPEndPoint remoteIpep = new IPEndPoint(IPAddress.Any, 10105);   //（下位机）应用程序与特定主机特定端口之间的连接
+
+            
             while (true)
             {
+                Monitor.Enter(lockHelper);  //锁定lockHelper
+                
                 try
                 {
-                    
-                    byte[] byteRecv = udpcRecv.Receive(ref remoteIpep);  //ref高级参数目的：使引用地址一致 
-                    StringBuilder message = new StringBuilder(0);   //存储16进制字节数拼接成的字符串
-                    //StringBuilder[] hexStrs = new  StringBuilder[5];   //存储16进制字节数
+                    byte[] byteRecv = udpClient.Receive(ref remoteIpep);  //ref高级参数目的：使引用地址一致 
+                    //Thread.Sleep(1000);                           //线程休眠1秒
+                    StringBuilder message = new StringBuilder(0);   //存储16进制字节数拼接成的字符串 
                     List<StringBuilder> hexStrs = new List<StringBuilder>();
                     for (int i = 0; i < byteRecv.Length;i++ )
                     {
@@ -2144,58 +2071,126 @@ namespace CreepRateApp
                         int dataLen = (int)byteRecv[2];    //获取数据段长度(根据协议规定，data_len存在数据包的第3个字节，下标为2)
                         if (dataLen <= 0 || hexStrs.Count != dataLen+4)                 //没有数据或数据段长度无效
                         {
-                            showMessage(richTextBox1, string.Format("{0}", "下位机(" + remoteIpep + ")：无效数据包"));
+                            showMessage(richTextBox1, string.Format("{0}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "：无效数据包"));
                         }
                         else {
-                            StringBuilder hexStrData = new StringBuilder();
+                            StringBuilder cmdStr = new StringBuilder();
                             for (int i = 3; i < 2 + dataLen; i++)
                             {
-                                hexStrData.Append("0x"+hexStrs[i]+" ");
+                                cmdStr.Append("0x" + hexStrs[i] + " ");
                             }
                             switch (hexStrs[3]+"")
                             {
                                 //故障配置应答
                                 case "81":
-
-                                    showMessage(richTextBox1, string.Format("{0}[{1}]", "下位机(" + remoteIpep + ")故障配置应答：", hexStrData));
+                                    showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "故障配置应答：", cmdStr));
                                     break;
                                 //传感器通道配置应答
                                 case "82":
-                                    showMessage(richTextBox1, string.Format("{0}[{1}]", "下位机(" + remoteIpep + ")传感器通道配置应答：", hexStrData));
+                                    showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "传感器通道配置应答：", cmdStr));
                                     break;
                                 //数据应答
                                 case "83":
-                                    showMessage(richTextBox1, string.Format("{0}[{1}]", "下位机(" + remoteIpep + ")数据应答：", hexStrData));
+                                    showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "数据应答：", cmdStr));
                                     break;
                                 //传感器交互应答
                                 case "84":
-                                    showMessage(richTextBox1, string.Format("{0}[{1}]", "下位机(" + remoteIpep + ")传感器交互应答：", hexStrData));
+                                    showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "传感器交互应答：", cmdStr));
                                     break; 
                                 //交互应答
                                 case "85":
-                                    showMessage(richTextBox1, string.Format("{0}[{1}]", "下位机(" + remoteIpep + ")交互应答：", hexStrData));
+                                    if (dataLen == 2)    //有效“交互应答”命令，数据段占2个字节，category + status
+                                    {
+                                        StringBuilder status = hexStrs[4];   //获取status值
+                                        switch (status+"") {
+                                            //传感器通道已配置信息
+                                            case "01":
+                                                showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "交互应答：", "传感器通道已配置信息"));
+                                                //TODO存储状态变量
+                                                break;
+                                            //故障已配置信息
+                                            case "02":
+                                                showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "交互应答：", "故障已配置信息"));
+                                                //TODO存储状态变量
+                                                break;
+                                            //擦除结束可重启采集，等待上位机命令
+                                            case "03":
+                                                showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "交互应答：", "擦除结束可重启采集，等待上位机命令"));
+                                                break;
+                                            //已停止采集可读数据
+                                            case "04":
+                                                showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "交互应答：", "已停止采集可读数据"));
+                                                break;
+                                            //传感器通道未配置信息
+                                            case "81":
+                                                showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "交互应答：", "传感器通道未配置信息"));
+                                                //TODO存储状态变量
+                                                break;
+                                            //故障未配置信息
+                                            case "82":
+                                                showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "交互应答：", "故障未配置信息"));
+                                                //TODO存储状态变量
+                                                break;
+                                            //不可采集，等待上位机命令
+                                            case "83":
+                                                showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "交互应答：", "不可采集，等待上位机命令"));
+                                                break;
+                                            //采集中...
+                                            case "84":
+                                                showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "交互应答：", "采集中..."));
+                                                break;
+                                            //default
+                                            default:
+                                                showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "交互应答：", "[无效命令]"));
+                                                break;
+                                        }
+                                    }
+                                    else 
+                                    {
+                                        cmdStr = new StringBuilder("[无效命令]");
+                                        showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "交互应答：", cmdStr));
+                                    }
+                                    
                                     break;
                                 default:
-                                    showMessage(richTextBox1, string.Format("{0}[{1}]", "下位机(" + remoteIpep + ")无法识别命令：", hexStrData));
+                                    showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "无法识别命令：", cmdStr));
                                     break;
                             }
                         }
                         
                     }
                     else {
-                        showMessage(richTextBox1, string.Format("{0}[{1}]", "未知命令(" + remoteIpep + ")：", message));
+                        showMessage(richTextBox1, string.Format("{0}{1}", "未知命令(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "：", message));
                     }
+                    //Monitor.Wait(lockHelper);  //将该线程暂停，并释放锁允许其他线程访问
+
+                    //等到了Monitor.Pulse(obj)和Monitor.Exit(obj)的信号，就继续往下执行
+                    Monitor.Exit(lockHelper);
+
+                    
                 }
                 catch{
-                    udpcRecv.Close();
-                    udpcRecv = null;
-                    showMessage(richTextBox1, string.Format("系统消息：下位机5s无回应"));
-                    //thrRecv.Abort();    //所谓的关闭线程
-                    udpcRecv = new UdpClient(localIpep);
-                    udpcRecv.Client.ReceiveTimeout = 5000;
-                    continue;
-                }
-                
+                    //Object locker = new object();
+                    //lock (locker) {
+                        //if (udpClient != null)
+                        //{
+                            udpClient.Close();
+                            udpClient = null;
+                            showMessage(richTextBox1, string.Format("系统消息_"+System.DateTime.Now.ToString()+"：下位机5s无回应"));
+                            //thrRecv.Abort();    //所谓的关闭线程
+                            udpClient = new UdpClient(localIpep);
+                            udpClient.Client.ReceiveTimeout = 4000;
+
+                            Thread.Sleep(1000);
+
+                            //Monitor.Wait(lockHelper);  //将该线程暂停，并释放锁允许其他线程访问
+
+                            //等到了Monitor.Pulse(obj)和Monitor.Exit(obj)的信号，就继续往下执行
+                            Monitor.Exit(lockHelper);   
+                            continue; 
+                    //}
+                    
+                } 
             }
         }
 
@@ -2205,7 +2200,7 @@ namespace CreepRateApp
         /// <param name="textBox"></param>
         /// <param name="message"></param>
         delegate void showMessageDelegate(RichTextBox textBox, string message);
-        private void showMessage(RichTextBox textBox, string message) {
+        public static void showMessage(RichTextBox textBox, string message) {
             if (textBox.InvokeRequired)
             {
                 showMessageDelegate showMessageDelegate = showMessage;
@@ -2221,6 +2216,155 @@ namespace CreepRateApp
                 //添加文本内容
                 textBox.AppendText(message + "\r\n");
                 //textBox.Text += message + "\r\n";
+            }
+        }
+
+        /// <summary>
+        /// 获取传感器通道配置信息
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void barButtonItem13_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            try
+            {
+                //生成配置信息 byte数组 对应的 16进制字符串数组
+                byte[] cmd = new byte[6];
+
+                //Header
+                cmd[0] = byte.Parse("EB", System.Globalization.NumberStyles.HexNumber);
+                cmd[1] = byte.Parse("90", System.Globalization.NumberStyles.HexNumber);
+
+                //Len
+                cmd[2] = 2;
+
+                //data
+                //--Category
+                cmd[3] = byte.Parse("05", System.Globalization.NumberStyles.HexNumber);
+
+                //--data 
+                cmd[4] = byte.Parse("01", System.Globalization.NumberStyles.HexNumber);  //获取传感器通道配置信息
+
+                //Verify
+                byte verifyByte = 0;
+                for (int i = 0; i < cmd.Length; i++)
+                {
+                    verifyByte ^= cmd[i];
+                }
+                cmd[5] = verifyByte;
+
+                //转换为十六进制字符串 
+                string sendCmdStr = "";
+                for (int i = 0; i < cmd.Length; i++)
+                {
+                    StringBuilder hexStr = new StringBuilder(cmd[i].ToString("X2"));
+                    //将上述16进制字符串数组 拼接为 0x_ _ 格式 的字符串 
+                    sendCmdStr += "0x" + hexStr + " ";
+                    //cmdStrs[i] = hexStr + "";
+                }
+
+                //===============================================
+
+
+                //下发通道配置信息
+                //1、关闭线程 
+                //MainForm.thrRecv.Abort();    //所谓的关闭线程
+                //MainForm.thrRecv.Join();    //挂起
+                //2、关闭udpcRecv
+                //MainForm.udpcRecv.Close();
+                //MainForm.udpcRecv = null;
+                //3、创建udpcSend
+
+                //4、创建thrSend
+                thrSend = new Thread(MainForm.SendMessage);
+
+                //5、开启thrSend（thrSend执行结束后自动关闭udpcSend，销毁thrSend） 
+                thrSend.Start(sendCmdStr);
+
+                //6、在主界面显示发送内容 
+                showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[获取传感器通道配置]_" + System.DateTime.Now.ToString() + "：", sendCmdStr));
+
+
+                XtraMessageBox.Show("指令下发成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception exception)
+            {
+                XtraMessageBox.Show(exception.Message, "异常", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+
+
+        }
+        /// <summary>
+        /// 获取故障配置信息
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void barButtonItem14_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            try
+            {
+                //生成配置信息 byte数组 对应的 16进制字符串数组
+                byte[] cmd = new byte[6];
+
+                //Header
+                cmd[0] = byte.Parse("EB", System.Globalization.NumberStyles.HexNumber);
+                cmd[1] = byte.Parse("90", System.Globalization.NumberStyles.HexNumber);
+
+                //Len
+                cmd[2] = 2;
+
+                //data
+                //--Category
+                cmd[3] = byte.Parse("05", System.Globalization.NumberStyles.HexNumber);
+
+                //--data 
+                cmd[4] = byte.Parse("02", System.Globalization.NumberStyles.HexNumber);  //获取传感器通道配置信息
+
+                //Verify
+                byte verifyByte = 0;
+                for (int i = 0; i < cmd.Length; i++)
+                {
+                    verifyByte ^= cmd[i];
+                }
+                cmd[5] = verifyByte;
+
+                //转换为十六进制字符串 
+                string sendCmdStr = "";
+                for (int i = 0; i < cmd.Length; i++)
+                {
+                    StringBuilder hexStr = new StringBuilder(cmd[i].ToString("X2"));
+                    //将上述16进制字符串数组 拼接为 0x_ _ 格式 的字符串 
+                    sendCmdStr += "0x" + hexStr + " ";
+                    //cmdStrs[i] = hexStr + "";
+                }
+
+                //===============================================
+
+
+                //下发通道配置信息
+                //1、关闭线程 
+                //MainForm.thrRecv.Abort();    //所谓的关闭线程
+                //MainForm.thrRecv.Join();    //挂起
+                //2、关闭udpcRecv
+                //MainForm.udpcRecv.Close();
+                //MainForm.udpcRecv = null;
+                //3、创建udpcSend
+
+                //4、创建thrSend
+                thrSend = new Thread(MainForm.SendMessage);
+
+                //5、开启thrSend（thrSend执行结束后自动关闭udpcSend，销毁thrSend） 
+                thrSend.Start(sendCmdStr);
+
+                //6、在主界面显示发送内容 
+                showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[获取故障配置]_" + System.DateTime.Now.ToString() + "：", sendCmdStr));
+
+
+                XtraMessageBox.Show("指令下发成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception exception)
+            {
+                XtraMessageBox.Show(exception.Message, "异常", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
     }

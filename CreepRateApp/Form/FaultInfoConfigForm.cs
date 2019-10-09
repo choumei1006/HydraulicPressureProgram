@@ -11,6 +11,12 @@ using System.IO.Ports;
 using SerialportSample;
 using com.sun.xml.@internal.bind.v2;
 
+using System.Reflection;
+
+using System.Threading;
+using System.Net;
+using System.Net.Sockets; 
+
 namespace CreepRateApp
 {
     public partial class FaultInfoConfigForm : DevExpress.XtraEditors.XtraForm
@@ -27,37 +33,85 @@ namespace CreepRateApp
             mSerialPort.ReceivedBytesThreshold = 1; 
         }
 
+        /// <summary>
+        /// 保存配置，并发送
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void button1_Click(object sender, EventArgs e)
         {
-            getint3();
-        }
+            List<string> faultConfigValues = new List<string>();  //存放故障配置值
 
-       //
-        private int[] getint3()
-        {
-            fctext[0] = (int)this.numericUpDown1.Value;
-            fctext[1] = (int)this.numericUpDown2.Value;
-            fctext[2] = (int)this.numericUpDown3.Value;
-            fctext[3] = (int)this.numericUpDown4.Value;
-            fctext[4] = (int)this.numericUpDown5.Value;
-            fctext[5] = (int)this.numericUpDown6.Value;
-            fctext[6] = (int)this.numericUpDown7.Value;
-            fctext[7] = (int)this.numericUpDown8.Value;
-            fctext[8] = (int)this.numericUpDown9.Value;
-            fctext[9] = (int)this.numericUpDown10.Value;
-            fctext[10] = (int)this.numericUpDown11.Value;
-            fctext[11] = (int)this.numericUpDown12.Value;
-            fctext[12] = (int)this.numericUpDown13.Value;
-            fctext[13] = (int)this.numericUpDown14.Value;
-            fctext[14] = (int)this.numericUpDown15.Value;
-            fctext[15] = (int)this.numericUpDown16.Value;
-            fctext[16] = (int)this.numericUpDown17.Value;
-            fctext[17] = (int)this.numericUpDown18.Value;
-            fctext[18] = (int)this.numericUpDown19.Value;
+            int isVerified = 0;
 
-            return fctext;
-        }
-        
+            try
+            {
+                //检查故障配置合理性
+                for (int i = 1; i <= 19; i++)
+                {
+                    Control control = Controls.Find("numericUpDown" + Convert.ToString(i), true)[0];
+                    String value = control.GetType().GetProperty("Text").GetValue(control, null).ToString();
+                    if (!string.IsNullOrWhiteSpace(value))  //&& value != "0"
+                    {
+                        faultConfigValues.Add(value);
+                    }
+                    else
+                    {
+                        XtraMessageBox.Show("存在未配置通道，请检查更改！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        break;
+                    }
+                    isVerified = i;
+                }
+                //判断是否完成所有故障配置合理性检查
+                if (isVerified == 19)
+                {
+                    //初始化故障配置信息类 
+                    FaultInfoConfigValue.setChannelConfigValue(faultConfigValues);
+
+                    //生成配置信息 byte数组 对应的 16进制字符串数组
+                    string sendCmdStr = FaultInfoConfigValue.getSendCmd();
+
+                    //将上述16进制字符串数组 拼接为 0x_ _ 格式 的字符串
+                    /*string sendCmdStr = "";
+                    for (int i = 0; i < sendCmd.Length; i++)
+                    {
+                        sendCmdStr += "0x" + sendCmd[i] + " ";
+                    }
+                     * */
+
+                    //下发通道配置信息
+                    //1、关闭线程 
+                    //MainForm.thrRecv.Abort();    //所谓的关闭线程
+                    //MainForm.thrRecv.Join();    //挂起
+                    //2、关闭udpcRecv
+                    //MainForm.udpcRecv.Close();
+                    //MainForm.udpcRecv = null;
+                    //3、创建udpcSend
+
+                    //4、创建thrSend
+                    MainForm.thrSend = new Thread(MainForm.SendMessage);
+
+                    //5、开启thrSend（thrSend执行结束后自动关闭udpcSend，销毁thrSend） 
+                    MainForm.thrSend.Start(sendCmdStr);
+
+                    //6、在主界面显示发送内容 
+                    MainForm.showMessage(MainForm.richTextBox1, string.Format("{0}{1}", "上位机(" + MainForm.localIpep + ")[故障配置信息下发]_" + System.DateTime.Now.ToString() + "：", sendCmdStr));
+
+
+
+                    XtraMessageBox.Show("配置成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    this.Close();
+                }
+                else
+                {
+                    XtraMessageBox.Show("存在未配置项，请检查更改！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception exception)
+            {
+                XtraMessageBox.Show(exception.Message, "配置异常", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        } 
         
     }
 }

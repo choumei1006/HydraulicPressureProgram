@@ -341,6 +341,9 @@
     <Compile Include="Form\SensorChannelConfigForm.Designer.cs">
       <DependentUpon>SensorChannelConfigForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="SensorChannelConfigValue.cs" />
+    <Compile Include="SensorStateConfigValue.cs" />
+    <Compile Include="FaultInfoConfigValue.cs" />
     <EmbeddedResource Include="Form\FaultInfoConfigForm.resx">
       <DependentUpon>FaultInfoConfigForm.cs</DependentUpon>
     </EmbeddedResource>

@@ -65,6 +65,8 @@
             this.barButtonItem10 = new DevExpress.XtraBars.BarButtonItem();
             this.barButtonItem11 = new DevExpress.XtraBars.BarButtonItem();
             this.barButtonItem12 = new DevExpress.XtraBars.BarButtonItem();
+            this.barButtonItem13 = new DevExpress.XtraBars.BarButtonItem();
+            this.barButtonItem14 = new DevExpress.XtraBars.BarButtonItem();
             this.page_HotAnalysis = new DevExpress.XtraBars.Ribbon.RibbonPage();
             this.rpg_SerialPortDateAnalysis = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
             this.ribbonPage1 = new DevExpress.XtraBars.Ribbon.RibbonPage();
@@ -72,7 +74,6 @@
             this.ribbonStatusBar = new DevExpress.XtraBars.Ribbon.RibbonStatusBar();
             this.defaultLookAndFeel1 = new DevExpress.LookAndFeel.DefaultLookAndFeel(this.components);
             this.layoutControl1 = new DevExpress.XtraLayout.LayoutControl();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.chartControl2 = new DevExpress.XtraCharts.ChartControl();
             this.chartControl1 = new DevExpress.XtraCharts.ChartControl();
             this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();
@@ -158,10 +159,12 @@
             this.barButtonItem9,
             this.barButtonItem10,
             this.barButtonItem11,
-            this.barButtonItem12});
+            this.barButtonItem12,
+            this.barButtonItem13,
+            this.barButtonItem14});
             this.ribbon.Location = new System.Drawing.Point(0, 0);
             this.ribbon.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.ribbon.MaxItemId = 20;
+            this.ribbon.MaxItemId = 22;
             this.ribbon.Name = "ribbon";
             this.ribbon.Pages.AddRange(new DevExpress.XtraBars.Ribbon.RibbonPage[] {
             this.page_HotAnalysis,
@@ -247,7 +250,6 @@
             this.b_FeedingMachine.Name = "b_FeedingMachine";
             this.b_FeedingMachine.RibbonStyle = ((DevExpress.XtraBars.Ribbon.RibbonItemStyles)(((DevExpress.XtraBars.Ribbon.RibbonItemStyles.Large | DevExpress.XtraBars.Ribbon.RibbonItemStyles.SmallWithText)
                         | DevExpress.XtraBars.Ribbon.RibbonItemStyles.SmallWithoutText)));
-            this.b_FeedingMachine.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.b_FeedingMachine_ItemClick);
             // 
             // barCheckItem1
             // 
@@ -342,6 +344,24 @@
             this.barButtonItem12.Visibility = DevExpress.XtraBars.BarItemVisibility.OnlyInCustomizing;
             this.barButtonItem12.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.barButtonItem12_ItemClick);
             // 
+            // barButtonItem13
+            // 
+            this.barButtonItem13.Caption = "获取通道配置";
+            this.barButtonItem13.Glyph = ((System.Drawing.Image)(resources.GetObject("barButtonItem13.Glyph")));
+            this.barButtonItem13.Id = 20;
+            this.barButtonItem13.LargeGlyph = ((System.Drawing.Image)(resources.GetObject("barButtonItem13.LargeGlyph")));
+            this.barButtonItem13.Name = "barButtonItem13";
+            this.barButtonItem13.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.barButtonItem13_ItemClick);
+            // 
+            // barButtonItem14
+            // 
+            this.barButtonItem14.Caption = "获取故障配置";
+            this.barButtonItem14.Glyph = ((System.Drawing.Image)(resources.GetObject("barButtonItem14.Glyph")));
+            this.barButtonItem14.Id = 21;
+            this.barButtonItem14.LargeGlyph = ((System.Drawing.Image)(resources.GetObject("barButtonItem14.LargeGlyph")));
+            this.barButtonItem14.Name = "barButtonItem14";
+            this.barButtonItem14.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.barButtonItem14_ItemClick);
+            // 
             // page_HotAnalysis
             // 
             this.page_HotAnalysis.Groups.AddRange(new DevExpress.XtraBars.Ribbon.RibbonPageGroup[] {
@@ -357,6 +377,8 @@
             this.rpg_SerialPortDateAnalysis.ItemLinks.Add(this.barButtonItem5);
             this.rpg_SerialPortDateAnalysis.ItemLinks.Add(this.barButtonItem12);
             this.rpg_SerialPortDateAnalysis.ItemLinks.Add(this.barButtonItem9);
+            this.rpg_SerialPortDateAnalysis.ItemLinks.Add(this.barButtonItem13);
+            this.rpg_SerialPortDateAnalysis.ItemLinks.Add(this.barButtonItem14);
             this.rpg_SerialPortDateAnalysis.Name = "rpg_SerialPortDateAnalysis";
             this.rpg_SerialPortDateAnalysis.ShowCaptionButton = false;
             this.rpg_SerialPortDateAnalysis.Text = "串口数据分析";
@@ -371,8 +393,8 @@
             // ribbonPageGroup1
             // 
             this.ribbonPageGroup1.AllowTextClipping = false;
-            this.ribbonPageGroup1.ItemLinks.Add(this.barButtonItem2);
             this.ribbonPageGroup1.ItemLinks.Add(this.barButtonItem10);
+            this.ribbonPageGroup1.ItemLinks.Add(this.barButtonItem2);
             this.ribbonPageGroup1.ItemLinks.Add(this.barButtonItem11);
             this.ribbonPageGroup1.Name = "ribbonPageGroup1";
             this.ribbonPageGroup1.ShowCaptionButton = false;
@@ -391,7 +413,6 @@
             // 
             // layoutControl1
             // 
-            this.layoutControl1.Controls.Add(this.richTextBox1);
             this.layoutControl1.Controls.Add(this.chartControl2);
             this.layoutControl1.Controls.Add(this.chartControl1);
             this.layoutControl1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -403,14 +424,6 @@
             this.layoutControl1.Size = new System.Drawing.Size(1619, 701);
             this.layoutControl1.TabIndex = 2;
             this.layoutControl1.Text = "layoutControl1";
-            // 
-            // richTextBox1
-            // 
-            this.richTextBox1.Location = new System.Drawing.Point(24, 571);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(1571, 106);
-            this.richTextBox1.TabIndex = 6;
-            this.richTextBox1.Text = "";
             // 
             // chartControl2
             // 
@@ -544,7 +557,6 @@
             // 
             // layoutControlItem3
             // 
-            this.layoutControlItem3.Control = this.richTextBox1;
             this.layoutControlItem3.CustomizationFormText = "layoutControlItem3";
             this.layoutControlItem3.Location = new System.Drawing.Point(0, 0);
             this.layoutControlItem3.Name = "layoutControlItem3";
@@ -797,8 +809,10 @@
         private DevExpress.XtraGrid.Columns.GridColumn colRuHuaLv;
         private DevExpress.XtraGrid.Columns.GridColumn colIsHuiZhuTie;
         private DevExpress.XtraBars.BarButtonItem barButtonItem12;
-        private System.Windows.Forms.RichTextBox richTextBox1;
         private DevExpress.XtraLayout.LayoutControlGroup layoutControlGroup4;
         private DevExpress.XtraLayout.LayoutControlItem layoutControlItem3;
+        private DevExpress.XtraBars.BarButtonItem barButtonItem13;
+        private DevExpress.XtraBars.BarButtonItem barButtonItem14;
+        //public System.Windows.Forms.RichTextBox richTextBox1;
     }
 }
