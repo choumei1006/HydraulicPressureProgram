@@ -315,6 +315,18 @@
     <Compile Include="Form\SensorStateConfigForm.Designer.cs">
       <DependentUpon>SensorStateConfigForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Form\EquipmentIdConfigForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form\EquipmentIdConfigForm.Designer.cs">
+      <DependentUpon>EquipmentIdConfigForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Form\SensorSpanConfigForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form\SensorSpanConfigForm.Designer.cs">
+      <DependentUpon>SensorSpanConfigForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="GlobalValue.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
@@ -344,6 +356,7 @@
     <Compile Include="SensorChannelConfigValue.cs" />
     <Compile Include="SensorStateConfigValue.cs" />
     <Compile Include="FaultInfoConfigValue.cs" />
+    <Compile Include="SensorSpanConfigValue.cs" />
     <EmbeddedResource Include="Form\FaultInfoConfigForm.resx">
       <DependentUpon>FaultInfoConfigForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -359,6 +372,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Form\SensorStateConfigForm.resx">
       <DependentUpon>SensorStateConfigForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form\EquipmentIdConfigForm.resx">
+      <DependentUpon>EquipmentIdConfigForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form\SensorSpanConfigForm.resx">
+      <DependentUpon>SensorSpanConfigForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>

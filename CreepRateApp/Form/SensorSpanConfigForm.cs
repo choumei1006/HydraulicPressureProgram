@@ -19,7 +19,7 @@ using System.Net.Sockets;
 
 namespace CreepRateApp
 {
-    public partial class SensorChannelConfigForm : DevExpress.XtraEditors.XtraForm
+    public partial class SensorSpanConfigForm : DevExpress.XtraEditors.XtraForm
     {
         private DevExpress.XtraBars.Ribbon.RibbonForm _form;
         //private SerialPort mSerialPort; 
@@ -33,7 +33,7 @@ namespace CreepRateApp
 
        
         //public SensorChannelConfigForm(SerialPort paramPortDev)
-        public SensorChannelConfigForm(DevExpress.XtraBars.Ribbon.RibbonForm form)
+        public SensorSpanConfigForm(DevExpress.XtraBars.Ribbon.RibbonForm form)
         {
             InitializeComponent();
             //mSerialPort = paramPortDev;
@@ -63,33 +63,26 @@ namespace CreepRateApp
             try
             {
                 //检查通道配置合理性
-                for (int i = 1; i <= 30; i++)
+                for (int i = 1; i <= 24; i++)
                 {
                     //Control control2 = Controls.Find("numericUpDown1", true)[0];
                     Control control = Controls.Find("numericUpDown" + Convert.ToString(i), true)[0];
                     String value = control.GetType().GetProperty("Text").GetValue(control, null).ToString();
-                    if (!string.IsNullOrWhiteSpace(value) && value != "0")  //&& value != "0"
-                    {
+                    
                         
-                       
-                        channelConfigValues.Add(value);
-
-                    }
-                    else
-                    {
-                        XtraMessageBox.Show("存在未配置通道，请检查更改！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        break;
-                    }
+                    channelConfigValues.Add(value);
+                                                            
+                                           
                     isVerified = i;
                 }
                 //判断是否完成所有传感器通道的配置合理性检查
-                if (isVerified == 30)
+                if (isVerified == 24)
                 {
                     //初始化传感器通道配置信息类
-                    SensorChannelConfigValue.setChannelConfigValue(channelConfigValues);
+                    SensorSpanConfigValue.setChannelConfigValue(channelConfigValues);
 
                     //生成配置信息 byte数组 对应的 16进制字符串数组
-                    string sendCmdStr = SensorChannelConfigValue.getSendCmd();
+                    string sendCmdStr = SensorSpanConfigValue.getSendCmd();
 
                     //将上述16进制字符串数组 拼接为 0x_ _ 格式 的字符串
                     /*string sendCmdStr = "";
@@ -134,8 +127,10 @@ namespace CreepRateApp
         }
 
         
-      
+       
 
+
+        
 
 
 
@@ -153,15 +148,8 @@ namespace CreepRateApp
             return localaddr.ToString();
         }
 
-        private void SensorChannelConfigForm_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void numericUpDown18_ValueChanged(object sender, EventArgs e)
-        {
-
-        }
+        
+        
         
     }
 }
