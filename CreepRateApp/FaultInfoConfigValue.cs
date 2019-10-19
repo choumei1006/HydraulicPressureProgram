@@ -153,9 +153,16 @@ namespace CreepRateApp
             //Header
             cmd[0] = byte.Parse("EB", System.Globalization.NumberStyles.HexNumber);
             cmd[1] = byte.Parse("90", System.Globalization.NumberStyles.HexNumber);
+            //DEVICE_ID
+            cmd[3] = 1;
+
+
+            //Reserve
+            cmd[4] = byte.Parse("ff", System.Globalization.NumberStyles.HexNumber);;
 
             //Len
-            cmd[2] = 20;
+            cmd[3] = 0;
+            cmd[4] = 47; 
 
             //data
             //--Category

@@ -20,7 +20,13 @@ using System.Net.Sockets;
 namespace CreepRateApp
 {
     public partial class FaultInfoConfigForm : DevExpress.XtraEditors.XtraForm
-    {
+    {   
+        //下拉框选值
+        public static Byte ValueSate = 0;
+        public static Byte Value1 = 0;
+        public static Byte Value2 = 0;
+
+
         private SerialPort mSerialPort; 
         private ModbusCRC crc = new ModbusCRC();
         private StringBuilder builder = new StringBuilder();//避免在事件处理方法中反复的创建，定义到外面。
@@ -47,7 +53,7 @@ namespace CreepRateApp
             try
             {
                 //检查故障配置合理性
-                for (int i = 1; i <= 19; i++)
+                for (int i = 4; i <= 26; i++)
                 {
                     Control control = Controls.Find("numericUpDown" + Convert.ToString(i), true)[0];
                     String value = control.GetType().GetProperty("Text").GetValue(control, null).ToString();
@@ -60,10 +66,30 @@ namespace CreepRateApp
                         XtraMessageBox.Show("存在未配置通道，请检查更改！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         break;
                     }
-                    isVerified = i;
+                    
+                   }
+           
+                //combox取值
+                
+                for (int i = 1; i <= 2; i++)
+                {
+                    Control control = Controls.Find("comboBox" + Convert.ToString(i), true)[0];
+                    String value = control.GetType().GetProperty("SelectedText").GetValue(control, null).ToString();
+                    if (value == "高电平")
+                    {
+                        faultConfigValues.Add(Convert.ToString(1));
+                    }
+                    else {
+                        faultConfigValues.Add(Convert.ToString(0));
+                    }
+                 
+
+                    isVerified = i+22;
                 }
+
+
                 //判断是否完成所有故障配置合理性检查
-                if (isVerified == 19)
+                if (isVerified == 24)
                 {
                     //初始化故障配置信息类 
                     FaultInfoConfigValue.setChannelConfigValue(faultConfigValues);
@@ -111,7 +137,9 @@ namespace CreepRateApp
             {
                 XtraMessageBox.Show(exception.Message, "配置异常", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
-        } 
-        
+        }
+
+
+        public int value1 { get; set; }
     }
 }
