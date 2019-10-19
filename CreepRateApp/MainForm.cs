@@ -41,7 +41,7 @@ namespace CreepRateApp
 
         //richTextBox1窗体
         public static System.Windows.Forms.RichTextBox richTextBox1;
-
+        public static int EquipmentId;
         private ModbusCRC crc = new ModbusCRC();
         private StringBuilder builder = new StringBuilder();//避免在事件处理方法中反复的创建，定义到外面。
         private int received_count = 0;//接收计数
@@ -2064,22 +2064,32 @@ namespace CreepRateApp
                         message.Append("0x" + hexStr + " ");
                     }
 
+                    EquipmentId = (int)byteRecv[2];
 
-                    if (hexStrs.Count >= 4)   //数据包至少包含Header、Length、Verify，共计4字节
+                    if (hexStrs.Count >= 7)   //数据包至少包含Header、Length、Verify，共计7字节
                     {
+
+                        byte b1 = byteRecv[5];
+                        byte b2 = byteRecv[6];
+
+
                         //解析16进制字节数
-                        int dataLen = (int)byteRecv[2];    //获取数据段长度(根据协议规定，data_len存在数据包的第3个字节，下标为2)
-                        if (dataLen <= 0 || hexStrs.Count != dataLen+4)                 //没有数据或数据段长度无效
+                       int dataLen = (b1 << 8) + b2;
+                       //int dataLen = (int)(b1 | b2 << 8);
+                        //int dataLen = (int)((b1 & 0xFF) << 8 | b2);
+
+                        //int dataLen = (int)byteRecv[2];    //获取数据段长度(根据协议规定，data_len存在数据包的第3个字节，下标为2)
+                        if (dataLen <= 0 )                 //没有数据或数据段长度无效
                         {
                             showMessage(richTextBox1, string.Format("{0}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "：无效数据包"));
                         }
                         else {
                             StringBuilder cmdStr = new StringBuilder();
-                            for (int i = 3; i < 2 + dataLen; i++)
+                            for (int i = 7; i < 8 + dataLen; i++)
                             {
                                 cmdStr.Append("0x" + hexStrs[i] + " ");
                             }
-                            switch (hexStrs[3]+"")
+                            switch (hexStrs[4]+"")
                             {
                                 //故障配置应答
                                 case "81":
@@ -2093,33 +2103,41 @@ namespace CreepRateApp
                                 case "83":
                                     showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "数据应答：", cmdStr));
                                     break;
-                                //传感器交互应答
+                                //传感器量程配置应答信息（下位机->上位机）
                                 case "84":
-                                    showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "传感器交互应答：", cmdStr));
-                                    break; 
+                                    showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "传感器量程配置应答信息：", cmdStr));
+                                    break;
+                                //设备ID设置
+                                case "86":
+                                    if (dataLen == 2)//data =2字节 Device_ID+reserve
+                                    {
+                                        showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "设备ID设置：", cmdStr));
+                                    }
+                                    break;
                                 //交互应答
                                 case "85":
-                                    if (dataLen == 2)    //有效“交互应答”命令，数据段占2个字节，category + status
+                                    if (dataLen == 1)    //有效“交互应答”命令，数据段占1个字节，status
                                     {
-                                        StringBuilder status = hexStrs[4];   //获取status值
+                                        StringBuilder status = hexStrs[7];   //获取status值
                                         switch (status+"") {
-                                            //传感器通道已配置信息
+                                            
+                                             //故障已配置信息
                                             case "01":
-                                                showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "交互应答：", "传感器通道已配置信息"));
-                                                //TODO存储状态变量
-                                                break;
-                                            //故障已配置信息
-                                            case "02":
                                                 showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "交互应答：", "故障已配置信息"));
                                                 //TODO存储状态变量
                                                 break;
-                                            //擦除结束可重启采集，等待上位机命令
-                                            case "03":
-                                                showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "交互应答：", "擦除结束可重启采集，等待上位机命令"));
+                                            //传感器通道已配置信息
+                                            case "02":
+                                                showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "交互应答：", "传感器通道已配置信息"));
+                                                //TODO存储状态变量
                                                 break;
-                                            //已停止采集可读数据
+                                            //已暂停采集
+                                            case "03":
+                                                showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "交互应答：", "已暂停采集"));
+                                                break;
+                                            //已开始采集
                                             case "04":
-                                                showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "交互应答：", "已停止采集可读数据"));
+                                                showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "交互应答：", "已开始采集"));
                                                 break;
                                             //传感器通道未配置信息
                                             case "81":
@@ -2131,14 +2149,18 @@ namespace CreepRateApp
                                                 showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "交互应答：", "故障未配置信息"));
                                                 //TODO存储状态变量
                                                 break;
-                                            //不可采集，等待上位机命令
-                                            case "83":
-                                                showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "交互应答：", "不可采集，等待上位机命令"));
+                                            //未设置设备ID
+                                            case "86":
+                                                showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "交互应答：", "未设置设备ID"));
                                                 break;
-                                            //采集中...
-                                            case "84":
-                                                showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "交互应答：", "采集中..."));
+                                            //擦除结束可重启采集
+                                            case "05":
+                                                showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "交互应答：", "擦除结束可重启采集"));
                                                 break;
+                                            //已设置设备ID
+                                            case "06":
+                                                showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "交互应答：", "已设置设备ID"));
+                                                break;    
                                             //default
                                             default:
                                                 showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "交互应答：", "[无效命令]"));
@@ -2229,21 +2251,26 @@ namespace CreepRateApp
             try
             {
                 //生成配置信息 byte数组 对应的 16进制字符串数组
-                byte[] cmd = new byte[6];
+                byte[] cmd = new byte[9];
 
                 //Header
                 cmd[0] = byte.Parse("EB", System.Globalization.NumberStyles.HexNumber);
                 cmd[1] = byte.Parse("90", System.Globalization.NumberStyles.HexNumber);
+                //Device_id
+                cmd[2] = Convert.ToByte(EquipmentId);
+                //Reserve
+                cmd[3] = byte.Parse("ff", System.Globalization.NumberStyles.HexNumber);
+                //--Category
+                cmd[4] = byte.Parse("05", System.Globalization.NumberStyles.HexNumber);
 
                 //Len
-                cmd[2] = 2;
-
+                cmd[5] = byte.Parse("00", System.Globalization.NumberStyles.HexNumber);
+                cmd[6] = byte.Parse("01", System.Globalization.NumberStyles.HexNumber);
                 //data
-                //--Category
-                cmd[3] = byte.Parse("05", System.Globalization.NumberStyles.HexNumber);
+                
 
                 //--data 
-                cmd[4] = byte.Parse("01", System.Globalization.NumberStyles.HexNumber);  //获取传感器通道配置信息
+                cmd[7] = byte.Parse("01", System.Globalization.NumberStyles.HexNumber);  //获取传感器通道配置信息
 
                 //Verify
                 byte verifyByte = 0;
@@ -2251,7 +2278,7 @@ namespace CreepRateApp
                 {
                     verifyByte ^= cmd[i];
                 }
-                cmd[5] = verifyByte;
+                cmd[8] = verifyByte;
 
                 //转换为十六进制字符串 
                 string sendCmdStr = "";
@@ -2304,21 +2331,26 @@ namespace CreepRateApp
             try
             {
                 //生成配置信息 byte数组 对应的 16进制字符串数组
-                byte[] cmd = new byte[6];
+                byte[] cmd = new byte[9];
 
                 //Header
                 cmd[0] = byte.Parse("EB", System.Globalization.NumberStyles.HexNumber);
                 cmd[1] = byte.Parse("90", System.Globalization.NumberStyles.HexNumber);
 
-                //Len
-                cmd[2] = 2;
-
-                //data
+                //Device_id
+                cmd[2] = Convert.ToByte(EquipmentId);
+                //Reserve
+                cmd[3] = byte.Parse("ff", System.Globalization.NumberStyles.HexNumber);
                 //--Category
-                cmd[3] = byte.Parse("05", System.Globalization.NumberStyles.HexNumber);
+                cmd[4] = byte.Parse("05", System.Globalization.NumberStyles.HexNumber);
 
+                //Len
+                cmd[5] = byte.Parse("00", System.Globalization.NumberStyles.HexNumber);
+                cmd[6] = byte.Parse("01", System.Globalization.NumberStyles.HexNumber);
+
+               
                 //--data 
-                cmd[4] = byte.Parse("02", System.Globalization.NumberStyles.HexNumber);  //获取传感器通道配置信息
+                cmd[7] = byte.Parse("01", System.Globalization.NumberStyles.HexNumber);  //获取传感器通道配置信息
 
                 //Verify
                 byte verifyByte = 0;
@@ -2326,7 +2358,7 @@ namespace CreepRateApp
                 {
                     verifyByte ^= cmd[i];
                 }
-                cmd[5] = verifyByte;
+                cmd[8] = verifyByte;
 
                 //转换为十六进制字符串 
                 string sendCmdStr = "";
@@ -2366,6 +2398,100 @@ namespace CreepRateApp
             {
                 XtraMessageBox.Show(exception.Message, "异常", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
+        }
+
+        private void barButtonItem15_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            EquipmentIdConfigForm spc = new EquipmentIdConfigForm(ComDevice);
+            try//此处用try做异常处理，是为了防止COM不存在释放Dialog后，ShowDialog无法找到窗体资源而报错。
+            {
+                spc.ShowDialog();
+            }
+            catch { }
+        }
+
+        private void barButtonItem16_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            try
+            {
+                //生成配置信息 byte数组 对应的 16进制字符串数组
+                byte[] cmd = new byte[9];
+
+                //Header
+                cmd[0] = byte.Parse("EB", System.Globalization.NumberStyles.HexNumber);
+                cmd[1] = byte.Parse("90", System.Globalization.NumberStyles.HexNumber);
+
+                //Device_id
+                cmd[2] = Convert.ToByte(EquipmentId);
+                //Reserve
+                cmd[3] = byte.Parse("ff", System.Globalization.NumberStyles.HexNumber);
+                //--Category
+                cmd[4] = byte.Parse("05", System.Globalization.NumberStyles.HexNumber);
+
+                //Len
+                cmd[5] = byte.Parse("00", System.Globalization.NumberStyles.HexNumber);
+                cmd[6] = byte.Parse("01", System.Globalization.NumberStyles.HexNumber);
+
+
+                //--data 
+                cmd[7] = byte.Parse("05", System.Globalization.NumberStyles.HexNumber);  //清除数据
+
+                //Verify
+                byte verifyByte = 0;
+                for (int i = 0; i < cmd.Length; i++)
+                {
+                    verifyByte ^= cmd[i];
+                }
+                cmd[8] = verifyByte;
+
+                //转换为十六进制字符串 
+                string sendCmdStr = "";
+                for (int i = 0; i < cmd.Length; i++)
+                {
+                    StringBuilder hexStr = new StringBuilder(cmd[i].ToString("X2"));
+                    //将上述16进制字符串数组 拼接为 0x_ _ 格式 的字符串 
+                    sendCmdStr += "0x" + hexStr + " ";
+                    //cmdStrs[i] = hexStr + "";
+                }
+
+                //===============================================
+
+
+                //下发通道配置信息
+                //1、关闭线程 
+                //MainForm.thrRecv.Abort();    //所谓的关闭线程
+                //MainForm.thrRecv.Join();    //挂起
+                //2、关闭udpcRecv
+                //MainForm.udpcRecv.Close();
+                //MainForm.udpcRecv = null;
+                //3、创建udpcSend
+
+                //4、创建thrSend
+                thrSend = new Thread(MainForm.SendMessage);
+
+                //5、开启thrSend（thrSend执行结束后自动关闭udpcSend，销毁thrSend） 
+                thrSend.Start(sendCmdStr);
+
+                //6、在主界面显示发送内容 
+                showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[获取故障配置]_" + System.DateTime.Now.ToString() + "：", sendCmdStr));
+
+
+                XtraMessageBox.Show("指令下发成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception exception)
+            {
+                XtraMessageBox.Show(exception.Message, "异常", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private void barButtonItem17_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            SensorSpanConfigForm spc = new SensorSpanConfigForm(this);
+            try//此处用try做异常处理，是为了防止COM不存在释放Dialog后，ShowDialog无法找到窗体资源而报错。
+            {
+                spc.ShowDialog();
+            }
+            catch { }
         }
     }
 }

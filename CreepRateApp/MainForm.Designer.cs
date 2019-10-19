@@ -67,6 +67,8 @@
             this.barButtonItem12 = new DevExpress.XtraBars.BarButtonItem();
             this.barButtonItem13 = new DevExpress.XtraBars.BarButtonItem();
             this.barButtonItem14 = new DevExpress.XtraBars.BarButtonItem();
+            this.barButtonItem15 = new DevExpress.XtraBars.BarButtonItem();
+            this.barButtonItem16 = new DevExpress.XtraBars.BarButtonItem();
             this.page_HotAnalysis = new DevExpress.XtraBars.Ribbon.RibbonPage();
             this.rpg_SerialPortDateAnalysis = new DevExpress.XtraBars.Ribbon.RibbonPageGroup();
             this.ribbonPage1 = new DevExpress.XtraBars.Ribbon.RibbonPage();
@@ -101,6 +103,7 @@
             this.colTal_Teu = new DevExpress.XtraGrid.Columns.GridColumn();
             this.colRuHuaLv = new DevExpress.XtraGrid.Columns.GridColumn();
             this.colIsHuiZhuTie = new DevExpress.XtraGrid.Columns.GridColumn();
+            this.barButtonItem17 = new DevExpress.XtraBars.BarButtonItem();
             ((System.ComponentModel.ISupportInitialize)(this.ribbon)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.repositoryItemImageEdit1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControl1)).BeginInit();
@@ -161,10 +164,13 @@
             this.barButtonItem11,
             this.barButtonItem12,
             this.barButtonItem13,
-            this.barButtonItem14});
+            this.barButtonItem14,
+            this.barButtonItem15,
+            this.barButtonItem16,
+            this.barButtonItem17});
             this.ribbon.Location = new System.Drawing.Point(0, 0);
-            this.ribbon.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.ribbon.MaxItemId = 22;
+            this.ribbon.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.ribbon.MaxItemId = 25;
             this.ribbon.Name = "ribbon";
             this.ribbon.Pages.AddRange(new DevExpress.XtraBars.Ribbon.RibbonPage[] {
             this.page_HotAnalysis,
@@ -172,7 +178,7 @@
             this.ribbon.RepositoryItems.AddRange(new DevExpress.XtraEditors.Repository.RepositoryItem[] {
             this.repositoryItemImageEdit1});
             this.ribbon.ShowExpandCollapseButton = DevExpress.Utils.DefaultBoolean.True;
-            this.ribbon.Size = new System.Drawing.Size(1619, 185);
+            this.ribbon.Size = new System.Drawing.Size(1295, 167);
             this.ribbon.StatusBar = this.ribbonStatusBar;
             this.ribbon.Tag = "";
             // 
@@ -362,6 +368,25 @@
             this.barButtonItem14.Name = "barButtonItem14";
             this.barButtonItem14.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.barButtonItem14_ItemClick);
             // 
+            // barButtonItem15
+            // 
+            this.barButtonItem15.Caption = "设备ID配置";
+            this.barButtonItem15.Glyph = ((System.Drawing.Image)(resources.GetObject("barButtonItem15.Glyph")));
+            this.barButtonItem15.Id = 22;
+            this.barButtonItem15.Name = "barButtonItem15";
+            this.barButtonItem15.RibbonStyle = ((DevExpress.XtraBars.Ribbon.RibbonItemStyles)(((DevExpress.XtraBars.Ribbon.RibbonItemStyles.Large | DevExpress.XtraBars.Ribbon.RibbonItemStyles.SmallWithText)
+                        | DevExpress.XtraBars.Ribbon.RibbonItemStyles.SmallWithoutText)));
+            this.barButtonItem15.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.barButtonItem15_ItemClick);
+            // 
+            // barButtonItem16
+            // 
+            this.barButtonItem16.Caption = "清除数据";
+            this.barButtonItem16.Glyph = ((System.Drawing.Image)(resources.GetObject("barButtonItem16.Glyph")));
+            this.barButtonItem16.Id = 23;
+            this.barButtonItem16.Name = "barButtonItem16";
+            this.barButtonItem16.RibbonStyle = DevExpress.XtraBars.Ribbon.RibbonItemStyles.Large;
+            this.barButtonItem16.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.barButtonItem16_ItemClick);
+            // 
             // page_HotAnalysis
             // 
             this.page_HotAnalysis.Groups.AddRange(new DevExpress.XtraBars.Ribbon.RibbonPageGroup[] {
@@ -379,6 +404,7 @@
             this.rpg_SerialPortDateAnalysis.ItemLinks.Add(this.barButtonItem9);
             this.rpg_SerialPortDateAnalysis.ItemLinks.Add(this.barButtonItem13);
             this.rpg_SerialPortDateAnalysis.ItemLinks.Add(this.barButtonItem14);
+            this.rpg_SerialPortDateAnalysis.ItemLinks.Add(this.barButtonItem16);
             this.rpg_SerialPortDateAnalysis.Name = "rpg_SerialPortDateAnalysis";
             this.rpg_SerialPortDateAnalysis.ShowCaptionButton = false;
             this.rpg_SerialPortDateAnalysis.Text = "串口数据分析";
@@ -396,16 +422,18 @@
             this.ribbonPageGroup1.ItemLinks.Add(this.barButtonItem10);
             this.ribbonPageGroup1.ItemLinks.Add(this.barButtonItem2);
             this.ribbonPageGroup1.ItemLinks.Add(this.barButtonItem11);
+            this.ribbonPageGroup1.ItemLinks.Add(this.barButtonItem15);
+            this.ribbonPageGroup1.ItemLinks.Add(this.barButtonItem17);
             this.ribbonPageGroup1.Name = "ribbonPageGroup1";
             this.ribbonPageGroup1.ShowCaptionButton = false;
             // 
             // ribbonStatusBar
             // 
-            this.ribbonStatusBar.Location = new System.Drawing.Point(0, 886);
-            this.ribbonStatusBar.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.ribbonStatusBar.Location = new System.Drawing.Point(0, 727);
+            this.ribbonStatusBar.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.ribbonStatusBar.Name = "ribbonStatusBar";
             this.ribbonStatusBar.Ribbon = this.ribbon;
-            this.ribbonStatusBar.Size = new System.Drawing.Size(1619, 33);
+            this.ribbonStatusBar.Size = new System.Drawing.Size(1295, 25);
             // 
             // defaultLookAndFeel1
             // 
@@ -416,12 +444,12 @@
             this.layoutControl1.Controls.Add(this.chartControl2);
             this.layoutControl1.Controls.Add(this.chartControl1);
             this.layoutControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.layoutControl1.Location = new System.Drawing.Point(0, 185);
-            this.layoutControl1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.layoutControl1.Location = new System.Drawing.Point(0, 167);
+            this.layoutControl1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.layoutControl1.Name = "layoutControl1";
             this.layoutControl1.OptionsCustomizationForm.DesignTimeCustomizationFormPositionAndSize = new System.Drawing.Rectangle(98, 446, 964, 516);
             this.layoutControl1.Root = this.layoutControlGroup1;
-            this.layoutControl1.Size = new System.Drawing.Size(1619, 701);
+            this.layoutControl1.Size = new System.Drawing.Size(1295, 560);
             this.layoutControl1.TabIndex = 2;
             this.layoutControl1.Text = "layoutControl1";
             // 
@@ -431,8 +459,8 @@
             xyDiagram1.AxisX.VisibleInPanesSerializable = "-1";
             xyDiagram1.AxisY.VisibleInPanesSerializable = "-1";
             this.chartControl2.Diagram = xyDiagram1;
-            this.chartControl2.Location = new System.Drawing.Point(24, 302);
-            this.chartControl2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.chartControl2.Location = new System.Drawing.Point(24, 246);
+            this.chartControl2.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.chartControl2.Name = "chartControl2";
             series1.ArgumentDataMember = "x";
             series1.ArgumentScaleType = DevExpress.XtraCharts.ScaleType.Numerical;
@@ -452,7 +480,7 @@
         series2,
         series3};
             this.chartControl2.SeriesTemplate.View = splineSeriesView4;
-            this.chartControl2.Size = new System.Drawing.Size(1571, 213);
+            this.chartControl2.Size = new System.Drawing.Size(1247, 161);
             this.chartControl2.TabIndex = 5;
             // 
             // chartControl1
@@ -461,8 +489,8 @@
             xyDiagram2.AxisX.VisibleInPanesSerializable = "-1";
             xyDiagram2.AxisY.VisibleInPanesSerializable = "-1";
             this.chartControl1.Diagram = xyDiagram2;
-            this.chartControl1.Location = new System.Drawing.Point(24, 52);
-            this.chartControl1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.chartControl1.Location = new System.Drawing.Point(24, 48);
+            this.chartControl1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.chartControl1.Name = "chartControl1";
             this.chartControl1.PaletteName = "Apex";
             series4.ArgumentDataMember = "x";
@@ -483,7 +511,7 @@
         series5,
         series6};
             this.chartControl1.SeriesTemplate.View = splineSeriesView8;
-            this.chartControl1.Size = new System.Drawing.Size(1571, 194);
+            this.chartControl1.Size = new System.Drawing.Size(1247, 146);
             this.chartControl1.TabIndex = 4;
             // 
             // layoutControlGroup1
@@ -497,7 +525,7 @@
             this.layoutControlGroup4});
             this.layoutControlGroup1.Location = new System.Drawing.Point(0, 0);
             this.layoutControlGroup1.Name = "layoutControlGroup1";
-            this.layoutControlGroup1.Size = new System.Drawing.Size(1619, 701);
+            this.layoutControlGroup1.Size = new System.Drawing.Size(1295, 560);
             this.layoutControlGroup1.Text = "layoutControlGroup1";
             this.layoutControlGroup1.TextVisible = false;
             // 
@@ -508,7 +536,7 @@
             this.layoutControlItem1});
             this.layoutControlGroup2.Location = new System.Drawing.Point(0, 0);
             this.layoutControlGroup2.Name = "layoutControlGroup2";
-            this.layoutControlGroup2.Size = new System.Drawing.Size(1599, 250);
+            this.layoutControlGroup2.Size = new System.Drawing.Size(1275, 198);
             this.layoutControlGroup2.Text = "温度分析曲线";
             // 
             // layoutControlItem1
@@ -517,7 +545,7 @@
             this.layoutControlItem1.CustomizationFormText = "layoutControlItem1";
             this.layoutControlItem1.Location = new System.Drawing.Point(0, 0);
             this.layoutControlItem1.Name = "layoutControlItem1";
-            this.layoutControlItem1.Size = new System.Drawing.Size(1575, 198);
+            this.layoutControlItem1.Size = new System.Drawing.Size(1251, 150);
             this.layoutControlItem1.Text = "layoutControlItem1";
             this.layoutControlItem1.TextSize = new System.Drawing.Size(0, 0);
             this.layoutControlItem1.TextToControlDistance = 0;
@@ -528,9 +556,9 @@
             this.layoutControlGroup3.CustomizationFormText = "斜率分析曲线";
             this.layoutControlGroup3.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
             this.layoutControlItem2});
-            this.layoutControlGroup3.Location = new System.Drawing.Point(0, 250);
+            this.layoutControlGroup3.Location = new System.Drawing.Point(0, 198);
             this.layoutControlGroup3.Name = "layoutControlGroup3";
-            this.layoutControlGroup3.Size = new System.Drawing.Size(1599, 269);
+            this.layoutControlGroup3.Size = new System.Drawing.Size(1275, 213);
             this.layoutControlGroup3.Text = "斜率分析曲线";
             // 
             // layoutControlItem2
@@ -539,7 +567,7 @@
             this.layoutControlItem2.CustomizationFormText = "layoutControlItem2";
             this.layoutControlItem2.Location = new System.Drawing.Point(0, 0);
             this.layoutControlItem2.Name = "layoutControlItem2";
-            this.layoutControlItem2.Size = new System.Drawing.Size(1575, 217);
+            this.layoutControlItem2.Size = new System.Drawing.Size(1251, 165);
             this.layoutControlItem2.Text = "layoutControlItem2";
             this.layoutControlItem2.TextSize = new System.Drawing.Size(0, 0);
             this.layoutControlItem2.TextToControlDistance = 0;
@@ -550,9 +578,9 @@
             this.layoutControlGroup4.CustomizationFormText = "通讯监听窗口";
             this.layoutControlGroup4.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
             this.layoutControlItem3});
-            this.layoutControlGroup4.Location = new System.Drawing.Point(0, 519);
+            this.layoutControlGroup4.Location = new System.Drawing.Point(0, 411);
             this.layoutControlGroup4.Name = "layoutControlGroup4";
-            this.layoutControlGroup4.Size = new System.Drawing.Size(1599, 162);
+            this.layoutControlGroup4.Size = new System.Drawing.Size(1275, 129);
             this.layoutControlGroup4.Text = "通讯监听窗口";
             // 
             // layoutControlItem3
@@ -560,7 +588,7 @@
             this.layoutControlItem3.CustomizationFormText = "layoutControlItem3";
             this.layoutControlItem3.Location = new System.Drawing.Point(0, 0);
             this.layoutControlItem3.Name = "layoutControlItem3";
-            this.layoutControlItem3.Size = new System.Drawing.Size(1575, 110);
+            this.layoutControlItem3.Size = new System.Drawing.Size(1251, 81);
             this.layoutControlItem3.Text = "layoutControlItem3";
             this.layoutControlItem3.TextSize = new System.Drawing.Size(0, 0);
             this.layoutControlItem3.TextToControlDistance = 0;
@@ -696,16 +724,25 @@
             this.colIsHuiZhuTie.VisibleIndex = 10;
             this.colIsHuiZhuTie.Width = 45;
             // 
+            // barButtonItem17
+            // 
+            this.barButtonItem17.Caption = "传感器量程";
+            this.barButtonItem17.Glyph = ((System.Drawing.Image)(resources.GetObject("barButtonItem17.Glyph")));
+            this.barButtonItem17.Id = 24;
+            this.barButtonItem17.Name = "barButtonItem17";
+            this.barButtonItem17.RibbonStyle = DevExpress.XtraBars.Ribbon.RibbonItemStyles.Large;
+            this.barButtonItem17.ItemClick += new DevExpress.XtraBars.ItemClickEventHandler(this.barButtonItem17_ItemClick);
+            // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 22F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1619, 919);
+            this.ClientSize = new System.Drawing.Size(1295, 752);
             this.Controls.Add(this.layoutControl1);
             this.Controls.Add(this.ribbonStatusBar);
             this.Controls.Add(this.ribbon);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "MainForm";
             this.Ribbon = this.ribbon;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -813,6 +850,9 @@
         private DevExpress.XtraLayout.LayoutControlItem layoutControlItem3;
         private DevExpress.XtraBars.BarButtonItem barButtonItem13;
         private DevExpress.XtraBars.BarButtonItem barButtonItem14;
+        private DevExpress.XtraBars.BarButtonItem barButtonItem15;
+        private DevExpress.XtraBars.BarButtonItem barButtonItem16;
+        private DevExpress.XtraBars.BarButtonItem barButtonItem17;
         //public System.Windows.Forms.RichTextBox richTextBox1;
     }
 }

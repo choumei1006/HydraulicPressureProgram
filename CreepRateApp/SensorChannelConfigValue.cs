@@ -33,24 +33,14 @@ namespace CreepRateApp
 
         public static int ADC1_CHx8 = -1;
 
-        /// <summary>
-        /// 温度测点通道号
-        /// </summary>
+       
         public static int ADC1_CHx9 = -1;
 
-        /// <summary>
-        /// 液位测点通道号
-        /// </summary>
         public static int ADC1_CHx10 = -1;
 
-        /// <summary>
-        /// 水分测点通道号
-        /// </summary>
+        
         public static int ADC1_CHx11 = -1;
 
-        /// <summary>
-        /// 预留
-        /// </summary>
         public static int ADC1_CHx12 = -1;
 
         /// <summary>
@@ -144,68 +134,34 @@ namespace CreepRateApp
         /// </summary>
         /// <returns></returns>
         public static string getSendCmd(){
-            byte[] cmd = new byte[35];
-
+            byte[] cmd = new byte[38];
             //Header
             cmd[0] = byte.Parse("EB", System.Globalization.NumberStyles.HexNumber);
             cmd[1] = byte.Parse("90", System.Globalization.NumberStyles.HexNumber);
+            //Device_id
+            cmd[2] = Convert.ToByte(MainForm.EquipmentId);
+            //Reserve
+            cmd[3] = byte.Parse("ff", System.Globalization.NumberStyles.HexNumber);
+            //--Category
+            cmd[4] = byte.Parse("02", System.Globalization.NumberStyles.HexNumber);
 
             //Len
-            cmd[2] = 31;
-
-            //data
-            //--Category
-            cmd[3] = byte.Parse("02", System.Globalization.NumberStyles.HexNumber);
+            cmd[5] = byte.Parse("00", System.Globalization.NumberStyles.HexNumber);
+            cmd[6] = byte.Parse("25", System.Globalization.NumberStyles.HexNumber);
 
             //--data
             for (int m = 0; m < 30; m++) {
-                cmd[m + 4] = byte.Parse(configList[m], System.Globalization.NumberStyles.Integer);
+                cmd[m + 7] = byte.Parse(configList[m], System.Globalization.NumberStyles.Integer);
             }
-               
-            /*
-            cmd[4] = (byte)ADC1_CHx1;
-            cmd[5] = (byte)ADC1_CHx2;
-            cmd[6] = (byte)ADC1_CHx3;
-            cmd[7] = (byte)ADC1_CHx4;
-            cmd[8] = (byte)ADC1_CHx5;
-            cmd[9] = (byte)ADC1_CHx6;
-            cmd[10] = (byte)ADC1_CHx7;
-            cmd[11] = (byte)ADC1_CHx8;
+            
 
-            cmd[12] = (byte)ADC1_CHx9;
-            cmd[13] = (byte)ADC1_CHx10;
-            cmd[14] = (byte)ADC1_CHx11;
-            cmd[15] = (byte)ADC1_CHx12;
-
-
-            cmd[16] = (byte)ADC2_CHx1;
-            cmd[17] = (byte)ADC2_CHx2;
-            cmd[18] = (byte)ADC2_CHx3;
-            cmd[19] = (byte)ADC2_CHx4;
-            cmd[20] = (byte)ADC2_CHx5;
-            cmd[21] = (byte)ADC2_CHx6;
-            cmd[22] = (byte)ADC2_CHx7;
-            cmd[23] = (byte)ADC2_CHx8;
-            cmd[24] = (byte)ADC2_CHx9;
-            cmd[25] = (byte)ADC2_CHx10;
-            cmd[26] = (byte)ADC2_CHx11;
-            cmd[27] = (byte)ADC2_CHx12;
-            cmd[28] = (byte)ADC2_CHx13;
-            cmd[29] = (byte)ADC2_CHx14;
-            cmd[30] = (byte)ADC2_CHx15;
-
-
-            cmd[31] = (byte)DIN_CHx1;
-            cmd[32] = (byte)DIN_CHx2;
-            cmd[33] = (byte)DIN_CHx3;
-             * */
 
             //Verify
             byte verifyByte = 0;
             for(int i=0;i<cmd.Length;i++){
                 verifyByte^=cmd[i];
             }
-            cmd[34] = verifyByte;
+            cmd[37] = verifyByte;
 
             //转换为十六进制字符串
             String cmdStr ="";
