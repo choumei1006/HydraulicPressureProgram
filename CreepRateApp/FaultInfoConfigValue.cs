@@ -15,99 +15,129 @@ namespace CreepRateApp
         public static List<string> configList = null;
 
         /// <summary>
-        /// 系统欠压（压力测点2）：建压时长（单位:S）
+        /// 起始压力
+        /// </summary>
+        public static string Start_press = "";
+
+        /// <summary>
+        /// 开机压力
+        /// </summary>
+        public static string Open_press = "";
+
+        /// <summary>
+        /// 稳定持续时长
+        /// </summary>
+        public static string dura_stb = "";
+
+        /// <summary>
+        /// 建压超时时长
         /// </summary>
         public static string TIME_SYS = "";
 
         /// <summary>
-        /// 系统欠压：最低压力（单位:MPa）
+        /// 系统最低压力
         /// </summary>
         public static string MINPRESS_SYS = "";
 
         /// <summary>
-        /// 系统超压：最高压力（单位:MPa）
+        /// 系统最高压力 
         /// </summary>
         public static string MAXPRESS_SYS = "";
 
         /// <summary>
-        /// 仓压力（压力测点3）：最低压力（单位:MPa）
+        /// 仓压最低压力
         /// </summary>
         public static string MINPRESS_house = "";
 
         /// <summary>
-        /// 仓压力（压力测点3）：最高压力（单位:MPa）
+        /// 系统压力降低值
+        /// </summary>
+        public static string Syspress_dn = "";
+
+        /// <summary>
+        /// 仓压力最高压力
         /// </summary>
         public static string MAXPRESS_house = "";
 
         /// <summary>
-        /// 回转连接器漏油：压差（单位:MPa）
+        /// 回转连接器压差
         /// </summary>
-        public static string Oil_rotary_inc = "";
+        public static string rotary_Dvalue = "";
 
         /// <summary>
-        /// 蓄能器充气压力（压力测点？）：压力（单位:MPa）
+        /// 蓄能压力时长
+        /// </summary>
+        public static string Infla_time = "";
+
+        /// <summary>
+        /// 蓄能最低压力
         /// </summary>
         public static string Infla_press = "";
 
         /// <summary>
-        /// 左供油压力（压力测点5）：最低压力（单位:MPa）
+        /// 左供油最低压力
         /// </summary>
         public static string MINPRESS_LEFT = "";
 
         /// <summary>
-        /// 左供油压力（压力测点5）：最高压力（单位:MPa）
+        /// 左供油最高压力
         /// </summary>
         public static string MAXPRESS_LEFT = "";
 
         /// <summary>
-        /// 右供油压力（压力测点7）：最低压力（单位:MPa）
+        /// 右供油最低压力
         /// </summary>
         public static string MINPRESS_RIGHT = "";
 
         /// <summary>
-        /// 右供油压力（压力测点7）：最高压力（单位:MPa）
+        /// 右供油最高压力
         /// </summary>
         public static string MAXPRESS_RIGHT = "";
 
         /// <summary>
-        /// 固定供油压力（压力测点8）：最低压力（单位:MPa）
+        /// 固定供油最低压力
         /// </summary>
         public static string MINPRESS_hold = "";
 
         /// <summary>
-        /// 固定供油压力（压力测点8）：最高压力（单位:MPa）
+        /// 固定供油最高压力
         /// </summary>
         public static string MAXPRESS_hold = "";
 
         /// <summary>
-        /// 固定器异常：压力测点8）异常压力阈值（单位:MPa）
+        /// 固定器异常压力值
         /// </summary>
-        public static string Pressfault_hold = "";
+        public static string fault_hold = "";
 
         /// <summary>
-        /// 温度过高：温度阈值（单位:°）
+        /// 阀组压力限值
         /// </summary>
-        public static string Temp = "";
+        public static string Valves_maxpress = "";
 
         /// <summary>
-        /// 液位：下限值
+        /// 阀组压力差值
         /// </summary>
-        public static string Minliquid = "";
+        public static string Valves_Dvalue = "";
 
         /// <summary>
-        /// 液位：上限值
+        /// 温度最高值
         /// </summary>
-        public static string Maxliquid = "";
+        public static string Temp_max = "";
 
         /// <summary>
-        /// 含水量：上限值
+        /// 液体饱和度上限
         /// </summary>
-        public static string Maxwater = "";
+        public static string Liquid_Max = "";
 
         /// <summary>
-        /// 过滤器两端压差：差值
+        /// Bit0：液位低
         /// </summary>
-        public static string Filterpress = "";
+        public static string digital_bit0 = "";
+
+        /// <summary>
+        /// Bit1：过滤器堵塞
+        /// </summary>
+        public static string digital_bit1 = "";
 
         /// <summary>
         /// 通过集合数据，设置配置信息
@@ -115,30 +145,37 @@ namespace CreepRateApp
         /// <param name="valueList"></param>
         public static void setChannelConfigValue(List<String> valueList)
         {
+            //25项，此处的valueList数组中String保证合理性检测（不为空）
             configList = valueList;
 
-            TIME_SYS = valueList[0];
-            MINPRESS_SYS = valueList[1];
-            MAXPRESS_SYS = valueList[2];
-            MINPRESS_house = valueList[3];
-            MAXPRESS_house = valueList[4];
-            Oil_rotary_inc = valueList[5];
-            Infla_press = valueList[6];
-            MINPRESS_LEFT = valueList[7];
+            Start_press = valueList[0];
+            Open_press = valueList[1];
+            dura_stb = valueList[2];
+            TIME_SYS = valueList[3];
+            MINPRESS_SYS = valueList[4];
+            MAXPRESS_SYS = valueList[5];
+            MINPRESS_house = valueList[6];
+            Syspress_dn = valueList[7];
 
-            MAXPRESS_LEFT = valueList[8];
-            MINPRESS_RIGHT = valueList[9];
-            MAXPRESS_RIGHT = valueList[10];
-            MINPRESS_hold = valueList[11];
+            MAXPRESS_house = valueList[8];
+            rotary_Dvalue = valueList[9];
+            Infla_time = valueList[10];
+            Infla_press = valueList[11];
 
 
-            MAXPRESS_hold = valueList[12];
-            Pressfault_hold = valueList[13];
-            Temp = valueList[14];
-            Minliquid = valueList[15];
-            Maxliquid = valueList[16];
-            Maxwater = valueList[17];
-            Filterpress = valueList[18];
+            MINPRESS_LEFT = valueList[12];
+            MAXPRESS_LEFT = valueList[13];
+            MINPRESS_RIGHT = valueList[14];
+            MAXPRESS_RIGHT = valueList[15];
+            MINPRESS_hold = valueList[16];
+            MAXPRESS_hold = valueList[17];
+            fault_hold = valueList[18];
+            Valves_maxpress = valueList[19];
+            Valves_Dvalue = valueList[20];
+            Temp_max = valueList[21];
+            Liquid_Max = valueList[22];
+            digital_bit0 = valueList[23];
+            digital_bit1 = valueList[24];
             
         }
 
@@ -148,32 +185,54 @@ namespace CreepRateApp
         /// <returns></returns>
         public static string getSendCmd()
         {
-            byte[] cmd = new byte[24];
+            //7+(24*2-1)+1
+            byte[] cmd = new byte[55];
 
             //Header
             cmd[0] = byte.Parse("EB", System.Globalization.NumberStyles.HexNumber);
             cmd[1] = byte.Parse("90", System.Globalization.NumberStyles.HexNumber);
+
             //DEVICE_ID
-            cmd[3] = 1;
+            cmd[2] = MainForm.EquipmentId;
 
 
             //Reserve
-            cmd[4] = byte.Parse("ff", System.Globalization.NumberStyles.HexNumber);;
+            cmd[3] = byte.Parse("ff", System.Globalization.NumberStyles.HexNumber);
 
-            //Len
-            cmd[3] = 0;
-            cmd[4] = 47; 
+            //Category
+            cmd[4] = byte.Parse("01", System.Globalization.NumberStyles.HexNumber);
 
-            //data
-            //--Category
-            cmd[3] = byte.Parse("01", System.Globalization.NumberStyles.HexNumber);
+            //Len (2 byte)
+            cmd[5] = 0;
+            cmd[6] = 47;
 
-            //--data
-            for (int m = 0; m < 19; m++)
+
+            //data(下标7->52（7+2*23-1）最后一个字节digital稍后处理) 
+            for (int m = 0,n = 7; m <= 22; m++,n+=2)
             {
-                cmd[m + 4] = byte.Parse(configList[m], System.Globalization.NumberStyles.Integer);
+
+                int[] intIndexList = { 3, 4, 11, 22, 23 };    //整数下标数组 
+                int byteNum;    //当前访问到的配置信息数组元素
+                 
+                if (intIndexList.Contains(m + 1))
+                { 
+                    byteNum = (int.Parse(configList[m])) * 100;
+                }
+                else { 
+                    byteNum = (int)(Double.Parse(configList[m]) * 100);
+                }
+
+                //分高字节与低字节存储在2个字节中
+                cmd[n] = (byte)((byteNum >> 8) & 255);
+                cmd[n + 1] = (byte)(byteNum & 255); 
+
+
             }
 
+            //data(digital  下标53)
+            byte byte_bit0 = byte.Parse(configList[23], System.Globalization.NumberStyles.Integer);
+            byte byte_bit1 = byte.Parse(configList[24], System.Globalization.NumberStyles.Integer);
+            cmd[53] = (byte)(byte_bit0 ^ (byte_bit1<<1));
             
 
             //Verify
@@ -182,7 +241,7 @@ namespace CreepRateApp
             {
                 verifyByte ^= cmd[i];
             }
-            cmd[23] = verifyByte;
+            cmd[54] = verifyByte;
 
             //转换为十六进制字符串
             String cmdStr = "";

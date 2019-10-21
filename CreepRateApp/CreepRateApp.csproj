@@ -389,6 +389,7 @@
     <EmbeddedResource Include="Form\SensorChannelConfigForm.resx">
       <DependentUpon>SensorChannelConfigForm.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="Properties\DataSources\FaultInfoConfigValue.datasource" />
     <None Include="Properties\licenses.licx" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

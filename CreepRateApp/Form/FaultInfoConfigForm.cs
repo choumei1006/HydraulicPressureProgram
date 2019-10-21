@@ -50,10 +50,10 @@ namespace CreepRateApp
 
             int isVerified = 0;
 
-            try
-            {
+            //try
+            //{
                 //检查故障配置合理性
-                for (int i = 4; i <= 26; i++)
+                for (int i = 1; i <= 23; i++)
                 {
                     Control control = Controls.Find("numericUpDown" + Convert.ToString(i), true)[0];
                     String value = control.GetType().GetProperty("Text").GetValue(control, null).ToString();
@@ -67,29 +67,36 @@ namespace CreepRateApp
                         break;
                     }
                     
-                   }
+                }
+                isVerified = 23;
            
                 //combox取值
                 
                 for (int i = 1; i <= 2; i++)
                 {
                     Control control = Controls.Find("comboBox" + Convert.ToString(i), true)[0];
-                    String value = control.GetType().GetProperty("SelectedText").GetValue(control, null).ToString();
+                    Type tp = control.GetType();
+                    PropertyInfo pt = control.GetType().GetProperty("SelectedText");
+                    object obj = control.GetType().GetProperty("SelectedText").GetValue(control, null);
+                    String value = control.GetType().GetProperty("Text").GetValue(control, null).ToString();
                     if (value == "高电平")
                     {
                         faultConfigValues.Add(Convert.ToString(1));
+                        isVerified ++;
                     }
-                    else {
+                    else if (value == "低电平")
+                    {
                         faultConfigValues.Add(Convert.ToString(0));
+                        isVerified ++ ;
                     }
-                 
-
-                    isVerified = i+22;
+                    else { 
+                        
+                    } 
                 }
 
 
                 //判断是否完成所有故障配置合理性检查
-                if (isVerified == 24)
+                if (isVerified == 25)
                 {
                     //初始化故障配置信息类 
                     FaultInfoConfigValue.setChannelConfigValue(faultConfigValues);
@@ -124,7 +131,6 @@ namespace CreepRateApp
                     MainForm.showMessage(MainForm.richTextBox1, string.Format("{0}{1}", "上位机(" + MainForm.localIpep + ")[故障配置信息下发]_" + System.DateTime.Now.ToString() + "：", sendCmdStr));
 
 
-
                     XtraMessageBox.Show("配置成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     this.Close();
                 }
@@ -132,14 +138,12 @@ namespace CreepRateApp
                 {
                     XtraMessageBox.Show("存在未配置项，请检查更改！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
-            }
-            catch (Exception exception)
-            {
-                XtraMessageBox.Show(exception.Message, "配置异常", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
+            //}
+            //catch (Exception exception)
+            //{
+                //XtraMessageBox.Show(exception.Message, "配置异常", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            //}
         }
-
-
-        public int value1 { get; set; }
+          
     }
 }

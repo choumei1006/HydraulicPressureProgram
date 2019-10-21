@@ -38,45 +38,54 @@ namespace CreepRateApp
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void button1_Click(object sender, EventArgs e)
-        {
-            List<string> stateConfigValues = new List<string>();  //存放故障配置值
+        { 
+            String device_id = textBox1.Text;
 
-            //int isVerified = 0;
+            //设置设备ID静态变量
+            MainForm.EquipmentId = byte.Parse(device_id, System.Globalization.NumberStyles.Integer);
 
             try
             {
-                //检查故障配置合理性并初始化保存
-                /**if (toggleSwitch1.IsOn) {
-                    SensorStateConfigValue.Valve1 = 1;
-                }
-                if (toggleSwitch2.IsOn)
-                {
-                    SensorStateConfigValue.Valve2 = 1;
-                }
-                if (toggleSwitch3.IsOn)
-                {
-                    SensorStateConfigValue.Valve3 = 1;
-                }
-                if (toggleSwitch4.IsOn)
-                {
-                    SensorStateConfigValue.Valve4 = 1;
-                }
-                if (toggleSwitch5.IsOn)
-                {
-                    SensorStateConfigValue.Valve5 = 1;
-                }
-                 **/
-
                 //生成配置信息 byte数组 对应的 16进制字符串数组
-                string sendCmdStr = SensorStateConfigValue.getSendCmd();
+                byte[] cmd = new byte[10];
 
-                //将上述16进制字符串数组 拼接为 0x_ _ 格式 的字符串
-                /*string sendCmdStr = "";
-                for (int i = 0; i < sendCmd.Length; i++)
+                //Header
+                cmd[0] = byte.Parse("EB", System.Globalization.NumberStyles.HexNumber);
+                cmd[1] = byte.Parse("90", System.Globalization.NumberStyles.HexNumber);
+                //Device_id
+                cmd[2] = MainForm.EquipmentId;
+                //Reserve
+                cmd[3] = byte.Parse("ff", System.Globalization.NumberStyles.HexNumber);
+                //--Category
+                cmd[4] = byte.Parse("06", System.Globalization.NumberStyles.HexNumber);
+
+                //Len(2 byte)
+                cmd[5] = 0;
+                cmd[6] = 2;
+
+                //--data
+                cmd[7] = MainForm.EquipmentId;
+                cmd[8] = byte.Parse("ff", System.Globalization.NumberStyles.HexNumber);    //预留
+                  
+
+                //Verify
+                byte verifyByte = 0;
+                for (int i = 0; i < cmd.Length; i++)
                 {
-                    sendCmdStr += "0x" + sendCmd[i] + " ";
+                    verifyByte ^= cmd[i];
                 }
-                 * */
+                cmd[9] = verifyByte;
+
+                //转换为十六进制字符串
+                String sendCmdStr = "";
+                for (int i = 0; i < cmd.Length; i++)
+                {
+                    StringBuilder hexStr = new StringBuilder(cmd[i].ToString("X2"));
+                    sendCmdStr += "0x" + hexStr + " ";
+                }
+
+                //===============================================
+
 
                 //下发通道配置信息
                 //1、关闭线程 
@@ -94,24 +103,17 @@ namespace CreepRateApp
                 MainForm.thrSend.Start(sendCmdStr);
 
                 //6、在主界面显示发送内容 
-                MainForm.showMessage(MainForm.richTextBox1, string.Format("{0}{1}", "上位机(" + MainForm.localIpep + ")[传感器状态配置信息下发]_" + System.DateTime.Now.ToString() + "：", sendCmdStr));
+                MainForm.showMessage(MainForm.richTextBox1, string.Format("{0}{1}", "上位机(" + MainForm.localIpep + ")[设备ID设置]_" + System.DateTime.Now.ToString() + "：", sendCmdStr));
 
 
-
-                XtraMessageBox.Show("配置成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                XtraMessageBox.Show("指令下发成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 this.Close();
-
             }
             catch (Exception exception)
             {
-                XtraMessageBox.Show(exception.Message, "配置异常", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                XtraMessageBox.Show(exception.Message, "异常", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
-
-        
-
-       
-        
-        
+         
     }
 }

@@ -27,8 +27,7 @@ namespace CreepRateApp
         private StringBuilder builder = new StringBuilder();//避免在事件处理方法中反复的创建，定义到外面。
         private int[] sctext = new int[50]; //传感器数据
 
-        private UdpClient udpcSend;   //用于UDP发送的网络服务类
-        private static string localIpAddress = GetLocalIpAddress();
+        private UdpClient udpcSend;   //用于UDP发送的网络服务类 
         //private IPEndPoint localIpep = new IPEndPoint(IPAddress.Parse(localIpAddress), 10101); 
 
        
@@ -53,25 +52,21 @@ namespace CreepRateApp
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void button3_Click(object sender, EventArgs e)
-        {
-            //int[] t1 = getint1();
+        { 
             
-            List<string> channelConfigValues = new List<string>();  //存放通道配置值
+            List<string> spanConfigValues = new List<string>();  //存放量程配置值
 
             int isVerified = 0;
 
             try
             {
-                //检查通道配置合理性
+                //检查量程配置合理性
                 for (int i = 1; i <= 24; i++)
-                {
-                    //Control control2 = Controls.Find("numericUpDown1", true)[0];
+                { 
                     Control control = Controls.Find("numericUpDown" + Convert.ToString(i), true)[0];
                     String value = control.GetType().GetProperty("Text").GetValue(control, null).ToString();
-                    
-                        
-                    channelConfigValues.Add(value);
-                                                            
+
+                    spanConfigValues.Add(value);  
                                            
                     isVerified = i;
                 }
@@ -79,7 +74,7 @@ namespace CreepRateApp
                 if (isVerified == 24)
                 {
                     //初始化传感器通道配置信息类
-                    SensorSpanConfigValue.setChannelConfigValue(channelConfigValues);
+                    SensorSpanConfigValue.setSpanConfigValue(spanConfigValues);
 
                     //生成配置信息 byte数组 对应的 16进制字符串数组
                     string sendCmdStr = SensorSpanConfigValue.getSendCmd();
@@ -107,16 +102,14 @@ namespace CreepRateApp
                     MainForm.thrSend.Start(sendCmdStr);
 
                     //6、在主界面显示发送内容 
-                    MainForm.showMessage(MainForm.richTextBox1, string.Format("{0}{1}", "上位机(" + MainForm.localIpep + ")[传感器通道配置信息下发]_" + System.DateTime.Now.ToString() + "：", sendCmdStr));
-
-                    
-
+                    MainForm.showMessage(MainForm.richTextBox1, string.Format("{0}{1}", "上位机(" + MainForm.localIpep + ")[传感器量程配置信息下发]_" + System.DateTime.Now.ToString() + "：", sendCmdStr));
+                     
                     XtraMessageBox.Show("配置成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     this.Close();
                 }
                 else
                 {
-                    XtraMessageBox.Show("存在未配置通道，请检查更改！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    XtraMessageBox.Show("存在未配置量程，请检查更改！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
             catch(Exception exception) {
@@ -133,22 +126,7 @@ namespace CreepRateApp
         
 
 
-
-        /// <summary>
-        /// 获取本机IP
-        /// </summary>
-        /// <returns></returns>
-        private static string GetLocalIpAddress()
-        {
-            string hostName = Dns.GetHostName();   //获取本机名
-            IPHostEntry localhost = Dns.GetHostByName(hostName);    //方法已过期，可以获取IPv4的地址
-            //IPHostEntry localhost = Dns.GetHostEntry(hostName);   //获取IPv6地址
-            IPAddress localaddr = localhost.AddressList[0];
-
-            return localaddr.ToString();
-        }
-
-        
+ 
         
         
     }

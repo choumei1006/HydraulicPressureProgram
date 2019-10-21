@@ -36,10 +36,10 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(207, 267);
+            this.button1.Location = new System.Drawing.Point(181, 103);
             this.button1.Margin = new System.Windows.Forms.Padding(2);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(102, 36);
+            this.button1.Size = new System.Drawing.Size(86, 36);
             this.button1.TabIndex = 58;
             this.button1.Text = "保存";
             this.button1.UseVisualStyleBackColor = true;
@@ -48,40 +48,42 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(232, 313);
+            this.label1.Location = new System.Drawing.Point(278, 376);
             this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(0, 18);
+            this.label1.Size = new System.Drawing.Size(0, 22);
             this.label1.TabIndex = 59;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(95, 82);
+            this.label2.Location = new System.Drawing.Point(58, 41);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(69, 18);
+            this.label2.Size = new System.Drawing.Size(83, 22);
             this.label2.TabIndex = 60;
             this.label2.Text = "设备ID：";
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(207, 79);
+            this.textBox1.Location = new System.Drawing.Point(149, 38);
+            this.textBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(190, 26);
+            this.textBox1.Size = new System.Drawing.Size(241, 29);
             this.textBox1.TabIndex = 61;
             // 
             // EquipmentIdConfigForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(120F, 120F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(144F, 144F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(539, 375);
+            this.ClientSize = new System.Drawing.Size(457, 169);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.button1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
-            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "EquipmentIdConfigForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "设备ID配置";
