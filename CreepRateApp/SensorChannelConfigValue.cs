@@ -147,8 +147,8 @@ namespace CreepRateApp
             cmd[4] = byte.Parse("02", System.Globalization.NumberStyles.HexNumber);
 
             //Len(2 byte)
-            cmd[5] = 0;
-            cmd[6] = 30;
+            cmd[5] = 30;
+            cmd[6] = 0;
 
             //--data
             for (int m = 0; m < 30; m++) {

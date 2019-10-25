@@ -203,8 +203,8 @@ namespace CreepRateApp
             cmd[4] = byte.Parse("01", System.Globalization.NumberStyles.HexNumber);
 
             //Len (2 byte)
-            cmd[5] = 0;
-            cmd[6] = 47;
+            cmd[5] = 47;
+            cmd[6] = 0;
 
 
             //data(下标7->52（7+2*23-1）最后一个字节digital稍后处理) 
@@ -223,8 +223,8 @@ namespace CreepRateApp
                 }
 
                 //分高字节与低字节存储在2个字节中
-                cmd[n] = (byte)((byteNum >> 8) & 255);
-                cmd[n + 1] = (byte)(byteNum & 255); 
+                cmd[n] = (byte)(byteNum & 255);
+                cmd[n + 1] =    (byte)((byteNum >> 8) & 255); 
 
 
             }

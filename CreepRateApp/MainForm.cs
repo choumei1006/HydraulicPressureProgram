@@ -41,7 +41,7 @@ namespace CreepRateApp
 
         //richTextBox1窗体
         public static System.Windows.Forms.RichTextBox richTextBox1;
-        public static byte EquipmentId = 0;
+        public static byte EquipmentId = 255;
         private ModbusCRC crc = new ModbusCRC();
         private StringBuilder builder = new StringBuilder();//避免在事件处理方法中反复的创建，定义到外面。
         private int received_count = 0;//接收计数
@@ -286,6 +286,7 @@ namespace CreepRateApp
         //bool isNeedUdpRecv;   //是否监听UDP报文，在UDP监听阶段为true
         public static Thread thrRecv = new Thread(ReceiveMessage);       //线程：监听UDP报文
         public static Thread thrSend;       //线程：监听UDP报文
+        public static bool isCollecting = false;
         
 
         private static readonly object lockHelper = new object();
@@ -300,15 +301,15 @@ namespace CreepRateApp
             //设置RichTextBox1的相关位置属性
             richTextBox1 = new System.Windows.Forms.RichTextBox();
             layoutControl1.Controls.Add(richTextBox1);
-
             richTextBox1.Location = new System.Drawing.Point(24, 571);
             richTextBox1.Name = "richTextBox1";
             richTextBox1.Size = new System.Drawing.Size(1571, 106);
             richTextBox1.TabIndex = 6;
             richTextBox1.Text = "";
-
             this.layoutControlItem3.Control = richTextBox1;
             this.layoutControlItem3.TextVisible = false;
+
+
 
             //设置串口相关属性
             //端口
@@ -329,9 +330,8 @@ namespace CreepRateApp
             System.Timers.Timer timer = new System.Timers.Timer();
             timer.Enabled = true;
             timer.Interval = double.Parse(GlobalValue.IntalvasTime); //执行间隔时间,单位为毫秒; 这里实际间隔为10分钟  
-            //timer.Interval = double.Parse(settings.IntervalTime);
-            timer.Start();
-            timer.Elapsed += new System.Timers.ElapsedEventHandler(timer1_Tick);
+            //timer.Start();
+            //timer.Elapsed += new System.Timers.ElapsedEventHandler(timer1_Tick);   //定时发送接收数据的指令
 
             //开启UDP监听
             //udpClient = new UdpClient(localIpep);
@@ -339,9 +339,7 @@ namespace CreepRateApp
             //thrRecv = new Thread(ReceiveMessage);
             thrRecv.Start(); 
             showMessage(richTextBox1,string.Format("{0}{1}", "上位机(" + localIpep + ")_" + System.DateTime.Now.ToString() + "：", "UDP监听已开启"));
-           
             
-
 
         }
 
@@ -936,83 +934,7 @@ namespace CreepRateApp
             }
         }
 
-        /// <summary>
-        /// 停止并分析数据
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void barButtonItem4_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            try
-            {
-                //生成配置信息 byte数组 对应的 16进制字符串数组
-                byte[] cmd = new byte[9];
-
-                //Header
-                cmd[0] = byte.Parse("EB", System.Globalization.NumberStyles.HexNumber);
-                cmd[1] = byte.Parse("90", System.Globalization.NumberStyles.HexNumber);
-                //Device_id
-                cmd[2] = MainForm.EquipmentId;
-                //Reserve
-                cmd[3] = byte.Parse("ff", System.Globalization.NumberStyles.HexNumber);
-                //--Category
-                cmd[4] = byte.Parse("05", System.Globalization.NumberStyles.HexNumber);
-
-                //Len(2 byte)
-                cmd[5] = 0;
-                cmd[6] = 1;
-
-
-                //data  
-                cmd[7] = byte.Parse("03", System.Globalization.NumberStyles.HexNumber);
-
-
-                //Verify
-                byte verifyByte = 0;
-                for (int i = 0; i < cmd.Length; i++)
-                {
-                    verifyByte ^= cmd[i];
-                }
-                cmd[8] = verifyByte;
-
-                //转换为十六进制字符串
-                String sendCmdStr = "";
-                for (int i = 0; i < cmd.Length; i++)
-                {
-                    StringBuilder hexStr = new StringBuilder(cmd[i].ToString("X2"));
-                    sendCmdStr += "0x" + hexStr + " ";
-                }
-
-                //===============================================
-
-
-                //下发通道配置信息
-                //1、关闭线程 
-                //MainForm.thrRecv.Abort();    //所谓的关闭线程
-                //MainForm.thrRecv.Join();    //挂起
-                //2、关闭udpcRecv
-                //MainForm.udpcRecv.Close();
-                //MainForm.udpcRecv = null;
-                //3、创建udpcSend
-
-                //4、创建thrSend
-                thrSend = new Thread(MainForm.SendMessage);
-
-                //5、开启thrSend（thrSend执行结束后自动关闭udpcSend，销毁thrSend） 
-                thrSend.Start(sendCmdStr);
-
-                //6、在主界面显示发送内容 
-                showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[暂停采集]_" + System.DateTime.Now.ToString() + "：", sendCmdStr));
-
-
-                XtraMessageBox.Show("指令下发成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            catch (Exception exception)
-            {
-                XtraMessageBox.Show(exception.Message, "异常", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-
-        }
+        
 
 
 
@@ -1707,7 +1629,7 @@ namespace CreepRateApp
 
         /// <summary>
         /// 网口通信窗口
-        /// 该按钮【已弃用】
+        /// 注：该按钮【已弃用】
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -1791,12 +1713,16 @@ namespace CreepRateApp
                         //获取数据段长度(根据协议规定，data_len存在数据包的第6 、7个字节，下标为5、6)
                         byte b1 = byteRecv[5];
                         byte b2 = byteRecv[6]; 
-                        int dataLen = (b1 << 8) ^ b2;
-                        if ( dataLen != hexStrs.Count-8)                 //没有数据或数据段长度无效
+                        int dataLen = (b2 << 8) ^ b1;
+                        if ( (hexStrs[4]+"" != "83") &&(dataLen != hexStrs.Count-8) )                 //没有数据或数据段长度无效
                         {
                             showMessage(richTextBox1, string.Format("{0}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "：无效数据包"));
                         }
                         else {
+                            //读取并设置设备号device_id
+                            byte device_num = byteRecv[2];
+                            EquipmentId = device_num;    
+
                             StringBuilder cmdStr = new StringBuilder();
                             for (int i = 7; i <= 7+dataLen-1; i++)
                             {
@@ -1815,6 +1741,7 @@ namespace CreepRateApp
                                 //数据应答
                                 case "83":
                                     showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "_数据应答：", cmdStr));
+                                    //TODO   曲线显示
                                     break;
                                 //传感器量程配置应答
                                 case "84":
@@ -1827,7 +1754,6 @@ namespace CreepRateApp
                                         StringBuilder status = hexStrs[7];   //获取status值
                                         switch (status + "")
                                         {
-
                                             //故障已配置信息   TODO:接收随后的故障信息应答包
                                             case "01":
                                                 showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "_交互应答：", "故障已配置信息"));
@@ -1853,6 +1779,10 @@ namespace CreepRateApp
                                             //已设置设备ID      TODO:接收随后的设备ID应答包
                                             case "06":
                                                 showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "_交互应答：", "已设置设备ID"));
+                                                break;
+                                            //获取量程配置信息      TODO:接收随后的设备ID应答包
+                                            case "07":
+                                                showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "_交互应答：", "获取量程配置信息"));
                                                 break;
                                             //传感器通道未配置信息
                                             case "81":
@@ -2023,7 +1953,7 @@ namespace CreepRateApp
         }
 
 
-        //********************************************主界面的命令发送事件函数**************************************************
+        //*************************************************主界面的命令发送事件函数*******************************************************
 
         /// <summary>
         /// 开始采集
@@ -2034,72 +1964,167 @@ namespace CreepRateApp
         {
             try
             {
-                //生成配置信息 byte数组 对应的 16进制字符串数组
-                byte[] cmd = new byte[9];
-
-                //Header
-                cmd[0] = byte.Parse("EB", System.Globalization.NumberStyles.HexNumber);
-                cmd[1] = byte.Parse("90", System.Globalization.NumberStyles.HexNumber);
-                //Device_id
-                cmd[2] = MainForm.EquipmentId;
-                //Reserve
-                cmd[3] = byte.Parse("ff", System.Globalization.NumberStyles.HexNumber);
-                //--Category
-                cmd[4] = byte.Parse("05", System.Globalization.NumberStyles.HexNumber);
-
-                //Len(2 byte)
-                cmd[5] = 0;
-                cmd[6] = 1;
-
-
-                //data  
-                cmd[7] = byte.Parse("04", System.Globalization.NumberStyles.HexNumber);
-
-
-                //Verify
-                byte verifyByte = 0;
-                for (int i = 0; i < cmd.Length; i++)
+                if (!isCollecting)
                 {
-                    verifyByte ^= cmd[i];
+                    //生成配置信息 byte数组 对应的 16进制字符串数组
+                    byte[] cmd = new byte[9];
+
+                    //Header
+                    cmd[0] = byte.Parse("EB", System.Globalization.NumberStyles.HexNumber);
+                    cmd[1] = byte.Parse("90", System.Globalization.NumberStyles.HexNumber);
+                    //Device_id
+                    cmd[2] = MainForm.EquipmentId;
+                    //Reserve
+                    cmd[3] = byte.Parse("ff", System.Globalization.NumberStyles.HexNumber);
+                    //--Category
+                    cmd[4] = byte.Parse("05", System.Globalization.NumberStyles.HexNumber);
+
+                    //Len(2 byte)
+                    cmd[5] = 1;
+                    cmd[6] = 0;
+
+
+                    //data  
+                    cmd[7] = byte.Parse("04", System.Globalization.NumberStyles.HexNumber);
+
+
+                    //Verify
+                    byte verifyByte = 0;
+                    for (int i = 0; i < cmd.Length; i++)
+                    {
+                        verifyByte ^= cmd[i];
+                    }
+                    cmd[8] = verifyByte;
+
+                    //转换为十六进制字符串
+                    String sendCmdStr = "";
+                    for (int i = 0; i < cmd.Length; i++)
+                    {
+                        StringBuilder hexStr = new StringBuilder(cmd[i].ToString("X2"));
+                        sendCmdStr += "0x" + hexStr + " ";
+                    }
+
+                    //===============================================
+
+
+                    //下发通道配置信息
+                    //1、关闭线程 
+                    //MainForm.thrRecv.Abort();    //所谓的关闭线程
+                    //MainForm.thrRecv.Join();    //挂起
+                    //2、关闭udpcRecv
+                    //MainForm.udpcRecv.Close();
+                    //MainForm.udpcRecv = null;
+                    //3、创建udpcSend
+
+                    //4、创建thrSend
+                    thrSend = new Thread(MainForm.SendMessage);
+
+                    //5、开启thrSend（thrSend执行结束后自动关闭udpcSend，销毁thrSend） 
+                    thrSend.Start(sendCmdStr);
+
+                    //6、在主界面显示发送内容 
+                    showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[开始采集]_" + System.DateTime.Now.ToString() + "：", sendCmdStr));
+
+
+                    XtraMessageBox.Show("指令下发成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    isCollecting = true;
                 }
-                cmd[8] = verifyByte;
-
-                //转换为十六进制字符串
-                String sendCmdStr = "";
-                for (int i = 0; i < cmd.Length; i++)
-                {
-                    StringBuilder hexStr = new StringBuilder(cmd[i].ToString("X2"));
-                    sendCmdStr += "0x" + hexStr + " ";
-                }
-
-                //===============================================
-
-
-                //下发通道配置信息
-                //1、关闭线程 
-                //MainForm.thrRecv.Abort();    //所谓的关闭线程
-                //MainForm.thrRecv.Join();    //挂起
-                //2、关闭udpcRecv
-                //MainForm.udpcRecv.Close();
-                //MainForm.udpcRecv = null;
-                //3、创建udpcSend
-
-                //4、创建thrSend
-                thrSend = new Thread(MainForm.SendMessage);
-
-                //5、开启thrSend（thrSend执行结束后自动关闭udpcSend，销毁thrSend） 
-                thrSend.Start(sendCmdStr);
-
-                //6、在主界面显示发送内容 
-                showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[开始采集]_" + System.DateTime.Now.ToString() + "：", sendCmdStr));
-
-
-                XtraMessageBox.Show("指令下发成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                else {
+                    XtraMessageBox.Show("下位机已经开始采集数据！", "信息", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }  
             }
             catch (Exception exception)
             {
                 XtraMessageBox.Show(exception.Message, "异常", MessageBoxButtons.OK, MessageBoxIcon.Information);
             } 
+        }
+
+        /// <summary>
+        /// 暂停采集
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void barButtonItem4_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            try
+            {
+                if(isCollecting){
+                    //生成配置信息 byte数组 对应的 16进制字符串数组
+                    byte[] cmd = new byte[9];
+
+                    //Header
+                    cmd[0] = byte.Parse("EB", System.Globalization.NumberStyles.HexNumber);
+                    cmd[1] = byte.Parse("90", System.Globalization.NumberStyles.HexNumber);
+                    //Device_id
+                    cmd[2] = MainForm.EquipmentId;
+                    //Reserve
+                    cmd[3] = byte.Parse("ff", System.Globalization.NumberStyles.HexNumber);
+                    //--Category
+                    cmd[4] = byte.Parse("05", System.Globalization.NumberStyles.HexNumber);
+
+                    //Len(2 byte)
+                    cmd[5] = 0;
+                    cmd[6] = 1;
+
+
+                    //data  
+                    cmd[7] = byte.Parse("03", System.Globalization.NumberStyles.HexNumber);
+
+
+                    //Verify
+                    byte verifyByte = 0;
+                    for (int i = 0; i < cmd.Length; i++)
+                    {
+                        verifyByte ^= cmd[i];
+                    }
+                    cmd[8] = verifyByte;
+
+                    //转换为十六进制字符串
+                    String sendCmdStr = "";
+                    for (int i = 0; i < cmd.Length; i++)
+                    {
+                        StringBuilder hexStr = new StringBuilder(cmd[i].ToString("X2"));
+                        sendCmdStr += "0x" + hexStr + " ";
+                    }
+
+                    //===============================================
+
+
+                    //下发通道配置信息
+                    //1、关闭线程 
+                    //MainForm.thrRecv.Abort();    //所谓的关闭线程
+                    //MainForm.thrRecv.Join();    //挂起
+                    //2、关闭udpcRecv
+                    //MainForm.udpcRecv.Close();
+                    //MainForm.udpcRecv = null;
+                    //3、创建udpcSend
+
+                    //4、创建thrSend
+                    thrSend = new Thread(MainForm.SendMessage);
+
+                    //5、开启thrSend（thrSend执行结束后自动关闭udpcSend，销毁thrSend） 
+                    thrSend.Start(sendCmdStr);
+
+                    //6、在主界面显示发送内容 
+                    showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[暂停采集]_" + System.DateTime.Now.ToString() + "：", sendCmdStr));
+
+
+                    XtraMessageBox.Show("指令下发成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    isCollecting = false;
+
+                }else{
+                    XtraMessageBox.Show("下位机已经暂停采集数据！", "信息", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                } 
+            }
+            catch (Exception exception)
+            {
+                XtraMessageBox.Show(exception.Message, "异常", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+
         }
 
         /// <summary>
@@ -2110,15 +2135,15 @@ namespace CreepRateApp
         private void barButtonItem5_ItemClick(object sender, ItemClickEventArgs e)
         {
             bool isOpenTrans = true;
-            bool isTransAllData = true;    //是否回传全部数据
+            //bool isTransAllData = true;    //是否回传全部数据
 
 
             //实现按钮caption切换
             if (barButtonItem5.Caption == "开始实时回传")
             {
                 barButtonItem5.Caption = "暂停实时回传";
-                isOpenTrans = true;
-                if (XtraMessageBox.Show("是否实时回传全部数据？", "信息", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == System.Windows.Forms.DialogResult.Yes)
+                //isOpenTrans = true;
+                /*if (XtraMessageBox.Show("是否实时回传全部数据？", "信息", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == System.Windows.Forms.DialogResult.Yes)
                 {
                     isTransAllData = true;
                 }
@@ -2127,7 +2152,7 @@ namespace CreepRateApp
                     XtraMessageBox.Show("该功能正在开发，请您耐心等候！", "信息", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                     //TODO部分数据实时回传
-                }
+                }*/
             }
             else
             {
@@ -2152,8 +2177,8 @@ namespace CreepRateApp
                 cmd[4] = byte.Parse("03", System.Globalization.NumberStyles.HexNumber);
 
                 //Len(2 byte)
-                cmd[5] = 0;
-                cmd[6] = 4;
+                cmd[5] = 4;
+                cmd[6] = 0;
 
 
                 //data 
@@ -2167,16 +2192,16 @@ namespace CreepRateApp
                     cmd[7] = byte.Parse("01", System.Globalization.NumberStyles.HexNumber);
                 }
                 //是否回传全部数据
-                if (isTransAllData)
-                {
+                //if (isTransAllData)
+                //{
                     cmd[8] = byte.Parse("ff", System.Globalization.NumberStyles.HexNumber);
                     cmd[9] = byte.Parse("ff", System.Globalization.NumberStyles.HexNumber);
                     cmd[10] = byte.Parse("ff", System.Globalization.NumberStyles.HexNumber);
-                }
-                else
-                {
+                //}
+                //else
+                //{
                     //TODO回传相应组号数据
-                }
+                //}
 
 
                 //Verify
@@ -2257,8 +2282,8 @@ namespace CreepRateApp
                 cmd[4] = byte.Parse("05", System.Globalization.NumberStyles.HexNumber);
 
                 //Len(2 byte)
-                cmd[5] = 0;
-                cmd[6] = 1;
+                cmd[5] = 1;
+                cmd[6] = 0;
 
 
                 //data  
@@ -2334,8 +2359,8 @@ namespace CreepRateApp
                 cmd[4] = byte.Parse("05", System.Globalization.NumberStyles.HexNumber);
 
                 //Len(2 byte)
-                cmd[5] = 0;
-                cmd[6] = 1;
+                cmd[5] = 1;
+                cmd[6] = 0;
 
 
                 //data  
@@ -2421,8 +2446,8 @@ namespace CreepRateApp
                 cmd[4] = byte.Parse("05", System.Globalization.NumberStyles.HexNumber);
 
                 //Len(2 byte)
-                cmd[5] = 0;
-                cmd[6] = 1;
+                cmd[5] = 1;
+                cmd[6] = 0;
 
 
                 //data  
@@ -2514,8 +2539,8 @@ namespace CreepRateApp
                 cmd[4] = byte.Parse("05", System.Globalization.NumberStyles.HexNumber);
 
                 //Len(2 byte)
-                cmd[5] = 0;
-                cmd[6] = 1;
+                cmd[5] = 1;
+                cmd[6] = 0;
 
 
                 //data  
@@ -2576,7 +2601,7 @@ namespace CreepRateApp
         private void barButtonItem19_ItemClick(object sender, ItemClickEventArgs e)
         {
             bool isOpenTrans = true;
-            bool isTransAllData = true;    //是否回传全部数据
+            //bool isTransAllData = true;    //是否回传全部数据
 
 
             //实现按钮caption切换
@@ -2584,7 +2609,7 @@ namespace CreepRateApp
             {
                 barButtonItem19.Caption = "暂停离线回传";
                 isOpenTrans = true;
-                if (XtraMessageBox.Show("是否离线回传全部数据？", "信息", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == System.Windows.Forms.DialogResult.Yes)
+                /*if (XtraMessageBox.Show("是否离线回传全部数据？", "信息", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == System.Windows.Forms.DialogResult.Yes)
                 {
                     isTransAllData = true;
                 }
@@ -2593,7 +2618,7 @@ namespace CreepRateApp
                     XtraMessageBox.Show("该功能正在开发，请您耐心等候！", "信息", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                     //TODO部分数据实时回传
-                }
+                }*/
             }
             else
             {
@@ -2618,8 +2643,8 @@ namespace CreepRateApp
                 cmd[4] = byte.Parse("03", System.Globalization.NumberStyles.HexNumber);
 
                 //Len(2 byte)
-                cmd[5] = 0;
-                cmd[6] = 4;
+                cmd[5] = 4;
+                cmd[6] = 0;
 
 
                 //data 
@@ -2633,16 +2658,17 @@ namespace CreepRateApp
                     cmd[7] = byte.Parse("03", System.Globalization.NumberStyles.HexNumber);
                 }
                 //是否回传全部数据
-                if (isTransAllData)
-                {
+                //if (isTransAllData)
+                //{
                     cmd[8] = byte.Parse("ff", System.Globalization.NumberStyles.HexNumber);
                     cmd[9] = byte.Parse("ff", System.Globalization.NumberStyles.HexNumber);
                     cmd[10] = byte.Parse("ff", System.Globalization.NumberStyles.HexNumber);
-                }
-                else
-                {
+                //}
+                //else
+
+                //{
                     //TODO回传相应组号数据
-                }
+                //}
 
 
                 //Verify
@@ -2697,5 +2723,10 @@ namespace CreepRateApp
                 XtraMessageBox.Show(exception.Message, "异常", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
+
+        //**************************************************绘制曲线功能部分******************************************************
+
+
+
     }
 }

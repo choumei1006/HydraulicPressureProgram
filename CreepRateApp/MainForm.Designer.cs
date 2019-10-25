@@ -493,7 +493,7 @@
             xyDiagram1.AxisX.VisibleInPanesSerializable = "-1";
             xyDiagram1.AxisY.VisibleInPanesSerializable = "-1";
             this.chartControl2.Diagram = xyDiagram1;
-            this.chartControl2.Location = new System.Drawing.Point(24, 302);
+            this.chartControl2.Location = new System.Drawing.Point(24, 294);
             this.chartControl2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.chartControl2.Name = "chartControl2";
             series1.ArgumentDataMember = "x";
@@ -514,14 +514,19 @@
         series2,
         series3};
             this.chartControl2.SeriesTemplate.View = splineSeriesView4;
-            this.chartControl2.Size = new System.Drawing.Size(1571, 212);
+            this.chartControl2.Size = new System.Drawing.Size(1571, 234);
             this.chartControl2.TabIndex = 5;
             // 
             // chartControl1
             // 
             this.chartControl1.Cursor = System.Windows.Forms.Cursors.Default;
+            xyDiagram2.AxisX.MinorCount = 5;
             xyDiagram2.AxisX.VisibleInPanesSerializable = "-1";
             xyDiagram2.AxisY.VisibleInPanesSerializable = "-1";
+            xyDiagram2.EnableAxisXScrolling = true;
+            xyDiagram2.EnableAxisXZooming = true;
+            xyDiagram2.EnableAxisYScrolling = true;
+            xyDiagram2.EnableAxisYZooming = true;
             this.chartControl1.Diagram = xyDiagram2;
             this.chartControl1.Location = new System.Drawing.Point(24, 52);
             this.chartControl1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
@@ -545,7 +550,7 @@
         series5,
         series6};
             this.chartControl1.SeriesTemplate.View = splineSeriesView8;
-            this.chartControl1.Size = new System.Drawing.Size(1571, 194);
+            this.chartControl1.Size = new System.Drawing.Size(1571, 186);
             this.chartControl1.TabIndex = 4;
             // 
             // layoutControlGroup1
@@ -570,7 +575,7 @@
             this.layoutControlItem1});
             this.layoutControlGroup2.Location = new System.Drawing.Point(0, 0);
             this.layoutControlGroup2.Name = "layoutControlGroup2";
-            this.layoutControlGroup2.Size = new System.Drawing.Size(1599, 250);
+            this.layoutControlGroup2.Size = new System.Drawing.Size(1599, 242);
             this.layoutControlGroup2.Text = "温度分析曲线";
             // 
             // layoutControlItem1
@@ -579,7 +584,7 @@
             this.layoutControlItem1.CustomizationFormText = "layoutControlItem1";
             this.layoutControlItem1.Location = new System.Drawing.Point(0, 0);
             this.layoutControlItem1.Name = "layoutControlItem1";
-            this.layoutControlItem1.Size = new System.Drawing.Size(1575, 198);
+            this.layoutControlItem1.Size = new System.Drawing.Size(1575, 190);
             this.layoutControlItem1.Text = "layoutControlItem1";
             this.layoutControlItem1.TextSize = new System.Drawing.Size(0, 0);
             this.layoutControlItem1.TextToControlDistance = 0;
@@ -590,9 +595,9 @@
             this.layoutControlGroup3.CustomizationFormText = "斜率分析曲线";
             this.layoutControlGroup3.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
             this.layoutControlItem2});
-            this.layoutControlGroup3.Location = new System.Drawing.Point(0, 250);
+            this.layoutControlGroup3.Location = new System.Drawing.Point(0, 242);
             this.layoutControlGroup3.Name = "layoutControlGroup3";
-            this.layoutControlGroup3.Size = new System.Drawing.Size(1599, 268);
+            this.layoutControlGroup3.Size = new System.Drawing.Size(1599, 290);
             this.layoutControlGroup3.Text = "斜率分析曲线";
             // 
             // layoutControlItem2
@@ -601,7 +606,7 @@
             this.layoutControlItem2.CustomizationFormText = "layoutControlItem2";
             this.layoutControlItem2.Location = new System.Drawing.Point(0, 0);
             this.layoutControlItem2.Name = "layoutControlItem2";
-            this.layoutControlItem2.Size = new System.Drawing.Size(1575, 216);
+            this.layoutControlItem2.Size = new System.Drawing.Size(1575, 238);
             this.layoutControlItem2.Text = "layoutControlItem2";
             this.layoutControlItem2.TextSize = new System.Drawing.Size(0, 0);
             this.layoutControlItem2.TextToControlDistance = 0;
@@ -612,9 +617,9 @@
             this.layoutControlGroup4.CustomizationFormText = "通讯监听窗口";
             this.layoutControlGroup4.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
             this.layoutControlItem3});
-            this.layoutControlGroup4.Location = new System.Drawing.Point(0, 518);
+            this.layoutControlGroup4.Location = new System.Drawing.Point(0, 532);
             this.layoutControlGroup4.Name = "layoutControlGroup4";
-            this.layoutControlGroup4.Size = new System.Drawing.Size(1599, 163);
+            this.layoutControlGroup4.Size = new System.Drawing.Size(1599, 149);
             this.layoutControlGroup4.Text = "通讯监听窗口";
             // 
             // layoutControlItem3
@@ -622,7 +627,7 @@
             this.layoutControlItem3.CustomizationFormText = "layoutControlItem3";
             this.layoutControlItem3.Location = new System.Drawing.Point(0, 0);
             this.layoutControlItem3.Name = "layoutControlItem3";
-            this.layoutControlItem3.Size = new System.Drawing.Size(1575, 111);
+            this.layoutControlItem3.Size = new System.Drawing.Size(1575, 97);
             this.layoutControlItem3.Text = "layoutControlItem3";
             this.layoutControlItem3.TextSize = new System.Drawing.Size(0, 0);
             this.layoutControlItem3.TextToControlDistance = 0;

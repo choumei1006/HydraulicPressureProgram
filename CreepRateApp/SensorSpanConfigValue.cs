@@ -135,8 +135,8 @@ namespace CreepRateApp
             cmd[4] = byte.Parse("04", System.Globalization.NumberStyles.HexNumber);
 
             //Len
-            cmd[5] = 0;
-            cmd[6] = 24;
+            cmd[5] = 24;
+            cmd[6] = 0;
 
             sbyte[] scmd = new sbyte[12];   //存储最低值（有符号）
 

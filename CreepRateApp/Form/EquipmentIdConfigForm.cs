@@ -60,8 +60,8 @@ namespace CreepRateApp
                 cmd[4] = byte.Parse("06", System.Globalization.NumberStyles.HexNumber);
 
                 //Len(2 byte)
-                cmd[5] = 0;
-                cmd[6] = 2;
+                cmd[5] = 2;
+                cmd[6] = 0;
 
                 //--data
                 cmd[7] = MainForm.EquipmentId;
