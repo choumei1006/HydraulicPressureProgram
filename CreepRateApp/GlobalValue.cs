@@ -44,7 +44,7 @@ namespace CreepRateApp
         /// <summary>
         /// 间隔时间
         /// </summary>
-        public static string IntalvasTime = "250";
+        public static string IntalvasTime = "2000";
 
         //---------------------------------start---------------------------
         /// <summary>

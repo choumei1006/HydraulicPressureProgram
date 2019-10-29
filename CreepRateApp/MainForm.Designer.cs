@@ -129,10 +129,10 @@
             this.layoutControlGroup1 = new DevExpress.XtraLayout.LayoutControlGroup();
             this.layoutControlGroup2 = new DevExpress.XtraLayout.LayoutControlGroup();
             this.layoutControlItem1 = new DevExpress.XtraLayout.LayoutControlItem();
-            this.layoutControlGroup3 = new DevExpress.XtraLayout.LayoutControlGroup();
-            this.layoutControlItem2 = new DevExpress.XtraLayout.LayoutControlItem();
             this.layoutControlGroup4 = new DevExpress.XtraLayout.LayoutControlGroup();
             this.layoutControlItem3 = new DevExpress.XtraLayout.LayoutControlItem();
+            this.layoutControlGroup3 = new DevExpress.XtraLayout.LayoutControlGroup();
+            this.layoutControlItem2 = new DevExpress.XtraLayout.LayoutControlItem();
             this.analysisModelBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.chartDataBindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             this.chartDataBindingSource = new System.Windows.Forms.BindingSource(this.components);
@@ -222,10 +222,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup3)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup4)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup3)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.analysisModelBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chartDataBindingSource1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.chartDataBindingSource)).BeginInit();
@@ -553,8 +553,14 @@
             // chartControl2
             // 
             this.chartControl2.Cursor = System.Windows.Forms.Cursors.Default;
+            xyDiagram1.AxisX.MinorCount = 1;
+            xyDiagram1.AxisX.NumericScaleOptions.AutoGrid = false;
             xyDiagram1.AxisX.VisibleInPanesSerializable = "-1";
             xyDiagram1.AxisY.VisibleInPanesSerializable = "-1";
+            xyDiagram1.EnableAxisXScrolling = true;
+            xyDiagram1.EnableAxisXZooming = true;
+            xyDiagram1.EnableAxisYScrolling = true;
+            xyDiagram1.EnableAxisYZooming = true;
             this.chartControl2.Diagram = xyDiagram1;
             this.chartControl2.Legend.UseCheckBoxes = true;
             this.chartControl2.Location = new System.Drawing.Point(864, 52);
@@ -680,8 +686,14 @@
             // chartControl1
             // 
             this.chartControl1.Cursor = System.Windows.Forms.Cursors.Default;
+            xyDiagram2.AxisX.MinorCount = 1;
+            xyDiagram2.AxisX.NumericScaleOptions.AutoGrid = false;
             xyDiagram2.AxisX.VisibleInPanesSerializable = "-1";
             xyDiagram2.AxisY.VisibleInPanesSerializable = "-1";
+            xyDiagram2.EnableAxisXScrolling = true;
+            xyDiagram2.EnableAxisXZooming = true;
+            xyDiagram2.EnableAxisYScrolling = true;
+            xyDiagram2.EnableAxisYZooming = true;
             this.chartControl1.Diagram = xyDiagram2;
             this.chartControl1.Legend.UseCheckBoxes = true;
             this.chartControl1.Location = new System.Drawing.Point(24, 52);
@@ -796,6 +808,27 @@
             this.layoutControlItem1.TextToControlDistance = 0;
             this.layoutControlItem1.TextVisible = false;
             // 
+            // layoutControlGroup4
+            // 
+            this.layoutControlGroup4.CustomizationFormText = "分析汇总";
+            this.layoutControlGroup4.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
+            this.layoutControlItem3});
+            this.layoutControlGroup4.Location = new System.Drawing.Point(0, 503);
+            this.layoutControlGroup4.Name = "layoutControlGroup4";
+            this.layoutControlGroup4.Size = new System.Drawing.Size(1599, 178);
+            this.layoutControlGroup4.Text = "分析汇总";
+            // 
+            // layoutControlItem3
+            // 
+            this.layoutControlItem3.CustomizationFormText = "layoutControlItem3";
+            this.layoutControlItem3.Location = new System.Drawing.Point(0, 0);
+            this.layoutControlItem3.Name = "layoutControlItem3";
+            this.layoutControlItem3.Size = new System.Drawing.Size(1575, 126);
+            this.layoutControlItem3.Text = "layoutControlItem3";
+            this.layoutControlItem3.TextSize = new System.Drawing.Size(0, 0);
+            this.layoutControlItem3.TextToControlDistance = 0;
+            this.layoutControlItem3.TextVisible = false;
+            // 
             // layoutControlGroup3
             // 
             this.layoutControlGroup3.CustomizationFormText = "斜率分析曲线";
@@ -817,27 +850,6 @@
             this.layoutControlItem2.TextSize = new System.Drawing.Size(0, 0);
             this.layoutControlItem2.TextToControlDistance = 0;
             this.layoutControlItem2.TextVisible = false;
-            // 
-            // layoutControlGroup4
-            // 
-            this.layoutControlGroup4.CustomizationFormText = "分析汇总";
-            this.layoutControlGroup4.Items.AddRange(new DevExpress.XtraLayout.BaseLayoutItem[] {
-            this.layoutControlItem3});
-            this.layoutControlGroup4.Location = new System.Drawing.Point(0, 503);
-            this.layoutControlGroup4.Name = "layoutControlGroup4";
-            this.layoutControlGroup4.Size = new System.Drawing.Size(1599, 178);
-            this.layoutControlGroup4.Text = "分析汇总";
-            // 
-            // layoutControlItem3
-            // 
-            this.layoutControlItem3.CustomizationFormText = "layoutControlItem3";
-            this.layoutControlItem3.Location = new System.Drawing.Point(0, 0);
-            this.layoutControlItem3.Name = "layoutControlItem3";
-            this.layoutControlItem3.Size = new System.Drawing.Size(1575, 126);
-            this.layoutControlItem3.Text = "layoutControlItem3";
-            this.layoutControlItem3.TextSize = new System.Drawing.Size(0, 0);
-            this.layoutControlItem3.TextToControlDistance = 0;
-            this.layoutControlItem3.TextVisible = false;
             // 
             // analysisModelBindingSource
             // 
@@ -1048,10 +1060,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup3)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup4)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutControlGroup3)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.layoutControlItem2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.analysisModelBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.chartDataBindingSource1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.chartDataBindingSource)).EndInit();

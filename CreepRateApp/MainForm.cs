@@ -19,13 +19,11 @@ using System.IO.Ports;
 using SerialportSample;
 using System.Timers;
 using System.Collections;
-using System.IO;//引用此命名空间是用于数据的写入与读取
-using System.Text; //引用这个命名空间是用于接下来用可变的字符串的
+using System.IO;//引用此命名空间是用于数据的写入与读取 
 
 using System.Net;
 using System.Net.Sockets;
-using System.Net.NetworkInformation;
-using System.Threading;
+using System.Net.NetworkInformation; 
 using System.Reflection;
 
 namespace CreepRateApp
@@ -261,6 +259,7 @@ namespace CreepRateApp
         private int index_tsef = 0;  //tsef特征值的横坐标
         private int index_tem = 0;   //tem特征值的横坐标
         private double result_tal = 0.0;
+
         private List<string> temperatureList = new List<string>();
         private List<String> slopDrawList = new List<string>();
 
@@ -279,15 +278,14 @@ namespace CreepRateApp
         public static IPEndPoint localIpep = new IPEndPoint(IPAddress.Parse(localIPAddress), 10101);   //（本地）应用程序与特定主机特定服务的连接点
 
         //public static UdpClient udpcSend;
-        public static UdpClient udpClient = new UdpClient(localIpep);
-
-
+        public static UdpClient udpClient = new UdpClient(localIpep); 
 
         //bool isNeedUdpRecv;   //是否监听UDP报文，在UDP监听阶段为true
         public Thread thrRecv;       //线程：监听UDP报文
         public static Thread thrSend;       //线程：监听UDP报文
         public static bool isCollecting = false;
 
+        public static List<String> recvDataList = new List<String>();   //暂存接收到的数据Data
 
         private static readonly object lockHelper = new object();
 
@@ -323,22 +321,22 @@ namespace CreepRateApp
             ComDevice.DataBits = int.Parse(GlobalValue.DataBits);
 
 
-            ComDevice.DataReceived += new SerialDataReceivedEventHandler(Com_DataReceived);
-
-            System.Timers.Timer timer = new System.Timers.Timer();
-            timer.Enabled = true;
-            timer.Interval = double.Parse(GlobalValue.IntalvasTime); //执行间隔时间,单位为毫秒; 这里实际间隔为10分钟  
-            //timer.Interval = double.Parse(settings.IntervalTime);
-            //timer.Start();
-            //timer.Elapsed += new System.Timers.ElapsedEventHandler(timer1_Tick);
+            ComDevice.DataReceived += new SerialDataReceivedEventHandler(Com_DataReceived); 
 
             //开启UDP监听
-            thrRecv = new Thread(ReceiveMessage);
-            //udpClient = new UdpClient(localIpep);
-            udpClient.Client.ReceiveTimeout = 5000;
-            //thrRecv = new Thread(ReceiveMessage);
+            thrRecv = new Thread(ReceiveMessage); 
+            udpClient.Client.ReceiveTimeout = 5000; 
             thrRecv.Start();
             showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")_" + System.DateTime.Now.ToString() + "：", "UDP监听已开启"));
+
+            //开启recvDataList监听
+            System.Timers.Timer timer = new System.Timers.Timer();
+            timer.Enabled = true;
+            timer.Interval = double.Parse("2000"); //执行间隔时间,单位为毫秒; 这里实际间隔为10分钟
+            timer.Start();
+            timer.Elapsed += new System.Timers.ElapsedEventHandler(listenAndDrawLines);
+            //Thread thrLisenRecvDataList = new Thread(listenAndDrawLines);
+            //thrLisenRecvDataList.Start();
             
         }
 
@@ -1144,99 +1142,7 @@ namespace CreepRateApp
                 //MessageBox.Show("数据接收未开启2。", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 System.Console.WriteLine("数据接收未开启2。");
             }
-        }
-
-        //private void b_FeedingMachine_ItemClick(object sender, ItemClickEventArgs e)
-        //{
-        //    //“喂料机”功能也需要发送串口数据，占用信道，故先关闭Main界面已经开启的串口
-        //    try
-        //    {
-        //        if (ComDevice.IsOpen)
-        //        {
-        //            //打开时点击，则关闭串口
-        //            ComDevice.Close();
-        //        }
-        //    }
-        //    catch { }
-        //    //Main界面的循环回访数据的接收标志位也需要关闭
-        //    isNeedComRecevied = false;
-
-        //    ///注销操作系统端口取数据监听事件
-        //    ///此处必须注销现有托管到操作系统的监听事件，因为操作系统一个端口只支持一个事件的监听
-        //    ///为了防止准备关闭的监听事件不存在而报错，故要加入try处理
-        //    try
-        //    {
-        //        ComDevice.DataReceived -= new SerialDataReceivedEventHandler(Com_DataReceived);
-        //    }
-        //    catch { }
-
-        //    //FeedingMachineForm fmf = new FeedingMachineForm(ComDevice);
-        //    //fmf.ShowDialog();
-        //    //if (fmf.DialogResult == DialogResult.OK)//此处通过弹出窗口的DialogResult的值来判断窗口关闭，需要在弹窗关闭事件中设定dialogresult的值
-        //    //{
-        //    //    //窗口关闭了，重新注册主界面的端口数据获取操作系统托管监听事件
-        //    //    try
-        //    //    {
-        //    //        ComDevice.DataReceived += new SerialDataReceivedEventHandler(Com_DataReceived);
-        //    //    }
-        //    //    catch { }
-        //    //}
-        //}
-
-        /// <summary>
-        /// 添加配料输入窗口
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        //private void barButtonItem6_ItemClick(object sender, ItemClickEventArgs e)
-        //{
-        //    //添加配料输入窗口
-        //    try
-        //    {
-        //        if (ComDevice.IsOpen)
-        //        {
-        //            //打开时点击，则关闭串口
-        //            ComDevice.Close();
-        //        }
-        //    }
-        //    catch { }
-        //    //Main界面的循环回访数据的接收标志位也需要关闭
-        //    isNeedComRecevied = false;
-
-        //    ///注销操作系统端口取数据监听事件
-        //    ///此处必须注销现有托管到操作系统的监听事件，因为操作系统一个端口只支持一个事件的监听
-        //    ///为了防止准备关闭的监听事件不存在而报错，故要加入try处理
-        //    try
-        //    {
-        //        ComDevice.DataReceived -= new SerialDataReceivedEventHandler(Com_DataReceived);
-        //    }
-        //    catch { }
-
-        //    /*FeedingMachineForm fmf = new FeedingMachineForm(ComDevice);
-        //    fmf.ShowDialog();
-        //    if (fmf.DialogResult == DialogResult.OK)//此处通过弹出窗口的DialogResult的值来判断窗口关闭，需要在弹窗关闭事件中设定dialogresult的值
-        //    {
-        //        //窗口关闭了，重新注册主界面的端口数据获取操作系统托管监听事件
-        //        try
-        //        {
-        //            ComDevice.DataReceived += new SerialDataReceivedEventHandler(Com_DataReceived);
-        //        }
-        //        catch { }
-        //    }*/
-        //    //IngredientInputForm iif = new IngredientInputForm(ComDevice);
-        //    //iif.ShowDialog();
-        //    //if (iif.DialogResult == DialogResult.OK)//此处通过弹出窗口的DialogResult的值来判断窗口关闭，需要在弹窗关闭事件中设定dialogresult的值
-        //    //{
-        //    //    //窗口关闭了，重新注册主界面的端口数据获取操作系统托管监听事件
-        //    //    try
-        //    //    {
-        //    //        ComDevice.DataReceived += new SerialDataReceivedEventHandler(Com_DataReceived);
-        //    //    }
-        //    //    catch { }
-        //    //}
-
-        //}
-
+        } 
 
         /// <summary>
         /// 根据文件路径，绘制相应路曲线，分析txt文件中的温度数据特征值
@@ -1400,6 +1306,7 @@ namespace CreepRateApp
                     }
 
 
+
                     if (hexStrs.Count >= 8)   //数据包至少包含Header（2byte）、DEVICE_ID、Reserve、Category、Len（2byte）、Verify，共计8字节
                     {
                         //分离Len，并判断数据包长度信息是否正确 
@@ -1438,45 +1345,13 @@ namespace CreepRateApp
                                     break;
                                 //数据应答
                                 case "83":
+                                    recvDataList = new List<string> { "1122.02", " 1245.77", " 1543.09", " 1168.16 ", "1538.16", "1678.27", " 1598.27", " 1714.27", " 1763.27 ", "1982.38", " 1056.48 ", "1743.59", " 1546.26", " 1927.8", " 1503.09", " 1719.16 ", "1720.16", "1314.27", " 1610.27", " 1073.27", " 1539.27 ", "1639.38" };
                                     showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "_数据应答：", cmdStr));
-                                    //TODO   曲线显示
-                                    //清空温度、斜率曲线
-                                    //清空温度、斜率曲线
-                                    XYDiagram diagram = (XYDiagram)chartControl1.Diagram;
-                                    XYDiagram diagram2 = (XYDiagram)chartControl2.Diagram;
-
-                                    try
-                                    {
-                                        this.chartControl1.Series[0].Points.Clear();
-                                        this.chartControl2.Series[0].Points.Clear();
-                                        this.chartControl1.Series[1].Points.Clear();
-                                        this.chartControl2.Series[1].Points.Clear();
-                                        this.chartControl1.Series[2].Points.Clear();
-                                        this.chartControl2.Series[2].Points.Clear();
-
-                                        diagram.AxisX.ConstantLines.Clear();
-                                        diagram.AxisY.ConstantLines.Clear();
-
-                                        diagram2.AxisX.ConstantLines.Clear();
-                                        diagram2.AxisY.ConstantLines.Clear();
-                                    }
-                                    catch { }
-
-                                    entity.AnalysisModel uploadAnalysisModel = new entity.AnalysisModel();
-                                    if (uploadAnalysisModel.FileInfoList == null)
-                                    {
-                                        uploadAnalysisModel.FileInfoList = new List<entity.FileInfo>();
-                                    }
-
-                                     
-                                    //List<String> testStr1 = new List<string> { "1", "4", "5", "4", "8", "9", "5", "3", "8", "8", "5", "3", "2", "6", "7", "5", "8", "3", "4", "6", "8", "9", "4", "1" };
-                                    //List<String> testStr2 = new List<string> { "1", "4", "5", "4", "8", "9", "5", "3", "8", "8", "5", "3", "2", "6", "7", "5", "8", "3", "4", "6", "8", "9", "4", "1" };
-                                    //List<entity.XY> list = new List<entity.XY>();
-                                    //List<entity.XY> list2 = new List<entity.XY>(); 
-                                    drawLine("D:\\Files\\VS2010_projects\\C#\\CreepRateApp\\log\\2019-08-05\\2019-08-05_1\\温度2数据_20190805110127.txt", null, null, false, 0, diagram, uploadAnalysisModel);
+                                    
+                                    //drawLine("D:\\Files\\VS2010_projects\\C#\\CreepRateApp\\log\\2019-08-05\\2019-08-05_1\\温度2数据_20190805110127.txt", null, null, false, 0, diagram, uploadAnalysisModel);
                                     break;
                                 //传感器量程配置应答
-                                case "84":
+                                case "84": 
                                     showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "_传感器量程配置应答：", cmdStr));
                                     break;
                                 //交互应答
@@ -2741,6 +2616,114 @@ namespace CreepRateApp
                     XtraMessageBox.Show("操作完成。", "信息", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
+        }
+
+
+        //==========================================================绘制曲线================================================================
+
+        /// <summary>
+        /// 循环监测recvDataList变量内容，绘制曲线，将数据转移到本地文件，清除recvDataList变量内容
+        /// </summary>
+        /// <param name="obj"></param>
+        private void listenAndDrawLines(object source, ElapsedEventArgs e) { 
+            //while(true){
+                try
+                {
+                    if (recvDataList.Count > 0)    //recvDataList有内容了
+                    {
+                        //test
+                        System.Console.WriteLine("1.开始绘制数据曲线：");
+                        foreach(string item in recvDataList){
+                            System.Console.WriteLine(item);
+                        }
+                        //1、绘制曲线
+
+                        XYDiagram diagram = (XYDiagram)chartControl1.Diagram;
+                        XYDiagram diagram2 = (XYDiagram)chartControl2.Diagram;
+
+                        this.chartControl1.Series[0].Points.Clear();
+                        this.chartControl2.Series[0].Points.Clear();
+                        this.chartControl1.Series[1].Points.Clear();
+                        this.chartControl2.Series[1].Points.Clear();
+                        this.chartControl1.Series[2].Points.Clear();
+                        this.chartControl2.Series[2].Points.Clear();
+
+                        diagram.AxisX.ConstantLines.Clear();
+                        diagram.AxisY.ConstantLines.Clear();
+
+                        diagram2.AxisX.ConstantLines.Clear();
+                        diagram2.AxisY.ConstantLines.Clear();
+
+                        entity.AnalysisModel uploadAnalysisModel = new entity.AnalysisModel();
+                        if (uploadAnalysisModel.FileInfoList == null)
+                        {
+                            uploadAnalysisModel.FileInfoList = new List<entity.FileInfo>();
+                        }
+
+                        List<entity.XY> xyList = new List<entity.XY>();
+
+                        for (int i = 0; i < recvDataList.Count; i++)
+                        {
+                            entity.XY xy = new entity.XY();
+                            xy.x = i;
+                            xy.y = Math.Round(double.Parse(recvDataList[i] + ""), 2);
+                            xyList.Add(xy);
+                        }
+
+                        for (int i = 0; i < xyList.Count; i++)
+                        {
+                            SeriesPoint sp = new SeriesPoint();
+                            sp.Argument = xyList[i].x.ToString();
+                            double[] ys = { xyList[i].y };
+                            sp.Values = ys;
+                            this.chartControl1.Series[0].Points.Add(sp);
+                            this.chartControl2.Series[0].Points.Add(sp);
+                        }
+
+                        
+                        //2、数据更新至本地文件
+                        string exportFileTime = DateTime.Now.ToString("yyyyMMddhhmmss");
+                        string filePath = Application.StartupPath + "\\downLoadFiles\\测试输出数据_" + exportFileTime + ".txt";
+                        StringBuilder sb1 = new StringBuilder();        //声明一个可变字符串 
+                        for (int i = 0; i < recvDataList.Count; i++)
+                        {
+                            //循环给字符串拼接字符
+                            sb1.Append(recvDataList[i]);
+                        }
+                        FileStream fs = new FileStream(filePath, FileMode.Append, FileAccess.Write);   //若存在文件，则打开该文件并查找到文件尾，或者创建一个新文件
+                        byte[] bytes = new UTF8Encoding().GetBytes(sb1.ToString());   //存储时是二进制,所以这里需要把我们的字符串转成二进制
+                        fs.Write(bytes, 0, bytes.Length);
+                        fs.Close();     //每次读取文件后都要记得关闭文件
+
+                        //test2
+                        System.Console.WriteLine("更新文件：" + filePath);
+                        
+
+                        //3、清除recvDataList变量内容
+                        recvDataList.Clear();
+
+                        //test3 
+                        System.Console.WriteLine("清数据：" );
+                        if (recvDataList.Count != 0)
+                        {
+                            for (int i = 0; i < recvDataList.Count; i++)
+                            {
+                                System.Console.WriteLine(i + recvDataList[i]);
+                            }
+                        }
+                        else {
+                            System.Console.WriteLine("recvDataList已经被清空！");
+                        }
+                        
+                    }
+                    else {
+                        System.Console.WriteLine("recvDataList没数据！");
+                    }
+                }
+                catch { 
+                    
+                } 
+            //}
         }
 
         
