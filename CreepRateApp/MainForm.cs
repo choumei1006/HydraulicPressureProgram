@@ -48,6 +48,7 @@ namespace CreepRateApp
         private String oneSeriesSendMsg = "";
         private String twoSerisSendMsg = "";
         private String threeSeriesSendMsg = "";
+                        static int cnt = 0;
 
         
         System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
@@ -55,6 +56,101 @@ namespace CreepRateApp
         //richTextBox1窗体初始化
         public static System.Windows.Forms.RichTextBox richTextBox1;
         public static byte EquipmentId = 255;
+
+
+
+        //定义端口类
+        private SerialPort ComDevice = new SerialPort();
+
+        private int num_tal = 0;     //tal特征值的横坐标
+        private int index_tsef = 0;  //tsef特征值的横坐标
+        private int index_tem = 0;   //tem特征值的横坐标
+        private double result_tal = 0.0;
+
+        private List<string> temperatureList = new List<string>();
+        private List<String> slopDrawList = new List<string>();
+
+
+        private List<string> temperatureList1 = new List<string>();
+        private List<String> slopDrawList1 = new List<string>();
+
+
+        private List<string> temperatureList2 = new List<string>();
+        private List<String> slopDrawList2 = new List<string>();
+
+        private Boolean isNeedComRecevied = false;
+
+        //网口通信 
+        private static string localIPAddress = GetIpAddress();   //获取本地IP地址
+        public static IPEndPoint localIpep = new IPEndPoint(IPAddress.Parse(localIPAddress), 10101);   //（本地）应用程序与特定主机特定服务的连接点
+
+        //public static UdpClient udpcSend;
+        public static UdpClient udpClient = new UdpClient(localIpep); 
+
+        //bool isNeedUdpRecv;   //是否监听UDP报文，在UDP监听阶段为true
+        public Thread thrRecv;       //线程：监听UDP报文
+        public static Thread thrSend;       //线程：监听UDP报文
+        public static bool isCollecting = false;
+
+        public static List<String> recvDataList = new List<String>();   //暂存接收到的数据Data
+
+        private static readonly object lockHelper = new object();
+
+        public static string exportFileTime = DateTime.Now.ToString("yyyyMMddhhmmss");
+
+        private bool needRepaint = false;
+
+
+        public MainForm()
+        {
+
+            //Control.CheckForIllegalCrossThreadCalls = false;
+
+            InitializeComponent();
+
+            //设置RichTextBox1的相关位置属性 
+            richTextBox1 = new System.Windows.Forms.RichTextBox();
+            layoutControl1.Controls.Add(richTextBox1);
+            richTextBox1.Location = new System.Drawing.Point(24, 571);
+            richTextBox1.Name = "richTextBox1";
+            richTextBox1.Size = new System.Drawing.Size(1571, 106);
+            richTextBox1.TabIndex = 6;
+            richTextBox1.Text = "";
+            this.layoutControlItem3.Control = richTextBox1;
+            this.layoutControlItem3.TextVisible = false;
+
+            //设置串口相关属性
+            //端口
+            ComDevice.PortName = GlobalValue.PortName;
+            //波特率
+            ComDevice.BaudRate = int.Parse(GlobalValue.BaudRate);
+            //校验
+            ComDevice.Parity = (Parity)Convert.ToInt32(GlobalValue.Parity);
+            //停止位
+            ComDevice.StopBits = (StopBits)Convert.ToInt32(GlobalValue.StopBits);
+            //数据位
+            ComDevice.DataBits = int.Parse(GlobalValue.DataBits);
+
+
+            ComDevice.DataReceived += new SerialDataReceivedEventHandler(Com_DataReceived); 
+
+            //开启UDP监听
+            thrRecv = new Thread(ReceiveMessage); 
+            udpClient.Client.ReceiveTimeout = 5000; 
+            thrRecv.Start();
+            showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")_" + System.DateTime.Now.ToString() + "：", "UDP监听已开启"));
+
+            //开启recvDataList监听
+            System.Timers.Timer timer = new System.Timers.Timer();
+            timer.Enabled = true;
+            timer.Interval = double.Parse("1800"); //执行间隔时间,单位为毫秒; 这里实际间隔为10分钟
+            timer.Start();
+            timer.Elapsed += new System.Timers.ElapsedEventHandler(listenAndDrawLines);
+
+            //Thread thrLisenRecvDataList = new Thread(listenAndDrawLines);
+            //thrLisenRecvDataList.Start();
+            
+        }
 
 
 
@@ -250,94 +346,6 @@ namespace CreepRateApp
                 }
                 catch { }
             }
-        }
-
-        //定义端口类
-        private SerialPort ComDevice = new SerialPort();
-
-        private int num_tal = 0;     //tal特征值的横坐标
-        private int index_tsef = 0;  //tsef特征值的横坐标
-        private int index_tem = 0;   //tem特征值的横坐标
-        private double result_tal = 0.0;
-
-        private List<string> temperatureList = new List<string>();
-        private List<String> slopDrawList = new List<string>();
-
-
-        private List<string> temperatureList1 = new List<string>();
-        private List<String> slopDrawList1 = new List<string>();
-
-
-        private List<string> temperatureList2 = new List<string>();
-        private List<String> slopDrawList2 = new List<string>();
-
-        private Boolean isNeedComRecevied = false;
-
-        //网口通信 
-        private static string localIPAddress = GetIpAddress();   //获取本地IP地址
-        public static IPEndPoint localIpep = new IPEndPoint(IPAddress.Parse(localIPAddress), 10101);   //（本地）应用程序与特定主机特定服务的连接点
-
-        //public static UdpClient udpcSend;
-        public static UdpClient udpClient = new UdpClient(localIpep); 
-
-        //bool isNeedUdpRecv;   //是否监听UDP报文，在UDP监听阶段为true
-        public Thread thrRecv;       //线程：监听UDP报文
-        public static Thread thrSend;       //线程：监听UDP报文
-        public static bool isCollecting = false;
-
-        public static List<String> recvDataList = new List<String>();   //暂存接收到的数据Data
-
-        private static readonly object lockHelper = new object();
-
-
-        public MainForm()
-        {
-
-            //Control.CheckForIllegalCrossThreadCalls = false;
-
-            InitializeComponent();
-
-            //设置RichTextBox1的相关位置属性 
-            richTextBox1 = new System.Windows.Forms.RichTextBox();
-            layoutControl1.Controls.Add(richTextBox1);
-            richTextBox1.Location = new System.Drawing.Point(24, 571);
-            richTextBox1.Name = "richTextBox1";
-            richTextBox1.Size = new System.Drawing.Size(1571, 106);
-            richTextBox1.TabIndex = 6;
-            richTextBox1.Text = "";
-            this.layoutControlItem3.Control = richTextBox1;
-            this.layoutControlItem3.TextVisible = false;
-
-            //设置串口相关属性
-            //端口
-            ComDevice.PortName = GlobalValue.PortName;
-            //波特率
-            ComDevice.BaudRate = int.Parse(GlobalValue.BaudRate);
-            //校验
-            ComDevice.Parity = (Parity)Convert.ToInt32(GlobalValue.Parity);
-            //停止位
-            ComDevice.StopBits = (StopBits)Convert.ToInt32(GlobalValue.StopBits);
-            //数据位
-            ComDevice.DataBits = int.Parse(GlobalValue.DataBits);
-
-
-            ComDevice.DataReceived += new SerialDataReceivedEventHandler(Com_DataReceived); 
-
-            //开启UDP监听
-            thrRecv = new Thread(ReceiveMessage); 
-            udpClient.Client.ReceiveTimeout = 5000; 
-            thrRecv.Start();
-            showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")_" + System.DateTime.Now.ToString() + "：", "UDP监听已开启"));
-
-            //开启recvDataList监听
-            System.Timers.Timer timer = new System.Timers.Timer();
-            timer.Enabled = true;
-            timer.Interval = double.Parse("2000"); //执行间隔时间,单位为毫秒; 这里实际间隔为10分钟
-            timer.Start();
-            timer.Elapsed += new System.Timers.ElapsedEventHandler(listenAndDrawLines);
-            //Thread thrLisenRecvDataList = new Thread(listenAndDrawLines);
-            //thrLisenRecvDataList.Start();
-            
         }
 
         /// <summary>
@@ -1163,7 +1171,8 @@ namespace CreepRateApp
             List<double> quxianList = new List<double>();
             List<string> formatTxt = new List<string>();
 
-            temperatureArrList = Core.ChartList.GetTemperature(filePath, maxTemperature, minTemperature);
+            //temperatureArrList = Core.ChartList.GetTemperature(filePath, maxTemperature, minTemperature);
+            temperatureArrList = new List<string> { "1122.02", " 1245.77", " 1543.09", " 1168.16 ", "1538.16", "1678.27", " 1598.27", " 1714.27", " 1763.27 ", "1982.38", " 1056.48 ", "1743.59", " 1546.26", " 1927.8", " 1503.09", " 1719.16 ", "1720.16", "1314.27", " 1610.27", " 1073.27", " 1539.27 ", "1639.38" };
             //slopList = Core.ChartList.GetSlop(temperatureArrList);
             slopList = temperatureArrList;
 
@@ -1314,7 +1323,7 @@ namespace CreepRateApp
                         byte b1 = byteRecv[5];
                         byte b2 = byteRecv[6];
                         int dataLen = (b2 << 8) ^ b1;
-                        if ((hexStrs[4] + "" != "83") && (dataLen != hexStrs.Count - 8))                 //没有数据或数据段长度无效
+                        if (dataLen != hexStrs.Count - 8)                 //没有数据或数据段长度无效   (hexStrs[4] + "" != "83") && 
                         {
                             showMessage(richTextBox1, string.Format("{0}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "：无效数据包"));
                         }
@@ -1324,36 +1333,59 @@ namespace CreepRateApp
                             byte device_num = byteRecv[2];
                             EquipmentId = device_num;
 
-                            StringBuilder cmdStr = new StringBuilder();
-                            if (hexStrs[4] + "" != "83")
+                            StringBuilder cmdStr0x = new StringBuilder();
+                            for (int i = 7; i <= 7 + dataLen - 1; i++)
                             {
-                                for (int i = 7; i <= 7 + dataLen - 1; i++)
-                                {
-                                    cmdStr.Append("0x" + hexStrs[i] + " ");
-                                }
+                                cmdStr0x.Append("0x" + hexStrs[i] + " ");
                             }
 
                             switch (hexStrs[4] + "")
                             {
                                 //故障配置应答
                                 case "81":
-                                    showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "_故障配置应答：", cmdStr));
+                                    showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "_故障配置应答：", cmdStr0x));
                                     break;
                                 //传感器通道配置应答
                                 case "82":
-                                    showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "_传感器通道配置应答：", cmdStr));
+                                    showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "_传感器通道配置应答：", cmdStr0x));
                                     break;
+
                                 //数据应答
                                 case "83":
                                     recvDataList = new List<string> { "1122.02", " 1245.77", " 1543.09", " 1168.16 ", "1538.16", "1678.27", " 1598.27", " 1714.27", " 1763.27 ", "1982.38", " 1056.48 ", "1743.59", " 1546.26", " 1927.8", " 1503.09", " 1719.16 ", "1720.16", "1314.27", " 1610.27", " 1073.27", " 1539.27 ", "1639.38" };
-                                    showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "_数据应答：", cmdStr));
-                                    
+                                    needRepaint = true;
+                                    //--绘图_start 
+            
+                                    //--绘图_end
+
+                                    //barButtonItem17_ItemClick();
+                                    //--临时存储_start
+                                    //string filePath = Application.StartupPath + "\\downLoadFiles\\outputData_" + exportFileTime + ".txt";
+                                    //StringBuilder sb1 = new StringBuilder();        //声明一个可变字符串 
+                                    //for (int i = 0; i < recvDataList.Count; i++)
+                                    //{
+                                    //    //循环给字符串拼接字符
+                                    //    sb1.Append(recvDataList[i]);
+                                    //}
+                                    //FileStream fs = new FileStream(filePath, FileMode.Append, FileAccess.Write);   //若存在文件，则打开该文件并查找到文件尾，或者创建一个新文件
+                                    //byte[] bytes = new UTF8Encoding().GetBytes("\n"+cmdStr0x.ToString());
+                                    ////byte[] bytes = new UTF8Encoding().GetBytes(sb1.ToString());   //存储时是二进制,所以这里需要把我们的字符串转成二进制
+                                    //fs.Write(bytes, 0, bytes.Length);
+                                    //fs.Close();     //每次读取文件后都要记得关闭文件
+                                    //--临时存储_end
+
+
+
+                                    showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "_数据应答：", cmdStr0x));                                   
                                     //drawLine("D:\\Files\\VS2010_projects\\C#\\CreepRateApp\\log\\2019-08-05\\2019-08-05_1\\温度2数据_20190805110127.txt", null, null, false, 0, diagram, uploadAnalysisModel);
+                                    //Thread.Sleep(1000);
                                     break;
+
                                 //传感器量程配置应答
-                                case "84": 
-                                    showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "_传感器量程配置应答：", cmdStr));
+                                case "84":
+                                    showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "_传感器量程配置应答：", cmdStr0x));
                                     break;
+
                                 //交互应答
                                 case "85":
                                     if (dataLen == 1)    //有效“交互应答”命令，数据段占1个字节，status
@@ -1413,8 +1445,8 @@ namespace CreepRateApp
                                     }
                                     else
                                     {
-                                        cmdStr = new StringBuilder("无效命令");
-                                        showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "_交互应答：", cmdStr));
+                                        cmdStr0x = new StringBuilder("无效命令");
+                                        showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "_交互应答：", cmdStr0x));
                                     }
 
                                     break;
@@ -1429,14 +1461,14 @@ namespace CreepRateApp
                                     }
                                     else
                                     {
-                                        cmdStr = new StringBuilder("无效命令");
-                                        showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "_设备ID设置：", cmdStr));
+                                        cmdStr0x = new StringBuilder("无效命令");
+                                        showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "_设备ID设置：", cmdStr0x));
                                     }
                                     break;
                                 default:
-                                    showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "_无法识别命令：", cmdStr));
+                                    showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "_无法识别命令：", cmdStr0x));
                                     break;
-                            }
+                            } 
                         }
                     }
                     else
@@ -1447,7 +1479,6 @@ namespace CreepRateApp
 
                     //等到了Monitor.Pulse(obj)和Monitor.Exit(obj)的信号，就继续往下执行
                     Monitor.Exit(lockHelper);
-
 
                 }
                 catch
@@ -2407,215 +2438,270 @@ namespace CreepRateApp
         }
 
         /// <summary>
-        /// 选择文件
+        /// 绘图
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void barButtonItem17_ItemClick(object sender, ItemClickEventArgs e)
         {
-            bool isHuaTem = false;
-            //选择数据类型（华氏温度、摄氏温度）
-            if (XtraMessageBox.Show("文件中温度数据是否是华氏温度数据？", "提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
+            recvDataList = new List<string> { "1122.02", " 1245.77", " 1543.09", " 1168.16 ", "1538.16", "1678.27", " 1598.27", " 1714.27", " 1763.27 ", "1982.38", " 1056.48 ", "1743.59", " 1546.26", " 1927.8", " 1503.09", " 1719.16 ", "1720.16", "1314.27", " 1610.27", " 1073.27", " 1539.27 ", "1639.38" };
+
+            //test
+            System.Console.WriteLine("1.开始绘制数据曲线：");
+            foreach (string item in recvDataList)
             {
-                isHuaTem = true;
+                System.Console.WriteLine(item);
             }
+            //1、绘制曲线
 
-            //清空temperatureList全局变量
-            try
-            {
-                this.temperatureList.Clear();
-            }
-            catch { }
-
-
-            //清空温度、斜率曲线
             XYDiagram diagram = (XYDiagram)chartControl1.Diagram;
             XYDiagram diagram2 = (XYDiagram)chartControl2.Diagram;
 
-            try
+            this.chartControl1.Series[0].Points.Clear();
+            this.chartControl2.Series[0].Points.Clear();
+            this.chartControl1.Series[1].Points.Clear();
+            this.chartControl2.Series[1].Points.Clear();
+            this.chartControl1.Series[2].Points.Clear();
+            this.chartControl2.Series[2].Points.Clear();
+
+            diagram.AxisX.ConstantLines.Clear();
+            diagram.AxisY.ConstantLines.Clear();
+
+            diagram2.AxisX.ConstantLines.Clear();
+            diagram2.AxisY.ConstantLines.Clear();
+
+            //entity.AnalysisModel uploadAnalysisModel = new entity.AnalysisModel();
+            //if (uploadAnalysisModel.FileInfoList == null)
+            //{
+            //    uploadAnalysisModel.FileInfoList = new List<entity.FileInfo>();
+            //}
+
+            List<entity.XY> xyList = new List<entity.XY>();
+
+            for (int i = 0; i < recvDataList.Count; i++)
             {
-                this.chartControl1.Series[0].Points.Clear();
-                this.chartControl2.Series[0].Points.Clear();
-                this.chartControl1.Series[1].Points.Clear();
-                this.chartControl2.Series[1].Points.Clear();
-                this.chartControl1.Series[2].Points.Clear();
-                this.chartControl2.Series[2].Points.Clear();
-
-                diagram.AxisX.ConstantLines.Clear();
-                diagram.AxisY.ConstantLines.Clear();
-
-                diagram2.AxisX.ConstantLines.Clear();
-                diagram2.AxisY.ConstantLines.Clear();
+                entity.XY xy = new entity.XY();
+                xy.x = i;
+                xy.y = Math.Round(double.Parse(recvDataList[i] + ""), 2);
+                xyList.Add(xy);
             }
-            catch { }
 
-            entity.AnalysisModel uploadAnalysisModel = new entity.AnalysisModel();
-            if (uploadAnalysisModel.FileInfoList == null)
+            for (int i = 0; i < xyList.Count; i++)
             {
-                uploadAnalysisModel.FileInfoList = new List<entity.FileInfo>();
-            }
-
-            /*string timeString = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss");
-            List<string> slopList = new List<string>();
-            List<string> secDeriList = new List<string>();
-            List<double> quxianList = new List<double>();
-            List<string> formatTxt = new List<string>();*/
-
+                SeriesPoint sp = new SeriesPoint();
+                sp.Argument = xyList[i].x.ToString();
+                double[] ys = { xyList[i].y };
+                sp.Values = ys;
+                this.chartControl1.Series[0].Points.Add(sp);
+                this.chartControl2.Series[0].Points.Add(sp);
+            } 
 
 
-            //最高温度
-            //string maxTemperature = this.maxTemperatureInput.Text;
-            //最低温度
-            //string minTemperature = this.minTemperatureInput.Text;
+            //&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+            
+            //bool isHuaTem = false;
+            ////选择数据类型（华氏温度、摄氏温度）
+            //if (XtraMessageBox.Show("文件中温度数据是否是华氏温度数据？", "提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
+            //{
+            //    isHuaTem = true;
+            //}
 
-            this.preAnalysisOpenFileDialog.Multiselect = true;
-            if (this.preAnalysisOpenFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                //string filePath = this.preAnalysisOpenFileDialog.FileName;
-                string[] fileNames = this.preAnalysisOpenFileDialog.FileNames;
-                int fileNum = fileNames.Length;
+            ////清空temperatureList全局变量
+            //try
+            //{
+            //    this.temperatureList.Clear();
+            //}
+            //catch { }
 
 
-                if (fileNum > 0 && fileNum <= 3)
-                {
-                    //if (string.IsNullOrWhiteSpace(maxTemperature) || string.IsNullOrWhiteSpace(minTemperature))
-                    //{
-                    for (int fileIndex = 0; fileIndex < fileNum; fileIndex++)
-                    {
-                        //绘制曲线、特征值，计算参数
-                        drawLine(fileNames[fileIndex], null, null, isHuaTem, fileIndex, diagram, uploadAnalysisModel);
-                    }
-                    //}
-                    //else
-                    {
-                        /*double maxTep = double.Parse(maxTemperature) * 1.8 + 32;
-                        double minTep = double.Parse(minTemperature) * 1.8 + 32;
+            ////清空温度、斜率曲线
+            //XYDiagram diagram = (XYDiagram)chartControl1.Diagram;
+            //XYDiagram diagram2 = (XYDiagram)chartControl2.Diagram;
 
-                        temperatureList = Core.ChartList.GetTemperature(filePath, maxTep.ToString(), minTep.ToString());
-                        slopList = Core.ChartList.GetSlop(temperatureList);
+            //try
+            //{
+            //    this.chartControl1.Series[0].Points.Clear();
+            //    this.chartControl2.Series[0].Points.Clear();
+            //    this.chartControl1.Series[1].Points.Clear();
+            //    this.chartControl2.Series[1].Points.Clear();
+            //    this.chartControl1.Series[2].Points.Clear();
+            //    this.chartControl2.Series[2].Points.Clear();
 
-                        if (temperatureList.Count > 0 && slopList.Count > 0)
-                        {
-                            List<entity.XY> list = new List<entity.XY>();
-                            List<entity.XY> list2 = new List<entity.XY>();
+            //    diagram.AxisX.ConstantLines.Clear();
+            //    diagram.AxisY.ConstantLines.Clear();
 
-                            for (int i = 0; i < temperatureList.Count; i++)
-                            {
-                                entity.XY xy = new entity.XY();
-                                xy.x = i * 0.5;
-                                xy.y = Math.Round(double.Parse(temperatureList[i]), 2);
-                                list.Add(xy);
-                            }
+            //    diagram2.AxisX.ConstantLines.Clear();
+            //    diagram2.AxisY.ConstantLines.Clear();
+            //}
+            //catch { }
 
-                            for (int i = 0; i < slopList.Count; i++)
-                            {
-                                entity.XY xy = new entity.XY();
-                                xy.x = i * 0.5;
-                                xy.y = Math.Round(double.Parse(slopList[i]), 2);
-                                list2.Add(xy);
-                            }
+            //entity.AnalysisModel uploadAnalysisModel = new entity.AnalysisModel();
+            //if (uploadAnalysisModel.FileInfoList == null)
+            //{
+            //    uploadAnalysisModel.FileInfoList = new List<entity.FileInfo>();
+            //}
 
-                            for (int i = 0; i < list.Count; i++)
-                            {
-                                list[i].y = Math.Round((list[i].y - 32) * 5 / 9, 2);
-                                quxianList.Add(list[i].y);
-                            }
+            ///*string timeString = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss");
+            //List<string> slopList = new List<string>();
+            //List<string> secDeriList = new List<string>();
+            //List<double> quxianList = new List<double>();
+            //List<string> formatTxt = new List<string>();*/
 
-                            int min1 = (int)list[list.Count - 1].y - 1;
-                            int max1 = (int)list[0].y + 1;
-                            int min2 = (int)list2[0].y - 1;
-                            int max2 = (int)list2[list2.Count - 1].y + 1;
 
-                            this.chartControl1.DataSource = list;
-                            AxisRange DIA = (AxisRange)((XYDiagram)chartControl1.Diagram).AxisY.Range;
-                            DIA.SetMinMaxValues(min1, max1);
 
-                            this.chartControl2.DataSource = list2;
-                            AxisRange DIA2 = (AxisRange)((XYDiagram)chartControl2.Diagram).AxisY.Range;
-                            //DIA2.SetMinMaxValues(min2, max2);
+            ////最高温度
+            ////string maxTemperature = this.maxTemperatureInput.Text;
+            ////最低温度
+            ////string minTemperature = this.minTemperatureInput.Text;
 
-                            List<entity.ChartData> temperatureGridList = new List<entity.ChartData>();
-                            for (int i = 0; i < list.Count; i++)
-                            {
-                                entity.ChartData cd = new entity.ChartData();
-                                cd.Number = i;
-                                cd.DataValue = list[i].y;
-                                temperatureGridList.Add(cd);
-                            }
-                            this.gridControl2.DataSource = temperatureGridList;
+            //this.preAnalysisOpenFileDialog.Multiselect = true;
+            //if (this.preAnalysisOpenFileDialog.ShowDialog() == DialogResult.OK)
+            //{
+            //    //string filePath = this.preAnalysisOpenFileDialog.FileName;
+            //    string[] fileNames = this.preAnalysisOpenFileDialog.FileNames;
+            //    int fileNum = fileNames.Length;
 
-                            List<entity.ChartData> slopGridList = new List<entity.ChartData>();
-                            for (int i = 0; i < list2.Count; i++)
-                            {
-                                entity.ChartData cd = new entity.ChartData();
-                                cd.Number = i;
-                                cd.DataValue = list2[i].y;
-                                slopGridList.Add(cd);
-                            }
-                            this.gridControl3.DataSource = slopGridList;
-                        }*/
-                    }
-                }
-                else if (fileNames.Length > 3)
-                {
-                    MessageBox.Show("最多只能选择3个数据文件！", "操作提示");
-                }
-                if (XtraMessageBox.Show("计算完毕，是否将计算结果及相关文件保存至云端？", "提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
-                {
-                    string uploadFileTime = DateTime.Now.ToString("yyyyMMddhhmmss");
-                    //待分析的txt文件路径
-                    //string uploadTxtPath = filePath;
-                    //温度分析曲线图
-                    string uploadTempereturePic = Application.StartupPath + "\\temp\\温度分析曲线_" + uploadFileTime + ".Jpeg";
-                    this.chartControl1.ExportToImage(uploadTempereturePic, ImageFormat.Jpeg);
-                    //温度采集Excel报表
-                    string uploadTemperetureXls = Application.StartupPath + "\\temp\\温度采集报表_" + uploadFileTime + ".xls";
-                    //this.gridControl2.ExportToXls(uploadTemperetureXls);
-                    //斜率分析曲线图
-                    string uploadSlopPic = Application.StartupPath + "\\temp\\斜率分析曲线图_" + uploadFileTime + ".Jpeg";
-                    this.chartControl2.ExportToImage(uploadSlopPic, ImageFormat.Jpeg);
-                    //斜率计算记录Excel报表
-                    string uploadSlopXls = Application.StartupPath + "\\temp\\斜率计算记录报表_" + uploadFileTime + ".xls";
-                    //this.gridControl3.ExportToXls(uploadSlopXls);
 
-                    try
-                    {
-                        //uploadAnalysisModel.FileInfoList.Add(UploadFiles(uploadTxtPath, "txt"));
-                    }
-                    catch { }
+            //    if (fileNum > 0 && fileNum <= 3)
+            //    {
+            //        //if (string.IsNullOrWhiteSpace(maxTemperature) || string.IsNullOrWhiteSpace(minTemperature))
+            //        //{
+            //        for (int fileIndex = 0; fileIndex < fileNum; fileIndex++)
+            //        {
+            //            //绘制曲线、特征值，计算参数
+            //            drawLine(fileNames[fileIndex], null, null, isHuaTem, fileIndex, diagram, uploadAnalysisModel);
+            //        }
+            //        //}
+            //        //else
+            //        {
+            //            /*double maxTep = double.Parse(maxTemperature) * 1.8 + 32;
+            //            double minTep = double.Parse(minTemperature) * 1.8 + 32;
 
-                    try
-                    {
-                        uploadAnalysisModel.FileInfoList.Add(UploadFiles(uploadTempereturePic, "Jpeg"));
-                    }
-                    catch { }
+            //            temperatureList = Core.ChartList.GetTemperature(filePath, maxTep.ToString(), minTep.ToString());
+            //            slopList = Core.ChartList.GetSlop(temperatureList);
 
-                    try
-                    {
-                        uploadAnalysisModel.FileInfoList.Add(UploadFiles(uploadTemperetureXls, "xls"));
-                    }
-                    catch { }
+            //            if (temperatureList.Count > 0 && slopList.Count > 0)
+            //            {
+            //                List<entity.XY> list = new List<entity.XY>();
+            //                List<entity.XY> list2 = new List<entity.XY>();
 
-                    try
-                    {
-                        uploadAnalysisModel.FileInfoList.Add(UploadFiles(uploadSlopPic, "Jpeg"));
-                    }
-                    catch { }
+            //                for (int i = 0; i < temperatureList.Count; i++)
+            //                {
+            //                    entity.XY xy = new entity.XY();
+            //                    xy.x = i * 0.5;
+            //                    xy.y = Math.Round(double.Parse(temperatureList[i]), 2);
+            //                    list.Add(xy);
+            //                }
 
-                    try
-                    {
-                        uploadAnalysisModel.FileInfoList.Add(UploadFiles(uploadSlopXls, "xls"));
-                    }
-                    catch { }
+            //                for (int i = 0; i < slopList.Count; i++)
+            //                {
+            //                    entity.XY xy = new entity.XY();
+            //                    xy.x = i * 0.5;
+            //                    xy.y = Math.Round(double.Parse(slopList[i]), 2);
+            //                    list2.Add(xy);
+            //                }
 
-                    try
-                    {
-                        Core.DataBaseTools.Insert<entity.AnalysisModel>("AnalysisResult", uploadAnalysisModel);
-                    }
-                    catch { }
-                    XtraMessageBox.Show("操作完成。", "信息", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-            }
+            //                for (int i = 0; i < list.Count; i++)
+            //                {
+            //                    list[i].y = Math.Round((list[i].y - 32) * 5 / 9, 2);
+            //                    quxianList.Add(list[i].y);
+            //                }
+
+            //                int min1 = (int)list[list.Count - 1].y - 1;
+            //                int max1 = (int)list[0].y + 1;
+            //                int min2 = (int)list2[0].y - 1;
+            //                int max2 = (int)list2[list2.Count - 1].y + 1;
+
+            //                this.chartControl1.DataSource = list;
+            //                AxisRange DIA = (AxisRange)((XYDiagram)chartControl1.Diagram).AxisY.Range;
+            //                DIA.SetMinMaxValues(min1, max1);
+
+            //                this.chartControl2.DataSource = list2;
+            //                AxisRange DIA2 = (AxisRange)((XYDiagram)chartControl2.Diagram).AxisY.Range;
+            //                //DIA2.SetMinMaxValues(min2, max2);
+
+            //                List<entity.ChartData> temperatureGridList = new List<entity.ChartData>();
+            //                for (int i = 0; i < list.Count; i++)
+            //                {
+            //                    entity.ChartData cd = new entity.ChartData();
+            //                    cd.Number = i;
+            //                    cd.DataValue = list[i].y;
+            //                    temperatureGridList.Add(cd);
+            //                }
+            //                this.gridControl2.DataSource = temperatureGridList;
+
+            //                List<entity.ChartData> slopGridList = new List<entity.ChartData>();
+            //                for (int i = 0; i < list2.Count; i++)
+            //                {
+            //                    entity.ChartData cd = new entity.ChartData();
+            //                    cd.Number = i;
+            //                    cd.DataValue = list2[i].y;
+            //                    slopGridList.Add(cd);
+            //                }
+            //                this.gridControl3.DataSource = slopGridList;
+            //            }*/
+            //        }
+            //    }
+            //    else if (fileNames.Length > 3)
+            //    {
+            //        MessageBox.Show("最多只能选择3个数据文件！", "操作提示");
+            //    }
+            //    if (XtraMessageBox.Show("计算完毕，是否将计算结果及相关文件保存至云端？", "提示", MessageBoxButtons.OKCancel, MessageBoxIcon.Question) == DialogResult.OK)
+            //    {
+            //        string uploadFileTime = DateTime.Now.ToString("yyyyMMddhhmmss");
+            //        //待分析的txt文件路径
+            //        //string uploadTxtPath = filePath;
+            //        //温度分析曲线图
+            //        string uploadTempereturePic = Application.StartupPath + "\\temp\\温度分析曲线_" + uploadFileTime + ".Jpeg";
+            //        this.chartControl1.ExportToImage(uploadTempereturePic, ImageFormat.Jpeg);
+            //        //温度采集Excel报表
+            //        string uploadTemperetureXls = Application.StartupPath + "\\temp\\温度采集报表_" + uploadFileTime + ".xls";
+            //        //this.gridControl2.ExportToXls(uploadTemperetureXls);
+            //        //斜率分析曲线图
+            //        string uploadSlopPic = Application.StartupPath + "\\temp\\斜率分析曲线图_" + uploadFileTime + ".Jpeg";
+            //        this.chartControl2.ExportToImage(uploadSlopPic, ImageFormat.Jpeg);
+            //        //斜率计算记录Excel报表
+            //        string uploadSlopXls = Application.StartupPath + "\\temp\\斜率计算记录报表_" + uploadFileTime + ".xls";
+            //        //this.gridControl3.ExportToXls(uploadSlopXls);
+
+            //        try
+            //        {
+            //            //uploadAnalysisModel.FileInfoList.Add(UploadFiles(uploadTxtPath, "txt"));
+            //        }
+            //        catch { }
+
+            //        try
+            //        {
+            //            uploadAnalysisModel.FileInfoList.Add(UploadFiles(uploadTempereturePic, "Jpeg"));
+            //        }
+            //        catch { }
+
+            //        try
+            //        {
+            //            uploadAnalysisModel.FileInfoList.Add(UploadFiles(uploadTemperetureXls, "xls"));
+            //        }
+            //        catch { }
+
+            //        try
+            //        {
+            //            uploadAnalysisModel.FileInfoList.Add(UploadFiles(uploadSlopPic, "Jpeg"));
+            //        }
+            //        catch { }
+
+            //        try
+            //        {
+            //            uploadAnalysisModel.FileInfoList.Add(UploadFiles(uploadSlopXls, "xls"));
+            //        }
+            //        catch { }
+
+            //        try
+            //        {
+            //            Core.DataBaseTools.Insert<entity.AnalysisModel>("AnalysisResult", uploadAnalysisModel);
+            //        }
+            //        catch { }
+            //        XtraMessageBox.Show("操作完成。", "信息", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                //}
+            //}
         }
 
 
@@ -2625,40 +2711,46 @@ namespace CreepRateApp
         /// 循环监测recvDataList变量内容，绘制曲线，将数据转移到本地文件，清除recvDataList变量内容
         /// </summary>
         /// <param name="obj"></param>
-        private void listenAndDrawLines(object source, ElapsedEventArgs e) { 
-            //while(true){
+        private void listenAndDrawLines(object source, ElapsedEventArgs e)
+        { 
+            //while (true)
+            //{
                 try
                 {
-                    if (recvDataList.Count > 0)    //recvDataList有内容了
+                    //Monitor.Enter(lockHelper);  //锁定对象
+                    if (needRepaint)    //recvDataList有内容了   recvDataList.Count > 0
                     {
+                        needRepaint = false;
+
                         //test
                         System.Console.WriteLine("1.开始绘制数据曲线：");
-                        foreach(string item in recvDataList){
+                        foreach (string item in recvDataList)
+                        {
                             System.Console.WriteLine(item);
                         }
                         //1、绘制曲线
 
-                        XYDiagram diagram = (XYDiagram)chartControl1.Diagram;
-                        XYDiagram diagram2 = (XYDiagram)chartControl2.Diagram;
+                        //XYDiagram diagram = (XYDiagram)chartControl1.Diagram;
+                        //XYDiagram diagram2 = (XYDiagram)chartControl2.Diagram;
 
-                        this.chartControl1.Series[0].Points.Clear();
-                        this.chartControl2.Series[0].Points.Clear();
-                        this.chartControl1.Series[1].Points.Clear();
-                        this.chartControl2.Series[1].Points.Clear();
-                        this.chartControl1.Series[2].Points.Clear();
-                        this.chartControl2.Series[2].Points.Clear();
+                        ////this.chartControl1.Series[0].Points.Clear();
+                        ////this.chartControl2.Series[0].Points.Clear();
+                        ////this.chartControl1.Series[1].Points.Clear();
+                        ////this.chartControl2.Series[1].Points.Clear();
+                        //this.chartControl1.Series[2].Points.Clear();
+                        //this.chartControl2.Series[2].Points.Clear();
 
-                        diagram.AxisX.ConstantLines.Clear();
-                        diagram.AxisY.ConstantLines.Clear();
+                        //diagram.AxisX.ConstantLines.Clear();
+                        //diagram.AxisY.ConstantLines.Clear();
 
-                        diagram2.AxisX.ConstantLines.Clear();
-                        diagram2.AxisY.ConstantLines.Clear();
+                        //diagram2.AxisX.ConstantLines.Clear();
+                        //diagram2.AxisY.ConstantLines.Clear();
 
-                        entity.AnalysisModel uploadAnalysisModel = new entity.AnalysisModel();
-                        if (uploadAnalysisModel.FileInfoList == null)
-                        {
-                            uploadAnalysisModel.FileInfoList = new List<entity.FileInfo>();
-                        }
+                        //entity.AnalysisModel uploadAnalysisModel = new entity.AnalysisModel();
+                        //if (uploadAnalysisModel.FileInfoList == null)
+                        //{
+                        //    uploadAnalysisModel.FileInfoList = new List<entity.FileInfo>();
+                        //}
 
                         List<entity.XY> xyList = new List<entity.XY>();
 
@@ -2670,17 +2762,29 @@ namespace CreepRateApp
                             xyList.Add(xy);
                         }
 
-                        for (int i = 0; i < xyList.Count; i++)
-                        {
-                            SeriesPoint sp = new SeriesPoint();
-                            sp.Argument = xyList[i].x.ToString();
-                            double[] ys = { xyList[i].y };
-                            sp.Values = ys;
-                            this.chartControl1.Series[0].Points.Add(sp);
-                            this.chartControl2.Series[0].Points.Add(sp);
-                        }
+                        //for (int i = 0; i < xyList.Count; i++)
+                        //{
+                        //    SeriesPoint sp = new SeriesPoint();
+                        //    sp.Argument = xyList[i].x.ToString();
+                        //    double[] ys = { xyList[i].y };
+                        //    sp.Values = ys;
+                        //    //this.chartControl1.Series[0].Points.Add(sp);
+                        //    this.chartControl2.Series[0].Points.Add(sp);
+                        //}
 
-                        
+                        cnt = (cnt + 1);
+                        this.chartControl1.Series[0].Points.Add(new DevExpress.XtraCharts.SeriesPoint(cnt, xyList[cnt].y));
+                        this.chartControl2.Series[0].Points.Add(new DevExpress.XtraCharts.SeriesPoint(xyList[cnt].x, xyList[cnt].y));
+                        //if (this.chartControl1.Series[0].Points.Count > 10)
+                        //{
+                        //    this.chartControl1.Series[0].Points.RemoveRange(0,1);
+                        //}
+                        //if (this.chartControl2.Series[0].Points.Count > 10)
+                        //{
+                        //    this.chartControl2.Series[0].Points.RemoveRange(0,1);
+                        //}
+
+
                         //2、数据更新至本地文件
                         string exportFileTime = DateTime.Now.ToString("yyyyMMddhhmmss");
                         string filePath = Application.StartupPath + "\\downLoadFiles\\测试输出数据_" + exportFileTime + ".txt";
@@ -2697,13 +2801,13 @@ namespace CreepRateApp
 
                         //test2
                         System.Console.WriteLine("更新文件：" + filePath);
-                        
+
 
                         //3、清除recvDataList变量内容
                         recvDataList.Clear();
 
                         //test3 
-                        System.Console.WriteLine("清数据：" );
+                        System.Console.WriteLine("清数据：");
                         if (recvDataList.Count != 0)
                         {
                             for (int i = 0; i < recvDataList.Count; i++)
@@ -2711,30 +2815,27 @@ namespace CreepRateApp
                                 System.Console.WriteLine(i + recvDataList[i]);
                             }
                         }
-                        else {
+                        else
+                        {
                             System.Console.WriteLine("recvDataList已经被清空！");
                         }
-                        
                     }
-                    else {
+                    else
+                    {
                         System.Console.WriteLine("recvDataList没数据！");
                     }
+
+                   // Thread.Sleep(2000);
+                    //Monitor.Pulse(lockHelper);  //通知其他线程，我忙完了，等我Monitor.Exit(obj)了，你们就继续吧
+                    //Monitor.Exit(lockHelper);  //释放锁
                 }
-                catch { 
-                    
-                } 
+                catch
+                {
+
+                }   
             //}
-        }
-
-        
-
-
-
-
-
-
-
-
-        
+             
+            
+        }    
     }
 }
