@@ -56,6 +56,7 @@ namespace CreepRateApp
         //richTextBox1窗体初始化
         public static System.Windows.Forms.RichTextBox richTextBox1;
         public static byte EquipmentId = 255;
+        public static long EquipmentIdUpdateTime = DateTime.Now.Ticks;
 
 
 
@@ -1343,11 +1344,40 @@ namespace CreepRateApp
                             {
                                 //故障配置应答
                                 case "81":
+                                    //-----------故障配置-----
+                                    List<string> faultConfigValues = new List<string>();  //存放通道配置值
+                                    for (int i = 0; i <= 22; i++)
+                                    {
+                                        byte i1 = byteRecv[2*i+7];
+                                        byte i2 = byteRecv[2*i+1+7];
+                                        int configData = (i2 << 8) ^ i1;
+                                        string value = configData+"";
+
+                                        faultConfigValues.Add(value);
+
+                                    }
+                                    byte num53 = byteRecv[53];
+
+                                    //初始化故障配置信息类
+                                    FaultInfoConfigValue.setFaultConfigValue(faultConfigValues);
                                     showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "_故障配置应答：", cmdStr0x));
                                     break;
                                 //传感器通道配置应答
                                 case "82":
+                                    //-----------传感器通道配置-----
+                                    List<string> sensorChannelConfigValues = new List<string>();  //存放通道配置值
+                                    for (int i = 7; i <= 36; i++)
+                                    {
+                                        string value = byteRecv[i].ToString();
+
+                                        sensorChannelConfigValues.Add(value);
+
+                                    }
+                                    //初始化传感器通道配置信息类
+                                    SensorChannelConfigValue.setChannelConfigValue(sensorChannelConfigValues);
                                     showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "_传感器通道配置应答：", cmdStr0x));
+                                    showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "_传感器通道配置成功！"));
+                                    
                                     break;
 
                                 //数据应答
@@ -1383,7 +1413,21 @@ namespace CreepRateApp
 
                                 //传感器量程配置应答
                                 case "84":
+                                    //-----------传感器量程配置-----
+                                    List<string> spanConfigValues = new List<string>();  //存放量程配置值
+                                    for (int i = 7; i <= 30; i++)
+                                    {
+                                        string value = byteRecv[i].ToString();
+
+                                        spanConfigValues.Add(value);
+                                         
+                                    }
+                                    //初始化传感器通道配置信息类
+                                    SensorSpanConfigValue.setSpanConfigValue(spanConfigValues);
+                                    //------------------------------
                                     showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "_传感器量程配置应答：", cmdStr0x));
+                                    showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "_传感器量程配置成功！"));
+                                 
                                     break;
 
                                 //交互应答
@@ -1393,15 +1437,15 @@ namespace CreepRateApp
                                         StringBuilder status = hexStrs[7];   //获取status值
                                         switch (status + "")
                                         {
-                                            //故障已配置信息   TODO:接收随后的故障信息应答包
+                                            //故障已配置信息    
                                             case "01":
                                                 showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "_交互应答：", "故障已配置信息"));
-                                                //TODO存储状态变量
+                                                
                                                 break;
-                                            //传感器通道已配置信息   TODO:接收随后的传感器通道信息应答包
+                                            //传感器通道已配置信息   
                                             case "02":
                                                 showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "_交互应答：", "传感器通道已配置信息"));
-                                                //TODO存储状态变量
+                                                 
                                                 break;
                                             //已暂停采集
                                             case "03":
@@ -1415,27 +1459,35 @@ namespace CreepRateApp
                                             case "05":
                                                 showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "_交互应答：", "擦除结束可重启采集"));
                                                 break;
-                                            //已设置设备ID      TODO:接收随后的设备ID应答包
+                                            //已设置设备ID      
                                             case "06":
                                                 showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "_交互应答：", "已设置设备ID"));
                                                 break;
-                                            //获取量程配置信息      TODO:接收随后的设备ID应答包
+                                            //获取量程配置信息      
                                             case "07":
                                                 showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "_交互应答：", "获取量程配置信息"));
                                                 break;
                                             //传感器通道未配置信息
                                             case "81":
+                                                SensorChannelConfigValue.updateTime = -1;
                                                 showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "_交互应答：", "传感器通道未配置信息"));
                                                 //TODO存储状态变量
                                                 break;
                                             //故障未配置信息
                                             case "82":
+                                                FaultInfoConfigValue.updateTime = -1;
                                                 showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "_交互应答：", "故障未配置信息"));
                                                 //TODO存储状态变量
                                                 break;
                                             //未设置设备ID
                                             case "86":
+                                                EquipmentIdUpdateTime = -1;
                                                 showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "_交互应答：", "未设置设备ID"));
+                                                break;
+                                            //未设置传感器量程
+                                            case "87":
+                                                SensorSpanConfigValue.updateTime = -1;
+                                                showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString() + "_交互应答：", "未设置传感器量程"));
                                                 break;
                                             //default
                                             default:
@@ -2364,13 +2416,13 @@ namespace CreepRateApp
         //=======================================================================配置按钮================================================================================
 
         /// <summary>
-        /// 故障配置
+        /// 故障信息
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void barButtonItem13_ItemClick(object sender, ItemClickEventArgs e)
+        private void barButtonItem18_ItemClick(object sender, ItemClickEventArgs e)
         {
-            FaultInfoConfigForm spc = new FaultInfoConfigForm(ComDevice);
+            FaultInfoConfigForm spc = new FaultInfoConfigForm(this);
             try//此处用try做异常处理，是为了防止COM不存在释放Dialog后，ShowDialog无法找到窗体资源而报错。
             {
                 spc.ShowDialog();
@@ -2385,8 +2437,9 @@ namespace CreepRateApp
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void barButtonItem2_ItemClick(object sender, ItemClickEventArgs e)
+        private void barButtonItem19_ItemClick(object sender, ItemClickEventArgs e)
         {
+            
             SensorChannelConfigForm spc = new SensorChannelConfigForm(this);
             try//此处用try做异常处理，是为了防止COM不存在释放Dialog后，ShowDialog无法找到窗体资源而报错。
             {
@@ -2401,9 +2454,14 @@ namespace CreepRateApp
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void barButtonItem14_ItemClick(object sender, ItemClickEventArgs e)
+        private void barButtonItem20_ItemClick(object sender, ItemClickEventArgs e)
         {
-
+            SensorStateConfigForm stc = new SensorStateConfigForm(this);
+            try//此处用try做异常处理，是为了防止COM不存在释放Dialog后，ShowDialog无法找到窗体资源而报错。
+            {
+                stc.ShowDialog();
+            }
+            catch { }
         }
 
         /// <summary>
@@ -2411,7 +2469,7 @@ namespace CreepRateApp
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void barButtonItem15_ItemClick(object sender, ItemClickEventArgs e)
+        private void barButtonItem21_ItemClick(object sender, ItemClickEventArgs e)
         {
             EquipmentIdConfigForm spc = new EquipmentIdConfigForm(ComDevice);
             try//此处用try做异常处理，是为了防止COM不存在释放Dialog后，ShowDialog无法找到窗体资源而报错。
@@ -2427,7 +2485,7 @@ namespace CreepRateApp
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void barButtonItem16_ItemClick(object sender, ItemClickEventArgs e)
+        private void barButtonItem22_ItemClick(object sender, ItemClickEventArgs e)
         {
             SensorSpanConfigForm spc = new SensorSpanConfigForm(this);
             try//此处用try做异常处理，是为了防止COM不存在释放Dialog后，ShowDialog无法找到窗体资源而报错。
@@ -2836,6 +2894,9 @@ namespace CreepRateApp
             //}
              
             
-        }    
+        }
+
+       
+         
     }
 }

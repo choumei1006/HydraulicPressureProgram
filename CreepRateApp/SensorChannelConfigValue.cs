@@ -11,6 +11,7 @@ namespace CreepRateApp
     /// </summary>
     public static class SensorChannelConfigValue
     {
+        public static long updateTime = DateTime.Now.Ticks;
         //配置信息数组
         public static List<string> configList = 
             new List<string>{"1","2","3","4","5","6","7","8","9","10","11","12","1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","1","2","3"};
@@ -94,6 +95,8 @@ namespace CreepRateApp
         {
             configList = valueList;
 
+            updateTime = DateTime.Now.Ticks;
+
             ADC1_CHx1 = int.Parse(valueList[0]);
             ADC1_CHx2 = int.Parse(valueList[1]);
             ADC1_CHx3 = int.Parse(valueList[2]);
@@ -173,6 +176,14 @@ namespace CreepRateApp
             }
              
             return cmdStr;
+        }
+
+        /// <summary>
+        /// 返回配置值List
+        /// </summary>
+        /// <returns></returns>
+        public static List<string> getSensorChannelConfigList() {
+            return configList;
         }
     }
 }

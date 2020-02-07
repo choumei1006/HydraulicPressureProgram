@@ -38,6 +38,27 @@ namespace CreepRateApp
             //mSerialPort = paramPortDev;
             //mSerialPort.ReceivedBytesThreshold = 1;
             this._form = form;
+
+
+            //初始化设置值
+            //获取静态配置类中的配置值
+            List<string> configList = SensorSpanConfigValue.getSensorSpanConfigValue();
+            if (null == configList || configList.Count != 24)
+            {
+
+            }
+            else
+            {
+                //1-24循环显示在相应输入框
+                for (int i = 1; i <= 24; i++)
+                {
+                    string configVal = configList[i - 1];
+                    Control control = Controls.Find("numericUpDown" + Convert.ToString(i), true)[0];
+                    control.GetType().GetProperty("Text").SetValue(control, configVal, null);
+                    //String value = control.GetType().GetProperty("Text").GetValue(control, null).ToString();
+                }
+            }
+
         }
 
         private void config_current_Paint(object sender, PaintEventArgs e)
@@ -117,6 +138,149 @@ namespace CreepRateApp
             }
 
             
+        }
+
+        /// <summary>
+        /// 读取数据【已废弃】
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button1_Click_used(object sender, EventArgs e)
+        {
+            //获取静态配置类中的配置值
+            List<string> configList = SensorSpanConfigValue.getSensorSpanConfigValue();
+            if (null == configList || configList.Count != 24)
+            {
+                XtraMessageBox.Show("读取失败，请完成配置再读取哦！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+            //1-23循环显示在相应输入框
+            for (int i = 1; i <= 24; i++)
+            {
+                string configVal = configList[i - 1];
+                Control control = Controls.Find("numericUpDown" + Convert.ToString(i), true)[0];
+                control.GetType().GetProperty("Text").SetValue(control, configVal, null);
+                //String value = control.GetType().GetProperty("Text").GetValue(control, null).ToString();
+            } 
+
+            XtraMessageBox.Show("读取成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+        }
+
+        /// <summary>
+        /// 获取量程配置
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                //生成配置信息 byte数组 对应的 16进制字符串数组
+                byte[] cmd = new byte[9];
+
+                //Header
+                cmd[0] = byte.Parse("EB", System.Globalization.NumberStyles.HexNumber);
+                cmd[1] = byte.Parse("90", System.Globalization.NumberStyles.HexNumber);
+                //Device_id
+                cmd[2] = MainForm.EquipmentId;
+                //Reserve
+                cmd[3] = byte.Parse("ff", System.Globalization.NumberStyles.HexNumber);
+                //--Category
+                cmd[4] = byte.Parse("05", System.Globalization.NumberStyles.HexNumber);
+
+                //Len(2 byte)
+                cmd[5] = 1;
+                cmd[6] = 0;
+
+
+                //data  
+                cmd[7] = byte.Parse("07", System.Globalization.NumberStyles.HexNumber);
+
+
+                //Verify
+                byte verifyByte = 0;
+                for (int i = 0; i < cmd.Length; i++)
+                {
+                    verifyByte ^= cmd[i];
+                }
+                cmd[8] = verifyByte;
+
+                //转换为十六进制字符串
+                String sendCmdStr = "";
+                for (int i = 0; i < cmd.Length; i++)
+                {
+                    StringBuilder hexStr = new StringBuilder(cmd[i].ToString("X2"));
+                    sendCmdStr += "0x" + hexStr + " ";
+                }
+
+                //===============================================
+
+
+                //下发通道配置信息
+                //1、关闭线程 
+                //MainForm.thrRecv.Abort();    //所谓的关闭线程
+                //MainForm.thrRecv.Join();    //挂起
+                //2、关闭udpcRecv
+                //MainForm.udpcRecv.Close();
+                //MainForm.udpcRecv = null;
+                //3、创建udpcSend
+
+                //4、创建thrSend
+                MainForm.thrSend = new Thread(MainForm.SendMessage);
+
+                long lastUpdateTime = SensorSpanConfigValue.updateTime;
+
+                //5、开启thrSend（thrSend执行结束后自动关闭udpcSend，销毁thrSend） 
+                MainForm.thrSend.Start(sendCmdStr);
+
+                //6、在主界面显示发送内容 
+                MainForm.showMessage(MainForm.richTextBox1, string.Format("{0}{1}", "上位机(" + MainForm.localIpep + ")[获取传感器量程配置信息]_" + System.DateTime.Now.ToString() + "：", sendCmdStr));
+
+                int index = 0;
+                while (true)
+                {
+                    index++;
+                    if (index >= 20)
+                    {
+                        XtraMessageBox.Show("读取超时，请稍后重试！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        break;
+                    }
+                    if (FaultInfoConfigValue.updateTime < 0)
+                    {
+                        XtraMessageBox.Show("读取失败，传感器量程未配置！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        break;
+                    }
+                    if (FaultInfoConfigValue.updateTime > lastUpdateTime)
+                    {
+                        //将配置值显示在配置框中
+                        //获取静态配置类中的配置值
+                        List<string> configList = SensorSpanConfigValue.getSensorSpanConfigValue();
+                        if (null == configList || configList.Count != 24)
+                        {
+                            XtraMessageBox.Show("读取失败，配置信息不完整！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            return;
+                        }
+                        //1-23循环显示在相应输入框
+                        for (int i = 1; i <= 24; i++)
+                        {
+                            string configVal = configList[i - 1];
+                            Control control = Controls.Find("numericUpDown" + Convert.ToString(i), true)[0];
+                            control.GetType().GetProperty("Text").SetValue(control, configVal, null);
+                            //String value = control.GetType().GetProperty("Text").GetValue(control, null).ToString();
+                        } 
+
+                        XtraMessageBox.Show("读取成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        break;
+                    }
+                }
+
+                //XtraMessageBox.Show("指令下发成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception exception)
+            {
+                XtraMessageBox.Show(exception.Message, "异常", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
 
         

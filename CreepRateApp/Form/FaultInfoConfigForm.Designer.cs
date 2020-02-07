@@ -110,6 +110,7 @@
             this.numericUpDown22 = new System.Windows.Forms.NumericUpDown();
             this.numericUpDown23 = new System.Windows.Forms.NumericUpDown();
             this.label2 = new System.Windows.Forms.Label();
+            this.button2 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).BeginInit();
@@ -376,7 +377,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(248, 1013);
+            this.button1.Location = new System.Drawing.Point(362, 1013);
             this.button1.Margin = new System.Windows.Forms.Padding(2);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(122, 43);
@@ -1054,12 +1055,24 @@
             this.label2.Size = new System.Drawing.Size(0, 22);
             this.label2.TabIndex = 113;
             // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(146, 1013);
+            this.button2.Margin = new System.Windows.Forms.Padding(2);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(122, 43);
+            this.button2.TabIndex = 114;
+            this.button2.Text = "读取";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
             // FaultInfoConfigForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(144F, 144F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.AutoScroll = true;
             this.ClientSize = new System.Drawing.Size(647, 1056);
+            this.Controls.Add(this.button2);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.numericUpDown23);
             this.Controls.Add(this.numericUpDown22);
@@ -1259,6 +1272,7 @@
         private System.Windows.Forms.NumericUpDown numericUpDown23;
         private System.Windows.Forms.Label label2;
         public System.Windows.Forms.NumericUpDown numericUpDown1;
+        private System.Windows.Forms.Button button2;
 
 
     }

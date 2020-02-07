@@ -11,6 +11,9 @@ namespace CreepRateApp
     /// </summary>
     public static class FaultInfoConfigValue
     {
+
+        public static long updateTime = DateTime.Now.Ticks; 
+
         //配置信息数组
         public static List<string> configList = null;
 
@@ -143,10 +146,12 @@ namespace CreepRateApp
         /// 通过集合数据，设置配置信息
         /// </summary>
         /// <param name="valueList"></param>
-        public static void setChannelConfigValue(List<String> valueList)
+        public static void setFaultConfigValue(List<String> valueList)
         {
             //25项，此处的valueList数组中String保证合理性检测（不为空）
             configList = valueList;
+
+            updateTime = DateTime.Now.Ticks;
 
             Start_press = valueList[0];
             Open_press = valueList[1];
@@ -252,11 +257,17 @@ namespace CreepRateApp
             }
 
             //System.Text.UnicodeEncoding unicodeEncoder = new UnicodeEncoding();
-
-
-
+             
 
             return cmdStr;
+        }
+
+        /// <summary>
+        /// 获取故障信息配置值List
+        /// </summary>
+        /// <returns></returns>
+        public static List<String> getConfigList() {
+            return configList;
         }
          
     }

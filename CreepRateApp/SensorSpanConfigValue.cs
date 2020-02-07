@@ -11,6 +11,8 @@ namespace CreepRateApp
     /// </summary>
     public static class SensorSpanConfigValue
     {
+        public static long updateTime = DateTime.Now.Ticks;
+
         //配置信息数组
         public static List<string> configList =
             new List<string> { "60", "0", "60", "0", "60", "0", "60", "0", "60", "0", "60", "0", "60", "0", "60", "0", "125", "-25", "100", "0", "60", "0", "60", "0" };
@@ -83,6 +85,8 @@ namespace CreepRateApp
         public static void setSpanConfigValue(List<String> valueList)
         {
             configList = valueList;
+
+            updateTime = DateTime.Now.Ticks;
             
             //测点1-8最高最低值
             CHx1_FS = int.Parse(valueList[0]);
@@ -185,6 +189,14 @@ namespace CreepRateApp
                 }  
             }  
             return cmdStr;
+        }
+
+        /// <summary>
+        /// 返回设置值List
+        /// </summary>
+        /// <returns></returns>
+        public static List<string> getSensorSpanConfigValue() {
+            return configList;
         }
     }
 }

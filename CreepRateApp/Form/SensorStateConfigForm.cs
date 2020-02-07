@@ -21,16 +21,37 @@ namespace CreepRateApp
 {
     public partial class SensorStateConfigForm : DevExpress.XtraEditors.XtraForm
     {
+        private DevExpress.XtraBars.Ribbon.RibbonForm _form;
         private SerialPort mSerialPort; 
         private ModbusCRC crc = new ModbusCRC();
         private StringBuilder builder = new StringBuilder();//避免在事件处理方法中反复的创建，定义到外面。
 
-
-        public SensorStateConfigForm(SerialPort paramPortDev)
+        //public SensorStateConfigForm(SerialPort paramPortDev)
+        public SensorStateConfigForm(DevExpress.XtraBars.Ribbon.RibbonForm form)
         {
             InitializeComponent();
-            mSerialPort = paramPortDev;
-            mSerialPort.ReceivedBytesThreshold = 1; 
+            //mSerialPort = paramPortDev;
+            //mSerialPort.ReceivedBytesThreshold = 1; 
+            this._form = form;
+
+            //获取静态配置类中的配置值
+            List<string> configList = SensorStateConfigValue.getSensorStateConfigList();
+
+            if (null == configList || configList.Count != 5)
+            {
+
+            }
+            else
+            {
+                //1-5循环显示在相应输入框
+                for (int i = 1; i <= 5; i++)
+                {
+                    Boolean configVal = configList[i - 1] == "True" ? true : false;
+                    Control control = Controls.Find("toggleSwitch" + Convert.ToString(i), true)[0];
+                    control.GetType().GetProperty("IsOn").SetValue(control, configVal, null);
+                }
+            }
+  
         }
         /// <summary>
         /// 保存，并发送
@@ -45,26 +66,33 @@ namespace CreepRateApp
 
             try
             {
+                for (int i = 1; i <= 5; i++) {
+                    Control control = Controls.Find("toggleSwitch"+Convert.ToString(i),true)[0];
+                    string value = control.GetType().GetProperty("IsOn").GetValue(control,null).ToString();
+                    stateConfigValues.Add(value);
+                }
+                SensorStateConfigValue.setSensorStateConfigValue(stateConfigValues);
+
                 //检查故障配置合理性并初始化保存
-                if (toggleSwitch1.IsOn) {
-                    SensorStateConfigValue.Valve1 = 1;
-                }
-                if (toggleSwitch2.IsOn)
-                {
-                    SensorStateConfigValue.Valve2 = 1;
-                }
-                if (toggleSwitch3.IsOn)
-                {
-                    SensorStateConfigValue.Valve3 = 1;
-                }
-                if (toggleSwitch4.IsOn)
-                {
-                    SensorStateConfigValue.Valve4 = 1;
-                }
-                if (toggleSwitch5.IsOn)
-                {
-                    SensorStateConfigValue.Valve5 = 1;
-                }
+                //if (toggleSwitch1.IsOn) {
+                //    SensorStateConfigValue.Valve1 = 1;
+                //}
+                //if (toggleSwitch2.IsOn)
+                //{
+                //    SensorStateConfigValue.Valve2 = 1;
+                //}
+                //if (toggleSwitch3.IsOn)
+                //{
+                //    SensorStateConfigValue.Valve3 = 1;
+                //}
+                //if (toggleSwitch4.IsOn)
+                //{
+                //    SensorStateConfigValue.Valve4 = 1;
+                //}
+                //if (toggleSwitch5.IsOn)
+                //{
+                //    SensorStateConfigValue.Valve5 = 1;
+                //}
                  
 
                 //生成配置信息 byte数组 对应的 16进制字符串数组
@@ -106,6 +134,30 @@ namespace CreepRateApp
             {
                 XtraMessageBox.Show(exception.Message, "配置异常", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
+        }
+        /// <summary>
+        /// 读取配置值，并显示在相应的框中
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button2_Click(object sender, EventArgs e)
+        {
+            //获取静态配置类中的配置值
+            List<string> configList = SensorStateConfigValue.getSensorStateConfigList();
+            
+            if (null == configList || configList.Count != 5)
+            {
+                XtraMessageBox.Show("读取失败，请完成配置再读取哦！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+            //1-5循环显示在相应输入框
+            for (int i = 1; i <= 5; i++)
+            {
+                Boolean configVal = configList[i - 1] == "True" ? true : false;
+                Control control = Controls.Find("toggleSwitch" + Convert.ToString(i), true)[0];
+                control.GetType().GetProperty("IsOn").SetValue(control, configVal, null); 
+            }
+            XtraMessageBox.Show("读取成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
        

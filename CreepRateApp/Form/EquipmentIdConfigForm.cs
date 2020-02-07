@@ -31,6 +31,10 @@ namespace CreepRateApp
             InitializeComponent();
             mSerialPort = paramPortDev;
             mSerialPort.ReceivedBytesThreshold = 1; 
+
+            //初始化设备ID
+            byte ID = MainForm.EquipmentId;
+            textBox1.Text = ID.ToString(); 
         }
         /// <summary>
         /// 保存，并发送
@@ -53,7 +57,8 @@ namespace CreepRateApp
                 cmd[0] = byte.Parse("EB", System.Globalization.NumberStyles.HexNumber);
                 cmd[1] = byte.Parse("90", System.Globalization.NumberStyles.HexNumber);
                 //Device_id
-                cmd[2] = MainForm.EquipmentId;
+                //cmd[2] = MainForm.EquipmentId;
+                cmd[2] = byte.Parse("ff", System.Globalization.NumberStyles.HexNumber);
                 //Reserve
                 cmd[3] = byte.Parse("ff", System.Globalization.NumberStyles.HexNumber);
                 //--Category
@@ -114,6 +119,123 @@ namespace CreepRateApp
                 XtraMessageBox.Show(exception.Message, "异常", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
+
+        /// <summary>
+        /// 读取设备ID,显示已配置ID【已废弃】
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button2_Click_used(object sender, EventArgs e)
+        {
+            byte ID = MainForm.EquipmentId;
+            textBox1.Text = ID.ToString();
+            XtraMessageBox.Show("读取成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+       
+        }
+
+        /// <summary>
+        /// 获取设备ID
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button2_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                //生成配置信息 byte数组 对应的 16进制字符串数组
+                byte[] cmd = new byte[9];
+
+                //Header
+                cmd[0] = byte.Parse("EB", System.Globalization.NumberStyles.HexNumber);
+                cmd[1] = byte.Parse("90", System.Globalization.NumberStyles.HexNumber);
+                //Device_id
+                cmd[2] = MainForm.EquipmentId;
+                //Reserve
+                cmd[3] = byte.Parse("ff", System.Globalization.NumberStyles.HexNumber);
+                //--Category
+                cmd[4] = byte.Parse("05", System.Globalization.NumberStyles.HexNumber);
+
+                //Len(2 byte)
+                cmd[5] = 1;
+                cmd[6] = 0;
+
+
+                //data  
+                cmd[7] = byte.Parse("06", System.Globalization.NumberStyles.HexNumber);
+
+
+                //Verify
+                byte verifyByte = 0;
+                for (int i = 0; i < cmd.Length; i++)
+                {
+                    verifyByte ^= cmd[i];
+                }
+                cmd[8] = verifyByte;
+
+                //转换为十六进制字符串
+                String sendCmdStr = "";
+                for (int i = 0; i < cmd.Length; i++)
+                {
+                    StringBuilder hexStr = new StringBuilder(cmd[i].ToString("X2"));
+                    sendCmdStr += "0x" + hexStr + " ";
+                }
+
+                //===============================================
+
+
+                //下发通道配置信息
+                //1、关闭线程 
+                //MainForm.thrRecv.Abort();    //所谓的关闭线程
+                //MainForm.thrRecv.Join();    //挂起
+                //2、关闭udpcRecv
+                //MainForm.udpcRecv.Close();
+                //MainForm.udpcRecv = null;
+                //3、创建udpcSend
+
+                //4、创建thrSend
+                MainForm.thrSend = new Thread(MainForm.SendMessage);
+
+                long lastUpdateTime = MainForm.EquipmentIdUpdateTime;
+
+                //5、开启thrSend（thrSend执行结束后自动关闭udpcSend，销毁thrSend） 
+                MainForm.thrSend.Start(sendCmdStr);
+
+                //6、在主界面显示发送内容 
+                MainForm.showMessage(MainForm.richTextBox1, string.Format("{0}{1}", "上位机(" + MainForm.localIpep + ")[获取设备ID]_" + System.DateTime.Now.ToString() + "：", sendCmdStr));
+
+                int index = 0;
+                while (true)
+                {
+                    index++;
+                    if (index >= 20)
+                    {
+                        XtraMessageBox.Show("读取超时，请稍后重试！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        break;
+                    }
+                    if (FaultInfoConfigValue.updateTime < 0) {
+                        XtraMessageBox.Show("读取失败，设备ID未配置！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        break;
+                    }
+                    if (FaultInfoConfigValue.updateTime > lastUpdateTime)
+                    {
+                        //将配置值显示在配置框中
+                        byte ID = MainForm.EquipmentId;
+                        textBox1.Text = ID.ToString();
+
+                        XtraMessageBox.Show("读取成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        break;
+                    }
+                }
+
+                //XtraMessageBox.Show("指令下发成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception exception)
+            {
+                XtraMessageBox.Show(exception.Message, "异常", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+    
          
     }
 }
