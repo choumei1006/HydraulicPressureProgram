@@ -345,7 +345,7 @@
             this.labelControl12.Name = "labelControl12";
             this.labelControl12.Size = new System.Drawing.Size(152, 22);
             this.labelControl12.TabIndex = 31;
-            this.labelControl12.Text = "预留：";
+            this.labelControl12.Text = "电流通道12：";
             // 
             // labelControl11
             // 
@@ -356,7 +356,7 @@
             this.labelControl11.Name = "labelControl11";
             this.labelControl11.Size = new System.Drawing.Size(152, 22);
             this.labelControl11.TabIndex = 29;
-            this.labelControl11.Text = "预留：";
+            this.labelControl11.Text = "电流通道11：";
             // 
             // labelControl10
             // 
@@ -508,7 +508,7 @@
             this.config_24V.Controls.Add(this.labelControl17);
             this.config_24V.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.config_24V.Name = "config_24V";
-            this.config_24V.Size = new System.Drawing.Size(612, 675);
+            this.config_24V.Size = new System.Drawing.Size(608, 672);
             this.config_24V.Text = "24V通道配置";
             // 
             // numericUpDown27
@@ -640,7 +640,6 @@
             0,
             0,
             0});
-            //this.numericUpDown18.ValueChanged += new System.EventHandler(this.numericUpDown18_ValueChanged);
             // 
             // numericUpDown17
             // 
@@ -725,7 +724,7 @@
             this.labelControl31.Name = "labelControl31";
             this.labelControl31.Size = new System.Drawing.Size(161, 22);
             this.labelControl31.TabIndex = 28;
-            this.labelControl31.Text = "预留：";
+            this.labelControl31.Text = "24V开关量15：";
             // 
             // labelControl30
             // 
@@ -736,7 +735,7 @@
             this.labelControl30.Name = "labelControl30";
             this.labelControl30.Size = new System.Drawing.Size(161, 22);
             this.labelControl30.TabIndex = 26;
-            this.labelControl30.Text = "预留：";
+            this.labelControl30.Text = "24V开关量14：";
             // 
             // labelControl29
             // 
@@ -747,7 +746,7 @@
             this.labelControl29.Name = "labelControl29";
             this.labelControl29.Size = new System.Drawing.Size(161, 22);
             this.labelControl29.TabIndex = 24;
-            this.labelControl29.Text = "预留：";
+            this.labelControl29.Text = "24V开关量13：";
             // 
             // labelControl28
             // 
@@ -758,7 +757,7 @@
             this.labelControl28.Name = "labelControl28";
             this.labelControl28.Size = new System.Drawing.Size(161, 22);
             this.labelControl28.TabIndex = 22;
-            this.labelControl28.Text = "预留：";
+            this.labelControl28.Text = "24V开关量12：";
             // 
             // labelControl27
             // 
@@ -769,7 +768,7 @@
             this.labelControl27.Name = "labelControl27";
             this.labelControl27.Size = new System.Drawing.Size(161, 22);
             this.labelControl27.TabIndex = 20;
-            this.labelControl27.Text = "预留：";
+            this.labelControl27.Text = "24V开关量11：";
             // 
             // labelControl26
             // 
@@ -891,7 +890,7 @@
             this.config_switch.Controls.Add(this.labelControl32);
             this.config_switch.Margin = new System.Windows.Forms.Padding(2);
             this.config_switch.Name = "config_switch";
-            this.config_switch.Size = new System.Drawing.Size(612, 675);
+            this.config_switch.Size = new System.Drawing.Size(608, 672);
             this.config_switch.Text = "开关量测点";
             // 
             // numericUpDown30
@@ -953,7 +952,7 @@
             this.labelControl33.Name = "labelControl33";
             this.labelControl33.Size = new System.Drawing.Size(164, 22);
             this.labelControl33.TabIndex = 2;
-            this.labelControl33.Text = "预留：";
+            this.labelControl33.Text = "开关通道3：";
             // 
             // labelControl32
             // 
@@ -1002,7 +1001,6 @@
             this.Name = "SensorChannelConfigForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "传感器通道配置";
-            //this.Load += new System.EventHandler(this.SensorChannelConfigForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.xtraTabControl1)).EndInit();
             this.xtraTabControl1.ResumeLayout(false);
             this.config_current.ResumeLayout(false);

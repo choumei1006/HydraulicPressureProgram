@@ -150,7 +150,7 @@
             this.config_24V.Controls.Add(this.labelControl27);
             this.config_24V.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.config_24V.Name = "config_24V";
-            this.config_24V.Size = new System.Drawing.Size(612, 864);
+            this.config_24V.Size = new System.Drawing.Size(608, 861);
             this.config_24V.Text = "预留/温度水位量程";
             // 
             // numericUpDown24
@@ -266,7 +266,7 @@
             this.labelControl19.Name = "labelControl19";
             this.labelControl19.Size = new System.Drawing.Size(161, 22);
             this.labelControl19.TabIndex = 35;
-            this.labelControl19.Text = "预留2最低值：";
+            this.labelControl19.Text = "电流通道12最低值：";
             // 
             // labelControl18
             // 
@@ -277,7 +277,7 @@
             this.labelControl18.Name = "labelControl18";
             this.labelControl18.Size = new System.Drawing.Size(161, 22);
             this.labelControl18.TabIndex = 33;
-            this.labelControl18.Text = "预留2最高值：";
+            this.labelControl18.Text = "电流通道12最高值：";
             // 
             // labelControl17
             // 
@@ -288,7 +288,7 @@
             this.labelControl17.Name = "labelControl17";
             this.labelControl17.Size = new System.Drawing.Size(161, 22);
             this.labelControl17.TabIndex = 31;
-            this.labelControl17.Text = "预留1最低值：";
+            this.labelControl17.Text = "电流通道11最低值：";
             // 
             // label1
             // 
@@ -308,7 +308,7 @@
             this.labelControl31.Name = "labelControl31";
             this.labelControl31.Size = new System.Drawing.Size(161, 22);
             this.labelControl31.TabIndex = 28;
-            this.labelControl31.Text = "预留1最高值：";
+            this.labelControl31.Text = "电流通道11最高值：";
             // 
             // labelControl30
             // 

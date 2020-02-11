@@ -125,8 +125,9 @@ namespace CreepRateApp
                     //6、在主界面显示发送内容 
                     MainForm.showMessage(MainForm.richTextBox1, string.Format("{0}{1}", "上位机(" + MainForm.localIpep + ")[传感器量程配置信息下发]_" + System.DateTime.Now.ToString() + "：", sendCmdStr));
                      
-                    XtraMessageBox.Show("配置成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    this.Close();
+                    XtraMessageBox.Show("指令已下发！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MainForm.isCollecting = true;
+                    //this.Close();
                 }
                 else
                 {
@@ -136,6 +137,7 @@ namespace CreepRateApp
             catch(Exception exception) {
                 XtraMessageBox.Show(exception.Message, "配置异常", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
+            
 
             
         }
@@ -174,6 +176,7 @@ namespace CreepRateApp
         /// <param name="e"></param>
         private void button1_Click(object sender, EventArgs e)
         {
+            bool flag = false;
             try
             {
                 //生成配置信息 byte数组 对应的 16进制字符串数组
@@ -237,28 +240,53 @@ namespace CreepRateApp
                 //6、在主界面显示发送内容 
                 MainForm.showMessage(MainForm.richTextBox1, string.Format("{0}{1}", "上位机(" + MainForm.localIpep + ")[获取传感器量程配置信息]_" + System.DateTime.Now.ToString() + "：", sendCmdStr));
 
-                int index = 0;
-                while (true)
+
+                //监听传感器量程配置值变化
+                Thread thrListenSensorSpanConfigValue = new Thread(new ParameterizedThreadStart(listenSensorSpanConfigValue));
+                thrListenSensorSpanConfigValue.Start(lastUpdateTime);
+                 
+
+                //XtraMessageBox.Show("指令下发成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception exception)
+            {
+                XtraMessageBox.Show(exception.Message, "异常", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            if (flag) {
+                XtraMessageBox.Show("读取成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        /// <summary>
+        /// 监听传感器量程配置值变化
+        /// </summary>
+        /// <param name="lastUpdateTime"></param>
+        public void listenSensorSpanConfigValue(Object lastUpdateTime) {
+            int index = 0;
+            while (true)
+            {
+                //超时
+                if (index >= 5)
                 {
-                    index++;
-                    if (index >= 20)
+                    XtraMessageBox.Show("读取超时，请稍后重试！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    break;
+                }
+                //未配置
+                if (SensorSpanConfigValue.updateTime < Convert.ToInt64(lastUpdateTime))
+                {
+                    XtraMessageBox.Show("传感器量程未配置！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    break;
+                }
+                //读取配置成功
+                if (SensorSpanConfigValue.updateTime > Convert.ToInt64(lastUpdateTime))
+                {
+                    Action action = () =>
                     {
-                        XtraMessageBox.Show("读取超时，请稍后重试！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        break;
-                    }
-                    if (FaultInfoConfigValue.updateTime < 0)
-                    {
-                        XtraMessageBox.Show("读取失败，传感器量程未配置！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        break;
-                    }
-                    if (FaultInfoConfigValue.updateTime > lastUpdateTime)
-                    {
-                        //将配置值显示在配置框中
                         //获取静态配置类中的配置值
                         List<string> configList = SensorSpanConfigValue.getSensorSpanConfigValue();
                         if (null == configList || configList.Count != 24)
                         {
-                            XtraMessageBox.Show("读取失败，配置信息不完整！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            XtraMessageBox.Show("读取失败，配置值不完整！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             return;
                         }
                         //1-23循环显示在相应输入框
@@ -270,16 +298,14 @@ namespace CreepRateApp
                             //String value = control.GetType().GetProperty("Text").GetValue(control, null).ToString();
                         } 
 
-                        XtraMessageBox.Show("读取成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        break;
-                    }
-                }
+                    };
+                    Invoke(action);
 
-                //XtraMessageBox.Show("指令下发成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            catch (Exception exception)
-            {
-                XtraMessageBox.Show(exception.Message, "异常", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    XtraMessageBox.Show("读取成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    break;
+                }
+                index++;
+                Thread.Sleep(1000);
             }
         }
 

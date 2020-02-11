@@ -161,8 +161,9 @@ namespace CreepRateApp
                     MainForm.showMessage(MainForm.richTextBox1, string.Format("{0}{1}", "上位机(" + MainForm.localIpep + ")[故障配置信息下发]_" + System.DateTime.Now.ToString() + "：", sendCmdStr));
 
 
-                    XtraMessageBox.Show("配置成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    this.Close();
+                    XtraMessageBox.Show("指令已下发！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MainForm.isCollecting = true;
+                    //this.Close();
                 }
                 else
                 {
@@ -173,6 +174,7 @@ namespace CreepRateApp
             //{
                 //XtraMessageBox.Show(exception.Message, "配置异常", MessageBoxButtons.OK, MessageBoxIcon.Information);
             //}
+             
         }
 
         /// <summary>
@@ -205,7 +207,7 @@ namespace CreepRateApp
                 control.GetType().GetProperty("SelectedIndex").SetValue(control, configList[22 + i] == "0" ? 1:0, null);
             }
 
-            XtraMessageBox.Show("读取成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            XtraMessageBox.Show("指令已下发！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
         } 
 
@@ -280,18 +282,23 @@ namespace CreepRateApp
                 //6、在主界面显示发送内容 
                 MainForm.showMessage(MainForm.richTextBox1, string.Format("{0}{1}", "上位机(" + MainForm.localIpep + ")[获取故障配置信息]_" + System.DateTime.Now.ToString() + "：", sendCmdStr));
 
+                //监听故障信息配置值
+                Thread thrListenFaultInfoConfigValue = new Thread(new ParameterizedThreadStart(listenFaultInfoConfigValue));
+                thrListenFaultInfoConfigValue.Start(lastUpdateTime);
+
+                /*
                 int index = 0;
                 while (true)
                 {
-                    index++;
-                    if (index >= 20)
+                    
+                    if (index >= 5)
                     {
                         XtraMessageBox.Show("读取超时，请稍后重试！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                        break;
                     }
                     if (FaultInfoConfigValue.updateTime < 0)
                     {
-                        XtraMessageBox.Show("读取失败，故障信息未配置！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        XtraMessageBox.Show("故障信息未配置！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         break;
                     }
                     if (FaultInfoConfigValue.updateTime > lastUpdateTime)
@@ -324,7 +331,10 @@ namespace CreepRateApp
                         XtraMessageBox.Show("读取成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         break;
                     }
+                    index++;
+                    Thread.Sleep(1000);
                 }
+                 * */
 
                 //XtraMessageBox.Show("指令下发成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -332,6 +342,67 @@ namespace CreepRateApp
             {
                 XtraMessageBox.Show(exception.Message, "异常", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
+        }
+
+
+        /// <summary>
+        /// 监听故障信息检测
+        /// 
+        /// </summary>
+        /// <param name="lastUpdateTime"></param>
+        public void listenFaultInfoConfigValue(Object lastUpdateTime) { 
+            int index = 0;
+            while (true)
+            {
+                //超时
+                if (index >= 5)
+                {
+                    XtraMessageBox.Show("读取超时，请稍后重试！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    break;
+                }
+                //未配置
+                if (FaultInfoConfigValue.updateTime < Convert.ToInt64(lastUpdateTime))
+                {
+                    XtraMessageBox.Show("故障信息未配置！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    break;
+                }
+                //读取配置成功
+                if (FaultInfoConfigValue.updateTime > Convert.ToInt64(lastUpdateTime))
+                {
+                    Action action = () =>
+                    {
+                        //获取静态配置类中的配置值
+                        List<string> configList = FaultInfoConfigValue.getConfigList();
+                        if (configList.Count != 25)
+                        {
+                            XtraMessageBox.Show("读取失败，配置信息不完整！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            return;
+                        }
+                        //1-23循环显示在相应输入框
+                        for (int i = 1; i <= 23; i++)
+                        {
+                            string configVal = configList[i - 1];
+                            Control control = Controls.Find("numericUpDown" + Convert.ToString(i), true)[0];
+                            control.GetType().GetProperty("Text").SetValue(control, configVal, null);
+                            //String value = control.GetType().GetProperty("Text").GetValue(control, null).ToString();
+                        }
+
+                        //combox设置值
+                        for (int i = 1; i <= 2; i++)
+                        {
+                            Control control = Controls.Find("comboBox" + Convert.ToString(i), true)[0];
+
+                            control.GetType().GetProperty("SelectedIndex").SetValue(control, configList[22 + i] == "0" ? 1 : 0, null);
+                        }
+                    };
+                    Invoke(action);   
+
+                    XtraMessageBox.Show("读取成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    break;
+                }
+                index++;
+                Thread.Sleep(1000);
+            } 
         }
           
     }

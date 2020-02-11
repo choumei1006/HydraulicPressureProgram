@@ -24,6 +24,7 @@ namespace CreepRateApp
         private SerialPort mSerialPort; 
         private ModbusCRC crc = new ModbusCRC();
         private StringBuilder builder = new StringBuilder();//避免在事件处理方法中反复的创建，定义到外面。
+        private bool readFlag = false;
 
 
         public EquipmentIdConfigForm(SerialPort paramPortDev)
@@ -111,13 +112,14 @@ namespace CreepRateApp
                 MainForm.showMessage(MainForm.richTextBox1, string.Format("{0}{1}", "上位机(" + MainForm.localIpep + ")[设备ID设置]_" + System.DateTime.Now.ToString() + "：", sendCmdStr));
 
 
-                XtraMessageBox.Show("指令下发成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                this.Close();
+                XtraMessageBox.Show("指令已下发！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MainForm.isCollecting = true;
+                //this.Close();
             }
             catch (Exception exception)
             {
                 XtraMessageBox.Show(exception.Message, "异常", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
+            } 
         }
 
         /// <summary>
@@ -203,20 +205,47 @@ namespace CreepRateApp
                 //6、在主界面显示发送内容 
                 MainForm.showMessage(MainForm.richTextBox1, string.Format("{0}{1}", "上位机(" + MainForm.localIpep + ")[获取设备ID]_" + System.DateTime.Now.ToString() + "：", sendCmdStr));
 
+
+                //监听EquipmentID变化
+                Thread thrListenID = new Thread(new ParameterizedThreadStart(listenEquipmentID));
+                thrListenID.Start(lastUpdateTime);
+
+
+
+
+                /*
+                lock (MainForm.EquipmentIdUpdateTime) {
+                    while ((long)MainForm.EquipmentIdUpdateTime == (long)lastUpdateTime) {
+                        Monitor.Wait(MainForm.EquipmentIdUpdateTime);
+                    }
+                    if ((long)MainForm.EquipmentIdUpdateTime > (long)lastUpdateTime) {
+                        //将配置值显示在配置框中
+                        byte ID = MainForm.EquipmentId;
+                        textBox1.Text = ID.ToString();
+
+                        XtraMessageBox.Show("读取成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                       
+                    }
+                    if ((long)MainForm.EquipmentIdUpdateTime < 0) {
+                        XtraMessageBox.Show("设备ID未配置！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information); 
+
+                    }
+                }*/
+
+                /*
                 int index = 0;
                 while (true)
-                {
-                    index++;
-                    if (index >= 20)
+                { 
+                    if (index >= 5)
                     {
                         XtraMessageBox.Show("读取超时，请稍后重试！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         break;
                     }
-                    if (FaultInfoConfigValue.updateTime < 0) {
-                        XtraMessageBox.Show("读取失败，设备ID未配置！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    if (MainForm.EquipmentIdUpdateTime < 0) {
+                        XtraMessageBox.Show("设备ID未配置！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         break;
                     }
-                    if (FaultInfoConfigValue.updateTime > lastUpdateTime)
+                    if (MainForm.EquipmentIdUpdateTime > lastUpdateTime)
                     {
                         //将配置值显示在配置框中
                         byte ID = MainForm.EquipmentId;
@@ -225,7 +254,10 @@ namespace CreepRateApp
                         XtraMessageBox.Show("读取成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         break;
                     }
+                    index++;
+                    Thread.Sleep(1000);
                 }
+                */
 
                 //XtraMessageBox.Show("指令下发成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -233,9 +265,43 @@ namespace CreepRateApp
             {
                 XtraMessageBox.Show(exception.Message, "异常", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
+             
         }
 
-    
+        /// <summary>
+        /// 监听EquipmentID变化
+        /// </summary> 
+        public void listenEquipmentID(Object  lastUpdateTime) {
+            int index = 0;
+            while (true)
+            {
+                if (index >= 10)
+                {
+                    XtraMessageBox.Show("读取超时，请稍后重试！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    break;
+                }
+                if (MainForm.EquipmentIdUpdateTime < Convert.ToInt64(lastUpdateTime))
+                {
+                    XtraMessageBox.Show("设备ID未配置！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    break;
+                }
+                if (MainForm.EquipmentIdUpdateTime > Convert.ToInt64(lastUpdateTime))
+                {
+                    Action action = () =>
+                    {
+                        byte ID = MainForm.EquipmentId;
+                        textBox1.Text = ID.ToString();
+                    };
+                    Invoke(action);   
+
+                    XtraMessageBox.Show("读取成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    break;
+                }
+                index++;
+                Thread.Sleep(1000);
+            }
+        }
          
+          
     }
 }

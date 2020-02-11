@@ -12,6 +12,8 @@ namespace CreepRateApp
     public static class SensorSpanConfigValue
     {
         public static long updateTime = DateTime.Now.Ticks;
+        //public static Object updateTime = DateTime.Now.Ticks;
+
 
         //配置信息数组
         public static List<string> configList =

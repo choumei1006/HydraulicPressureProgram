@@ -1143,6 +1143,8 @@
             this.ResumeLayout(false);
             this.PerformLayout();
 
+            
+
         }
 
         #endregion
@@ -1214,5 +1216,7 @@
         private DevExpress.XtraBars.BarButtonItem barButtonItem20;
         private DevExpress.XtraBars.BarButtonItem barButtonItem21;
         private DevExpress.XtraBars.BarButtonItem barButtonItem22;
+
+
     }
 }

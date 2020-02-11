@@ -145,8 +145,9 @@ namespace CreepRateApp
 
 
 
-                        XtraMessageBox.Show("配置成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        this.Close();
+                        XtraMessageBox.Show("指令已下发！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MainForm.isCollecting = true; 
+                        //this.Close();
                    // } 
                 }
                 else
@@ -157,7 +158,8 @@ namespace CreepRateApp
             }
             catch(Exception exception) {
                 XtraMessageBox.Show(exception.Message, "配置异常", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            } 
+            }
+            
         }
 
         /// <summary>
@@ -213,6 +215,7 @@ namespace CreepRateApp
         /// <param name="e"></param>
         private void button1_Click(object sender, EventArgs e)
         {
+            Thread thrListenSensorChannelConfigValue = null;
             try
             {
                 //生成配置信息 byte数组 对应的 16进制字符串数组
@@ -269,7 +272,7 @@ namespace CreepRateApp
                 MainForm.thrSend = new Thread(MainForm.SendMessage);
 
                 //获取配置之前的FaultInfoValue最后一次修改时间
-                long lastUpdateTime = FaultInfoConfigValue.updateTime;
+                long lastUpdateTime = SensorChannelConfigValue.updateTime;
 
                 //5、开启thrSend（thrSend执行结束后自动关闭udpcSend，销毁thrSend） 
                 MainForm.thrSend.Start(sendCmdStr);
@@ -277,21 +280,27 @@ namespace CreepRateApp
                 //6、在主界面显示发送内容 
                 MainForm.showMessage(MainForm.richTextBox1, string.Format("{0}{1}", "上位机(" + MainForm.localIpep + ")[获取传感器通道配置信息]_" + System.DateTime.Now.ToString() + "：", sendCmdStr));
 
+                //监听传感器通道配置值
+                thrListenSensorChannelConfigValue = new Thread(new ParameterizedThreadStart(listenSensorChannelConfigValue));
+                thrListenSensorChannelConfigValue.Start(lastUpdateTime);
+
+
+                /*
+
                 int index = 0;
                 while (true)
-                {
-                    index++;
-                    if (index >= 20)
+                { 
+                    if (index >= 5)
                     {
                         XtraMessageBox.Show("读取超时，请稍后重试！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         break;
                     }
-                    if (FaultInfoConfigValue.updateTime < 0)
+                    if (SensorChannelConfigValue.updateTime < 0)
                     {
-                        XtraMessageBox.Show("读取失败，传感器通道信息未配置！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        XtraMessageBox.Show("传感器通道信息未配置！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         break;
                     }
-                    if (FaultInfoConfigValue.updateTime > lastUpdateTime)
+                    if (SensorChannelConfigValue.updateTime > lastUpdateTime)
                     {
                         //将配置值显示在配置框中
                         //获取静态配置类中的配置值
@@ -313,7 +322,10 @@ namespace CreepRateApp
                         XtraMessageBox.Show("读取成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         break;
                     }
+                    index++;
+                    Thread.Sleep(1000);
                 }
+                 * */
 
                 //XtraMessageBox.Show("指令下发成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
@@ -322,6 +334,58 @@ namespace CreepRateApp
             catch (Exception exception)
             {
                 XtraMessageBox.Show(exception.Message, "异常", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            } 
+             
+        }
+
+        /// <summary>
+        /// 监听传感器通道配置值变化
+        /// </summary>
+        /// <param name="lastUpdateTime"></param>
+        public void listenSensorChannelConfigValue(Object lastUpdateTime) { 
+            int index = 0;
+            while (true)
+            {
+                //超时
+                if (index >= 5)
+                {
+                    XtraMessageBox.Show("读取超时，请稍后重试！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    break;
+                }
+                //未配置
+                if (SensorChannelConfigValue.updateTime < Convert.ToInt64(lastUpdateTime))
+                {
+                    XtraMessageBox.Show("传感器通道未配置！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    break;
+                }
+                //读取配置成功
+                if (SensorChannelConfigValue.updateTime > Convert.ToInt64(lastUpdateTime))
+                {
+                    Action action = () =>
+                    {
+                        //获取静态配置类中的配置值
+                        List<string> configList = SensorChannelConfigValue.getSensorChannelConfigList();
+                        if (null == configList || configList.Count != 30)
+                        {
+                            XtraMessageBox.Show("读取失败，请完成配置再读取哦！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            return;
+                        }
+                        //1-30循环显示在相应输入框
+                        for (int i = 1; i <= 30; i++)
+                        {
+                            string configVal = configList[i - 1];
+                            Control control = Controls.Find("numericUpDown" + Convert.ToString(i), true)[0];
+                            control.GetType().GetProperty("Text").SetValue(control, configVal, null);
+                            //String value = control.GetType().GetProperty("Text").GetValue(control, null).ToString();
+                        }
+                    };
+                    Invoke(action);
+
+                    XtraMessageBox.Show("读取成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    break;
+                }
+                index++;
+                Thread.Sleep(1000);
             }
         }
 
