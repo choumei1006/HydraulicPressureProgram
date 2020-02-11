@@ -91,7 +91,7 @@ namespace CreepRateApp
         //bool isNeedUdpRecv;   //是否监听UDP报文，在UDP监听阶段为true
         public Thread thrRecv;       //线程：监听UDP报文
         public static Thread thrSend;       //线程：监听UDP报文
-        public static bool isCollecting = false;
+        public static bool isCollecting = true;
 
         public static List<String> recvDataList = new List<String>();   //暂存接收到的数据Data
 
@@ -1298,11 +1298,101 @@ namespace CreepRateApp
         public void ReceiveMessage(Object obj)
         {
             IPEndPoint remoteIpep = new IPEndPoint(IPAddress.Any, 10105);   //（下位机）应用程序与特定主机特定端口之间的连接
-
+            bool runFlag = false;
+            int runIdx = 0;
 
             while (true)
             {
                 Monitor.Enter(lockHelper);  //锁定lockHelper
+
+                
+
+                if ( runIdx%4 == 0 && !runFlag && isCollecting  ) {
+                    
+                    runFlag = true;
+                     //监听下位机采集状态
+                    //生成配置信息 byte数组 对应的 16进制字符串数组
+                    byte[] cmd = new byte[9];
+
+                    //Header
+                    cmd[0] = byte.Parse("EB", System.Globalization.NumberStyles.HexNumber);
+                    cmd[1] = byte.Parse("90", System.Globalization.NumberStyles.HexNumber);
+                    //Device_id
+                    cmd[2] = MainForm.EquipmentId;
+                    //Reserve
+                    cmd[3] = byte.Parse("ff", System.Globalization.NumberStyles.HexNumber);
+                    //--Category
+                    cmd[4] = byte.Parse("05", System.Globalization.NumberStyles.HexNumber);
+
+                    //Len(2 byte)
+                    cmd[5] = 1;
+                    cmd[6] = 0;
+
+
+                    //data  
+                    cmd[7] = byte.Parse("03", System.Globalization.NumberStyles.HexNumber);
+
+
+                    //Verify
+                    byte verifyByte = 0;
+                    for (int i = 0; i < cmd.Length; i++)
+                    {
+                        verifyByte ^= cmd[i];
+                    }
+                    cmd[8] = verifyByte;
+
+                    //转换为十六进制字符串
+                    String sendCmdStr = "";
+                    for (int i = 0; i < cmd.Length; i++)
+                    {
+                        StringBuilder hexStr = new StringBuilder(cmd[i].ToString("X2"));
+                        sendCmdStr += "0x" + hexStr + " ";
+                    }
+
+                    //===============================================
+
+
+                    //下发通道配置信息
+                    //1、关闭线程 
+                    //MainForm.thrRecv.Abort();    //所谓的关闭线程
+                    //MainForm.thrRecv.Join();    //挂起
+                    //2、关闭udpcRecv
+                    //MainForm.udpcRecv.Close();
+                    //MainForm.udpcRecv = null;
+                    //3、创建udpcSend
+
+                    //4、创建thrSend
+                    thrSend = new Thread(MainForm.SendMessage);
+
+                    //5、开启thrSend（thrSend执行结束后自动关闭udpcSend，销毁thrSend） 
+                    thrSend.Start(sendCmdStr);
+
+                    //thrSend.Join();
+
+                    //6、在主界面显示发送内容 
+                    //Action action = () =>
+                    //{
+                    //    showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[暂停采集]_" + System.DateTime.Now.ToString() + "：", sendCmdStr));
+                    //};
+                    //Invoke(action);
+                    showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[暂停采集]_" + System.DateTime.Now.ToString() + "：", sendCmdStr));
+
+
+                    //XtraMessageBox.Show("指令下发成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    //isCollecting = false;
+                     
+                }
+
+                runIdx++;
+                
+
+                if (udpClient.Client == null)
+                {
+
+                    udpClient = new UdpClient(localIpep);
+                    udpClient.Client.ReceiveTimeout = 4000;
+                }
 
                 try
                 {
@@ -1542,6 +1632,7 @@ namespace CreepRateApp
                 }
                 catch
                 {
+                    runFlag = false;
                     //Object locker = new object();
                     //lock (locker) {
                     //if (udpClient != null)
