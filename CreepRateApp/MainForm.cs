@@ -74,7 +74,7 @@ namespace CreepRateApp
 
         private List<string> temperatureList1 = new List<string>();
         private List<String> slopDrawList1 = new List<string>();
-
+         
 
         private List<string> temperatureList2 = new List<string>();
         private List<String> slopDrawList2 = new List<string>();
@@ -1508,13 +1508,20 @@ namespace CreepRateApp
                                 case "84":
                                     //-----------传感器量程配置-----
                                     List<string> spanConfigValues = new List<string>();  //存放量程配置值
-                                    for (int i = 7; i <= 30; i++)
-                                    {
-                                        string value = byteRecv[i].ToString();
-
-                                        spanConfigValues.Add(value);
-                                         
+                                    for (int i = 0; i < 12; i++) {
+                                        byte val_1 = byteRecv[2 * i + 7];
+                                        spanConfigValues.Add(val_1+"");
+                                        int temp = byteRecv[2 * i + 7 + 1];
+                                        int val_2 = temp -256;
+                                        spanConfigValues.Add(val_2+""); 
                                     }
+                                        //for (int i = 7; i <= 30; i++)
+                                        //{
+                                        //    string value = byteRecv[i].ToString();
+
+                                        //    spanConfigValues.Add(value);
+
+                                        //}
                                     SensorSpanConfigValue.setSpanConfigValue(spanConfigValues);
                                     //初始化传感器通道配置信息类                                    SensorSpanConfigValue.setSpanConfigValue(spanConfigValues);
                                     //------------------------------
