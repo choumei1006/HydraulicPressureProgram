@@ -508,7 +508,7 @@
             this.config_24V.Controls.Add(this.labelControl17);
             this.config_24V.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.config_24V.Name = "config_24V";
-            this.config_24V.Size = new System.Drawing.Size(608, 672);
+            this.config_24V.Size = new System.Drawing.Size(612, 675);
             this.config_24V.Text = "24V通道配置";
             // 
             // numericUpDown27
@@ -890,7 +890,7 @@
             this.config_switch.Controls.Add(this.labelControl32);
             this.config_switch.Margin = new System.Windows.Forms.Padding(2);
             this.config_switch.Name = "config_switch";
-            this.config_switch.Size = new System.Drawing.Size(608, 672);
+            this.config_switch.Size = new System.Drawing.Size(612, 675);
             this.config_switch.Text = "开关量测点";
             // 
             // numericUpDown30

@@ -347,7 +347,7 @@ namespace CreepRateApp
             while (true)
             {
                 //超时
-                if (index >= 5)
+                if (index >= 7)
                 {
                     XtraMessageBox.Show("读取超时，请稍后重试！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     break;
