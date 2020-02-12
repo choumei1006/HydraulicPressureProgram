@@ -199,9 +199,10 @@ namespace CreepRateApp
         /// <returns></returns>
         private static string GetLocalIpAddress()
         {
-            string hostName = Dns.GetHostName();   //获取本机名
-            IPHostEntry localhost = Dns.GetHostByName(hostName);    //方法已过期，可以获取IPv4的地址
-            //IPHostEntry localhost = Dns.GetHostEntry(hostName);   //获取IPv6地址
+            //string hostName = Dns.GetHostName();   //获取本机名
+            //IPHostEntry localhost = Dns.GetHostByName(hostName);    //方法已过期，可以获取IPv4的地址
+            ////IPHostEntry localhost = Dns.GetHostEntry(hostName);   //获取IPv6地址
+            IPHostEntry localhost = Dns.GetHostEntry(Dns.GetHostName()); 
             IPAddress localaddr = localhost.AddressList[0];
 
             return localaddr.ToString();
@@ -347,7 +348,7 @@ namespace CreepRateApp
             while (true)
             {
                 //超时
-                if (index >= 7)
+                if (index >= 10)
                 {
                     XtraMessageBox.Show("读取超时，请稍后重试！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     break;
