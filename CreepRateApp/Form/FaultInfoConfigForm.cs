@@ -158,7 +158,7 @@ namespace CreepRateApp
                     MainForm.thrSend.Start(sendCmdStr);
 
                     //6、在主界面显示发送内容 
-                    MainForm.showMessage(MainForm.richTextBox1, string.Format("{0}{1}", "上位机(" + MainForm.localIpep + ")[故障配置信息下发]_" + System.DateTime.Now.ToString() + "：", sendCmdStr));
+                    MainForm.showMessage(MainForm.richTextBox1, string.Format("{0}{1}", "上位机(" + MainForm.localIpep + ")[故障配置信息下发]_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", sendCmdStr));
 
 
                     XtraMessageBox.Show("指令已下发！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -280,7 +280,7 @@ namespace CreepRateApp
                 MainForm.thrSend.Start(sendCmdStr); 
 
                 //6、在主界面显示发送内容 
-                MainForm.showMessage(MainForm.richTextBox1, string.Format("{0}{1}", "上位机(" + MainForm.localIpep + ")[获取故障配置信息]_" + System.DateTime.Now.ToString() + "：", sendCmdStr));
+                MainForm.showMessage(MainForm.richTextBox1, string.Format("{0}{1}", "上位机(" + MainForm.localIpep + ")[获取故障配置信息]_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", sendCmdStr));
 
                 //监听故障信息配置值
                 Thread thrListenFaultInfoConfigValue = new Thread(new ParameterizedThreadStart(listenFaultInfoConfigValue));
