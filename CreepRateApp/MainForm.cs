@@ -139,8 +139,12 @@ namespace CreepRateApp
             thrRecv = new Thread(ReceiveMessage); 
             udpClient.Client.ReceiveTimeout = 5000; 
             thrRecv.Start();
-            showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", "UDP监听已开启"));
-
+            Action action = () =>
+            {
+                showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", "UDP监听已开启"));
+            };
+            action.Invoke();
+            
             //开启recvDataList监听
             System.Timers.Timer timer = new System.Timers.Timer();
             timer.Enabled = true;
@@ -1276,6 +1280,12 @@ namespace CreepRateApp
                 //System.Text.ASCIIEncoding ascEncoding = new ASCIIEncoding();
                 //byte[] sendbytes = ascEncoding.GetBytes(message);
                 IPEndPoint remoteIpep2 = new IPEndPoint(IPAddress.Parse("255.255.255.255"), 10105); // 发送到的IP地址和端口号
+                if (udpClient.Client == null)
+                {
+
+                    udpClient = new UdpClient(localIpep);
+                    udpClient.Client.ReceiveTimeout = 4000;
+                }
                 udpClient.Send(cmdBytes, cmdBytes.Length, remoteIpep2);
                 udpClient.Close();
 
@@ -1375,8 +1385,12 @@ namespace CreepRateApp
                     //    showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[暂停采集]_" + System.DateTime.Now.ToString() + "：", sendCmdStr));
                     //};
                     //Invoke(action);
-                    showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[暂停采集]_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", sendCmdStr));
-
+                    Action action = () =>
+                    {
+                        showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[暂停采集]_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", sendCmdStr));
+                    };
+                    action.Invoke();
+                    
 
                     //XtraMessageBox.Show("指令下发成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
@@ -1417,7 +1431,11 @@ namespace CreepRateApp
                         int dataLen = (b2 << 8) ^ b1;
                         if (dataLen != hexStrs.Count - 8)                 //没有数据或数据段长度无效   (hexStrs[4] + "" != "83") && 
                         {
-                            showMessage(richTextBox1, string.Format("{0}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：无效数据包"));
+                            Action action = () =>
+                            {
+                                showMessage(richTextBox1, string.Format("{0}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：无效数据包"));
+                            };
+                            action.Invoke();
                         }
                         else
                         {
@@ -1453,7 +1471,13 @@ namespace CreepRateApp
 
                                     //初始化故障配置信息类
                                     FaultInfoConfigValue.setFaultConfigValue(faultConfigValues);
-                                    showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_故障配置应答：", cmdStr0x));
+                                    Action action = () =>
+                                    {
+                                        showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_故障配置应答：", cmdStr0x));
+                                    };
+                                    action.Invoke();
+                            
+                                    
                                     break;
                                 //传感器通道配置应答
                                 case "82":
@@ -1468,8 +1492,18 @@ namespace CreepRateApp
                                     }
                                     //初始化传感器通道配置信息类
                                     SensorChannelConfigValue.setChannelConfigValue(sensorChannelConfigValues);
-                                    showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_传感器通道配置应答：", cmdStr0x));
-                                    showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_传感器通道配置成功！"));
+                                    Action action1 = () =>
+                                    {
+                                        showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_传感器通道配置应答：", cmdStr0x));
+                                    };
+                                    action1.Invoke();
+                                    //showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_传感器通道配置应答：", cmdStr0x));
+                                    Action action2 = () =>
+                                    {
+                                        showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_传感器通道配置成功！"));
+                                    };
+                                    action2.Invoke();
+                                    //showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_传感器通道配置成功！"));
                                     
                                     break;
 
@@ -1498,8 +1532,12 @@ namespace CreepRateApp
                                     //--临时存储_end
 
 
-
-                                    showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_数据应答：", cmdStr0x));                                   
+                                    Action action83 = () =>
+                                    {
+                                        showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_数据应答：", cmdStr0x)); 
+                                    };
+                                    action83.Invoke();
+                                                                      
                                     //drawLine("D:\\Files\\VS2010_projects\\C#\\CreepRateApp\\log\\2019-08-05\\2019-08-05_1\\温度2数据_20190805110127.txt", null, null, false, 0, diagram, uploadAnalysisModel);
                                     //Thread.Sleep(1000);
                                     break;
@@ -1512,7 +1550,7 @@ namespace CreepRateApp
                                         byte val_1 = byteRecv[2 * i + 7];
                                         spanConfigValues.Add(val_1+"");
                                         int temp = byteRecv[2 * i + 7 + 1];
-                                        int val_2 = temp -256;
+                                        int val_2 = (temp -256)&255;
                                         spanConfigValues.Add(val_2+""); 
                                     }
                                         //for (int i = 7; i <= 30; i++)
@@ -1525,9 +1563,17 @@ namespace CreepRateApp
                                     SensorSpanConfigValue.setSpanConfigValue(spanConfigValues);
                                     //初始化传感器通道配置信息类                                    SensorSpanConfigValue.setSpanConfigValue(spanConfigValues);
                                     //------------------------------
-                                    showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_传感器量程配置应答：", cmdStr0x));
-                                    showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_传感器量程配置成功！"));
-                                 
+                                    Action action841 = () =>
+                                    {
+                                        showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_传感器量程配置应答：", cmdStr0x));
+                                    };
+                                    action841.Invoke();
+                                    Action action842 = () =>
+                                    {
+                                        showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_传感器量程配置成功！"));
+                                    };
+                                    action842.Invoke();
+                                                                       
                                     break;
 
                                 //交互应答
@@ -1539,69 +1585,132 @@ namespace CreepRateApp
                                         {
                                             //故障已配置信息    
                                             case "01":
-                                                showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_交互应答：", "故障已配置信息"));
-                                                
+                                                Action action851 = () =>
+                                                {
+                                                    showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_交互应答：", "故障已配置信息"));
+                                                };
+                                                action851.Invoke();
+                                                                                                
                                                 break;
                                             //传感器通道已配置信息   
                                             case "02":
-                                                showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_交互应答：", "传感器通道已配置信息"));
-                                                 
+                                                Action action852 = () =>
+                                                {
+                                                    showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_交互应答：", "传感器通道已配置信息"));
+                                                };
+                                                action852.Invoke();
+                                                                                                 
                                                 break;
                                             //已暂停采集
                                             case "03":
                                                 isCollecting = false;
+                                                Action action853 = () =>
+                                                {
+                                                    showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_交互应答：", "已暂停采集"));
+                                                };
+                                                action853.Invoke();
 
-                                                showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_交互应答：", "已暂停采集"));
+                                                //showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_交互应答：", "已暂停采集"));
                                                 break;
                                             //已开始采集
                                             case "04":
                                                 isCollecting = true;
-                                                showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_交互应答：", "已开始采集"));
+                                                Action action854 = () =>
+                                                {
+                                                    showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_交互应答：", "已开始采集"));
+                                                };
+                                                action854.Invoke();
+                                                //showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_交互应答：", "已开始采集"));
                                                 break;
                                             //擦除结束可重启采集
                                             case "05":
-                                                showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_交互应答：", "擦除结束可重启采集"));
+                                                Action action855 = () =>
+                                                {
+                                                    showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_交互应答：", "擦除结束可重启采集"));
+                                                };
+                                                action855.Invoke();
+                                                //showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_交互应答：", "擦除结束可重启采集"));
                                                 break;
                                             //已设置设备ID      
                                             case "06":
-                                                showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_交互应答：", "已设置设备ID"));
+                                                Action action856 = () =>
+                                                {
+                                                    showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_交互应答：", "已设置设备ID"));
+                                                };
+                                                action856.Invoke();
+                                                //showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_交互应答：", "已设置设备ID"));
                                                 break;
                                             //获取量程配置信息      
                                             case "07":
-                                                showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_交互应答：", "获取量程配置信息"));
+                                                Action action857 = () =>
+                                                {
+                                                    showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_交互应答：", "获取量程配置信息"));
+                                                };
+                                                action857.Invoke();
+                                                //showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_交互应答：", "获取量程配置信息"));
                                                 break;
                                             //传感器通道未配置信息
                                             case "81":
                                                 SensorChannelConfigValue.updateTime = -1 * DateTime.Now.Ticks;
-                                                showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_交互应答：", "传感器通道未配置信息"));
+                                                Action action8581 = () =>
+                                                {
+                                                    showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_交互应答：", "传感器通道未配置信息"));
+                                                };
+                                                action8581.Invoke();
+                                                //showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_交互应答：", "传感器通道未配置信息"));
                                                 //TODO存储状态变量
                                                 break;
                                             //故障未配置信息
                                             case "82":
                                                 FaultInfoConfigValue.updateTime = -1 * DateTime.Now.Ticks;
-                                                showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_交互应答：", "故障未配置信息"));
+                                                Action action8582 = () =>
+                                                {
+                                                    showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_交互应答：", "故障未配置信息"));
+                                                };
+                                                action8582.Invoke();
+                                                //showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_交互应答：", "故障未配置信息"));
                                                 //TODO存储状态变量
                                                 break;
                                             //未设置设备ID
                                             case "86":
                                                 EquipmentIdUpdateTime = -1* DateTime.Now.Ticks;
-                                                showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_交互应答：", "未设置设备ID"));
+                                                Action action8586 = () =>
+                                                {
+                                                    showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_交互应答：", "未设置设备ID"));
+                                                };
+                                                action8586.Invoke();
+                                                //showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_交互应答：", "未设置设备ID"));
                                                 break;
                                             //未设置传感器量程
                                             case "87":
                                                 SensorSpanConfigValue.updateTime = -1 * DateTime.Now.Ticks;
-                                                showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_交互应答：", "未设置传感器量程"));
+                                                Action action8587 = () =>
+                                                {
+                                                    showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_交互应答：", "未设置传感器量程"));
+                                                };
+                                                action8587.Invoke();
+                                                //showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_交互应答：", "未设置传感器量程"));
                                                 break;
                                             //default
                                             default:
-                                                showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_交互应答：", "无效命令"));
+                                                Action actiond = () =>
+                                                {
+                                                    showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_交互应答：", "无效命令"));
+                                                };
+                                                actiond.Invoke();
+                                                //showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_交互应答：", "无效命令"));
                                                 break;
                                         }
                                     }
                                     else
                                     {
                                         cmdStr0x = new StringBuilder("无效命令");
-                                        showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_交互应答：", cmdStr0x));
+                                        Action action8587 = () =>
+                                        {
+                                            showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_交互应答：", cmdStr0x));
+                                        };
+                                        action8587.Invoke();
+                                       // showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_交互应答：", cmdStr0x));
                                     }
 
                                     break;
@@ -1613,23 +1722,43 @@ namespace CreepRateApp
                                         byte device_byte = byte.Parse(device_id + "", System.Globalization.NumberStyles.HexNumber);
                                         MainForm.EquipmentId = device_byte;
                                         MainForm.EquipmentIdUpdateTime = DateTime.Now.Ticks;
-                                        showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_设备ID设置：", device_byte));
+                                        Action action8587 = () =>
+                                        {
+                                            showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_设备ID设置：", device_byte));
+                                        };
+                                        action8587.Invoke();
+                                        //showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_设备ID设置：", device_byte));
                                     }
                                     else
                                     {
                                         cmdStr0x = new StringBuilder("无效命令");
-                                        showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_设备ID设置：", cmdStr0x));
+                                        Action action8587 = () =>
+                                        {
+                                            showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_设备ID设置：", cmdStr0x));
+                                        };
+                                        action8587.Invoke();
+                                        //showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_设备ID设置：", cmdStr0x));
                                     }
                                     break;
                                 default:
-                                    showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_无法识别命令：", cmdStr0x));
+                                    Action action858d = () =>
+                                        {
+                                            showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_无法识别命令：", cmdStr0x));
+                                        };
+                                    action858d.Invoke();
+                                    //showMessage(richTextBox1, string.Format("{0}{1}", "下位机(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "_无法识别命令：", cmdStr0x));
                                     break;
                             } 
                         }
                     }
                     else
                     {
-                        showMessage(richTextBox1, string.Format("{0}{1}", "未知命令(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", message));
+                        Action action858d = () =>
+                        {
+                            showMessage(richTextBox1, string.Format("{0}{1}", "未知命令(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", message));
+                        };
+                        action858d.Invoke();
+                        //showMessage(richTextBox1, string.Format("{0}{1}", "未知命令(" + remoteIpep + ")_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", message));
                     }
                     //Monitor.Wait(lockHelper);  //将该线程暂停，并释放锁允许其他线程访问
 
@@ -1639,6 +1768,7 @@ namespace CreepRateApp
                 }
                 catch
                 {
+                    Monitor.Enter(lockHelper);
                     runFlag = false;
                     //Object locker = new object();
                     //lock (locker) {
@@ -1646,10 +1776,21 @@ namespace CreepRateApp
                     //{
                     udpClient.Close();
                     udpClient = null;
-                    showMessage(richTextBox1, string.Format("系统消息_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：下位机5s无回应"));
-                    //thrRecv.Abort();    //所谓的关闭线程
+
                     udpClient = new UdpClient(localIpep);
                     udpClient.Client.ReceiveTimeout = 4000;
+
+                    Monitor.Exit(lockHelper);
+
+                    Action action858d = () =>
+                    {
+                        showMessage(richTextBox1, string.Format("系统消息_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：下位机5s无回应"));
+                    };
+                    action858d.Invoke();
+                    //showMessage(richTextBox1, string.Format("系统消息_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：下位机5s无回应"));
+                    //thrRecv.Abort();    //所谓的关闭线程
+                    //udpClient = new UdpClient(localIpep);
+                    //udpClient.Client.ReceiveTimeout = 4000;
 
                     Thread.Sleep(1000);
 
@@ -1776,7 +1917,12 @@ namespace CreepRateApp
                     thrSend.Start(sendCmdStr);
 
                     //6、在主界面显示发送内容 
-                    showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[开始采集]_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", sendCmdStr));
+                    Action action858d = () =>
+                    {
+                        showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[开始采集]_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", sendCmdStr));
+                    };
+                    action858d.Invoke();
+                    //showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[开始采集]_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", sendCmdStr));
 
 
                     XtraMessageBox.Show("指令下发成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -1865,7 +2011,12 @@ namespace CreepRateApp
                     thrSend.Start(sendCmdStr);
 
                     //6、在主界面显示发送内容 
-                    showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[暂停采集]_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", sendCmdStr));
+                    Action action858d = () =>
+                    {
+                        showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[暂停采集]_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", sendCmdStr));
+                    };
+                    action858d.Invoke();
+                    //showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[暂停采集]_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", sendCmdStr));
 
 
                     XtraMessageBox.Show("指令下发成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -2000,12 +2151,22 @@ namespace CreepRateApp
                 //6、在主界面显示发送内容 
                 if (isOpenTrans)
                 {
-                    showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[开始实时回传数据]_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", sendCmdStr));
+                    Action action858d = () =>
+                    {
+                        showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[开始实时回传数据]_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", sendCmdStr));
+                    };
+                    action858d.Invoke();
+                    //showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[开始实时回传数据]_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", sendCmdStr));
 
                 }
                 else
                 {
-                    showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[暂停实时回传数据]_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", sendCmdStr));
+                    Action action858d = () =>
+                    {
+                        showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[暂停实时回传数据]_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", sendCmdStr));
+                    };
+                    action858d.Invoke();
+                   // showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[暂停实时回传数据]_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", sendCmdStr));
 
                 }
 
@@ -2134,12 +2295,22 @@ namespace CreepRateApp
                 //6、在主界面显示发送内容 
                 if (isOpenTrans)
                 {
-                    showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[开始离线回传数据]_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", sendCmdStr));
+                    Action action858d = () =>
+                    {
+                        showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[开始离线回传数据]_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", sendCmdStr));
+                    };
+                    action858d.Invoke();
+                    //showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[开始离线回传数据]_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", sendCmdStr));
 
                 }
                 else
                 {
-                    showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[暂停离线回传数据]_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", sendCmdStr));
+                    Action action858d = () =>
+                    {
+                        showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[暂停离线回传数据]_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", sendCmdStr));
+                    };
+                    action858d.Invoke();
+                    //showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[暂停离线回传数据]_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", sendCmdStr));
 
                 }
 
@@ -2171,14 +2342,24 @@ namespace CreepRateApp
                 udpClient = new UdpClient(localIpep);
                 thrRecv = new Thread(ReceiveMessage);
                 thrRecv.Start();
-                showMessage(richTextBox1, "上位机：UDP监听已开启");
+                Action action858d = () =>
+                {
+                    showMessage(richTextBox1, "上位机：UDP监听已开启");
+                };
+                action858d.Invoke();
+                //showMessage(richTextBox1, "上位机：UDP监听已开启");
             }
             else
             {
                 barButtonItem7.Caption = "开始监听";
                 thrRecv.Abort();    //所谓的关闭线程
                 udpClient.Close();
-                showMessage(richTextBox1, "上位机：UDP监听已关闭");
+                Action action858d = () =>
+                {
+                    showMessage(richTextBox1, "上位机：UDP监听已关闭");
+                };
+                action858d.Invoke();
+                //showMessage(richTextBox1, "上位机：UDP监听已关闭");
 
             }
         }
@@ -2269,7 +2450,12 @@ namespace CreepRateApp
                 thrSend.Start(sendCmdStr);
 
                 //6、在主界面显示发送内容 
-                showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[获取传感器通道配置信息]_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", sendCmdStr));
+                Action action858d = () =>
+                {
+                    showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[获取传感器通道配置信息]_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", sendCmdStr));
+                };
+                action858d.Invoke();
+                //showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[获取传感器通道配置信息]_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", sendCmdStr));
 
 
                 XtraMessageBox.Show("指令下发成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -2348,7 +2534,12 @@ namespace CreepRateApp
                 thrSend.Start(sendCmdStr);
 
                 //6、在主界面显示发送内容 
-                showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[获取故障配置信息]_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", sendCmdStr));
+                Action action858d = () =>
+                {
+                    showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[获取故障配置信息]_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", sendCmdStr));
+                };
+                action858d.Invoke();
+                //showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[获取故障配置信息]_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", sendCmdStr));
 
 
                 XtraMessageBox.Show("指令下发成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -2427,7 +2618,12 @@ namespace CreepRateApp
                 thrSend.Start(sendCmdStr);
 
                 //6、在主界面显示发送内容 
-                showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[清除数据]_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", sendCmdStr));
+                Action action858d = () =>
+                {
+                    showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[清除数据]_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", sendCmdStr));
+                };
+                action858d.Invoke();
+                //showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[清除数据]_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", sendCmdStr));
 
 
                 XtraMessageBox.Show("指令下发成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -2506,7 +2702,12 @@ namespace CreepRateApp
                 thrSend.Start(sendCmdStr);
 
                 //6、在主界面显示发送内容 
-                showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[获取设备ID]_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", sendCmdStr));
+                Action action858d = () =>
+                {
+                    showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[获取设备ID]_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", sendCmdStr));
+                };
+                action858d.Invoke();
+                //showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[获取设备ID]_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", sendCmdStr));
 
 
                 XtraMessageBox.Show("指令下发成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -3073,7 +3274,12 @@ namespace CreepRateApp
                         thrSend.Start(sendCmdStr);
 
                         //6、在主界面显示发送内容 
-                        showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[开始采集]_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", sendCmdStr));
+                        Action action858d = () =>
+                        {
+                            showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[开始采集]_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", sendCmdStr));
+                        };
+                        action858d.Invoke();
+                        //showMessage(richTextBox1, string.Format("{0}{1}", "上位机(" + localIpep + ")[开始采集]_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", sendCmdStr));
 
 
                         //XtraMessageBox.Show("指令下发成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);

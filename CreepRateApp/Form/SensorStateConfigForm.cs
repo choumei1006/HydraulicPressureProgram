@@ -122,8 +122,12 @@ namespace CreepRateApp
                 MainForm.thrSend.Start(sendCmdStr);
 
                 //6、在主界面显示发送内容 
-                MainForm.showMessage(MainForm.richTextBox1, string.Format("{0}{1}", "上位机(" + MainForm.localIpep + ")[传感器状态配置信息下发]_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", sendCmdStr));
-
+                Action action = () =>
+                {
+                    MainForm.showMessage(MainForm.richTextBox1, string.Format("{0}{1}", "上位机(" + MainForm.localIpep + ")[传感器状态配置信息下发]_" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", System.Globalization.DateTimeFormatInfo.InvariantInfo) + "：", sendCmdStr));
+                };
+                action.Invoke();
+                
 
 
                 XtraMessageBox.Show("配置成功！", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
