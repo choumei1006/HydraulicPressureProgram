@@ -1549,9 +1549,13 @@ namespace CreepRateApp
                                     for (int i = 0; i < 12; i++) {
                                         byte val_1 = byteRecv[2 * i + 7];
                                         spanConfigValues.Add(val_1+"");
-                                        int temp = byteRecv[2 * i + 7 + 1];
-                                        int val_2 = (temp -256)&255;
-                                        spanConfigValues.Add(val_2+""); 
+                                        byte temp = byteRecv[2 * i + 7 + 1];
+                                        sbyte val_2 = (sbyte)(~(temp-(byte)1)); 
+                                        spanConfigValues.Add("-"+val_2+ ""); 
+                                        //int temp = byteRecv[2 * i + 7 + 1];
+                                        //int val_2 = (temp -256);
+                                        //int temp2 = val_2 & 255;
+                                        //spanConfigValues.Add(temp2+""); 
                                     }
                                         //for (int i = 7; i <= 30; i++)
                                         //{
