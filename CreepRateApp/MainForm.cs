@@ -1307,7 +1307,7 @@ namespace CreepRateApp
 
                 
 
-                if ( runIdx%4 == 0 && !runFlag && isCollecting  ) {
+                if ( runIdx%2 == 0 && !runFlag && isCollecting  ) {
                     
                     runFlag = true;
                      //监听下位机采集状态
