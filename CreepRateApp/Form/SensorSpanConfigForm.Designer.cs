@@ -150,7 +150,7 @@
             this.config_24V.Controls.Add(this.labelControl27);
             this.config_24V.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.config_24V.Name = "config_24V";
-            this.config_24V.Size = new System.Drawing.Size(612, 864);
+            this.config_24V.Size = new System.Drawing.Size(608, 861);
             this.config_24V.Text = "预留/温度水位量程";
             // 
             // numericUpDown24

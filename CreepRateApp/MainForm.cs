@@ -1465,8 +1465,8 @@ namespace CreepRateApp
                                         faultConfigValues.Add(value); 
                                     }
                                     byte num53 = byteRecv[53];
-                                    faultConfigValues.Add((num53 ^ 1)+"");
-                                    faultConfigValues.Add(((num53 >>1) ^ 1) + "");
+                                    faultConfigValues.Add((num53 & 1)+"");
+                                    faultConfigValues.Add(((num53 >>1) & 1) + "");
 
 
                                     //初始化故障配置信息类
